@@ -1,5 +1,6 @@
 CC = gcc
 SRCS = cli.c gui.c json.c main.c tester.c utils.c sds.c
+LIBS = -lcjson
 TARGET = testify
 PREFIX = /usr/local
 BINDIR = $(PREFIX)/bin
@@ -12,10 +13,10 @@ CFLAGS_DEBUG = -ggdb3 -O0 -DFORTIFY_SOURCE=3 -fsanitize=address -fstack-protecto
 all: prod
 
 prod:
-	$(CC) -o $(TARGET) $(SRCS) $(CFLAGS_PROD)
+	$(CC) -o $(TARGET) $(SRCS) $(LIBS) $(CFLAGS_PROD)
 
 debug:
-	$(CC) -o $(TARGET) $(SRCS) $(CFLAGS_DEBUG)
+	$(CC) -o $(TARGET) $(SRCS) $(LIBS) $(CFLAGS_DEBUG)
 
 clean:
 	rm -f $(TARGET)
