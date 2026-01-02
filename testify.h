@@ -22,8 +22,12 @@ typedef struct
     sds name;
     sds description;
     sds input;
-    sds type;
     sds expectedoutput;
+    sds notexpectedoutput;
+    sds containingoutput;
+    sds notcontainingoutput;
+    sds *commandargs;
+    int type;
 } testcase;
 
 void logo();
@@ -31,6 +35,8 @@ void help();
 void version();
 void runhelp();
 void parse_run(char **, int);
-char *get_binary_json(char *);
+const char *get_error();
+void get_binary_json(sds *, char *);
 testcase parse_testcase(cJSON *);
+int runtests(char *);
 #endif
