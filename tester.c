@@ -106,7 +106,7 @@ int passed_or_not(char *output, testcase testcase_obj)
     }
     else if (testcase_obj.containingoutputgiven)
     {
-        if (strstr(output, testcase_obj.expectedoutput) != NULL)
+        if (strstr(output, testcase_obj.containingoutput) != NULL)
         {
             return 1;
         }
@@ -128,7 +128,7 @@ int passed_or_not(char *output, testcase testcase_obj)
     }
     else if (testcase_obj.notcontainingoutputgiven)
     {
-        if (strstr(output, testcase_obj.expectedoutput) == NULL)
+        if (strstr(output, testcase_obj.notcontainingoutput) == NULL)
         {
             return 1;
         }
