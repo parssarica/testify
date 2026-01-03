@@ -19,7 +19,7 @@ void help()
     logo();
     printf("testify <commands>\n");
     printf("\nCommands:\n\n");
-    printf("\thelp\tShows this help messaage and exit\n");
+    printf("\thelp\tShows this help message and exit\n");
     printf("\tversion\tShows the version of program\n");
     printf("\trun\tReads the test cases and runs them\n");
 }
