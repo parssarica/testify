@@ -55,6 +55,10 @@ testcase parse_testcase(cJSON *testcase_obj)
     test_case.notexpectedoutput = sdsempty();
     test_case.containingoutput = sdsempty();
     test_case.notcontainingoutput = sdsempty();
+    test_case.expectedoutputgiven = 0;
+    test_case.notexpectedoutputgiven = 0;
+    test_case.containingoutputgiven = 0;
+    test_case.notcontainingoutputgiven = 0;
     type = cJSON_GetObjectItemCaseSensitive(testcase_obj, "type");
     if (cJSON_IsNumber(type))
     {
@@ -90,6 +94,7 @@ testcase parse_testcase(cJSON *testcase_obj)
         test_case.expectedoutput =
             sdscpylen(test_case.expectedoutput, expectedoutput->valuestring,
                       strlen(expectedoutput->valuestring));
+        test_case.expectedoutputgiven = 1;
     }
 
     notexpectedoutput =
@@ -100,6 +105,7 @@ testcase parse_testcase(cJSON *testcase_obj)
         test_case.notexpectedoutput = sdscpylen(
             test_case.notexpectedoutput, notexpectedoutput->valuestring,
             strlen(notexpectedoutput->valuestring));
+        test_case.notexpectedoutputgiven = 1;
     }
 
     containingoutput =
@@ -110,6 +116,7 @@ testcase parse_testcase(cJSON *testcase_obj)
         test_case.containingoutput =
             sdscpylen(test_case.containingoutput, containingoutput->valuestring,
                       strlen(containingoutput->valuestring));
+        test_case.containingoutputgiven = 1;
     }
 
     notcontainingoutput =
@@ -120,6 +127,7 @@ testcase parse_testcase(cJSON *testcase_obj)
         test_case.notcontainingoutput = sdscpylen(
             test_case.notcontainingoutput, notcontainingoutput->valuestring,
             strlen(notcontainingoutput->valuestring));
+        test_case.notcontainingoutputgiven = 1;
     }
 
     return test_case;

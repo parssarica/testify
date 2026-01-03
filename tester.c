@@ -55,7 +55,14 @@ int runtests(char *json)
         args = realloc(args, sizeof(char *) * ++i + sizeof(NULL));
         args[i] = NULL;
         output = execute(args, testcase_obj.input);
-        printf("%s\n", output);
+        if (passed_or_not(output, testcase_obj))
+        {
+            printf("Test '%s' passed!\n", testcase_obj.name);
+        }
+        else
+        {
+            printf("Test '%s' didn't pass...\n", testcase_obj.name);
+        }
         sdsfree(args[0]);
         for (int j = 1; j < i + 1; j++)
         {
@@ -67,4 +74,54 @@ int runtests(char *json)
     sdsfree(binary_file);
     cJSON_Delete(testcases);
     return 0;
+}
+
+int passed_or_not(char *output, testcase testcase_obj)
+{
+    if (testcase_obj.expectedoutputgiven)
+    {
+        if (strcmp(output, testcase_obj.expectedoutput) == 0)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if (testcase_obj.containingoutputgiven)
+    {
+        if (strstr(output, testcase_obj.expectedoutput) != NULL)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if (testcase_obj.notexpectedoutputgiven)
+    {
+        if (strcmp(output, testcase_obj.notexpectedoutput) != 0)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else if (testcase_obj.notcontainingoutputgiven)
+    {
+        if (strstr(output, testcase_obj.expectedoutput) == NULL)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    return 1;
 }

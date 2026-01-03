@@ -27,6 +27,10 @@ typedef struct
     sds containingoutput;
     sds notcontainingoutput;
     int type;
+    int expectedoutputgiven;
+    int notexpectedoutputgiven;
+    int containingoutputgiven;
+    int notcontainingoutputgiven;
 } testcase;
 
 void logo();
@@ -39,4 +43,5 @@ void get_binary_json(sds *, char *);
 testcase parse_testcase(cJSON *);
 int runtests(char *);
 sds execute(char **, char *);
+int passed_or_not(char *, testcase);
 #endif
