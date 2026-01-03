@@ -36,6 +36,11 @@ int main(int argc, char **argv)
         if (args.help_shown == 1)
             goto exit;
     }
+    else
+    {
+        help();
+        goto exit;
+    }
 
     fptr = fopen(args.filename, "rt");
     if (fptr == NULL)
