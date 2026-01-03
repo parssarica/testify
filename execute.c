@@ -14,7 +14,7 @@ Pars SARICA <pars@parssarica.com>
 
 extern char **environ;
 
-sds execute(char *process_args[], char *input)
+sds execute(char **process_args, char *input)
 {
     sds output = sdsempty();
     posix_spawn_file_actions_t actions;

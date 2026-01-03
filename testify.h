@@ -26,7 +26,6 @@ typedef struct
     sds notexpectedoutput;
     sds containingoutput;
     sds notcontainingoutput;
-    sds *commandargs;
     int type;
 } testcase;
 
@@ -39,5 +38,5 @@ const char *get_error();
 void get_binary_json(sds *, char *);
 testcase parse_testcase(cJSON *);
 int runtests(char *);
-sds execute(char *[], char *);
+sds execute(char **, char *);
 #endif

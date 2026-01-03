@@ -6,15 +6,19 @@ Pars SARICA <pars@parssarica.com>
 #include "testify.h"
 #include <cjson/cJSON.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int runtests(char *json)
 {
     testcase testcase_obj;
     cJSON *testcases;
     cJSON *testcase_objjson;
+    cJSON *testcase_input_str;
     sds binary_file = sdsempty();
     sds output;
-    char *args[] = {"cat", NULL};
+    char **args;
+    int i;
     get_binary_json(&binary_file, json);
     testcases = cJSON_Parse(json);
     if (!testcases)
@@ -29,16 +33,36 @@ int runtests(char *json)
                        cJSON_GetObjectItemCaseSensitive(testcases, "testcases"))
     {
         testcase_obj = parse_testcase(testcase_objjson);
-        output = execute(args, "word");
+        args = malloc(sizeof(char *));
+        args[0] = sdsnew(binary_file);
+        i = 0;
+        cJSON_ArrayForEach(
+            testcase_input_str,
+            cJSON_GetObjectItemCaseSensitive(testcase_objjson, "commandArgs"))
+        {
+            args = realloc(args, sizeof(sds) * ++i);
+            if (cJSON_IsString(testcase_input_str) &&
+                (testcase_input_str->valuestring != NULL))
+            {
+                args[i] = malloc(strlen(testcase_input_str->valuestring));
+                for (int j = 0;
+                     (size_t)j < strlen(testcase_input_str->valuestring); j++)
+                {
+                    args[i][j] = testcase_input_str->valuestring[j];
+                }
+            }
+        }
+        args = realloc(args, sizeof(char *) * ++i + sizeof(NULL));
+        args[i] = NULL;
+        output = execute(args, testcase_obj.input);
         printf("%s\n", output);
+        sdsfree(args[0]);
+        for (int j = 1; j < i + 1; j++)
+        {
+            free(args[j]);
+        }
+        free(args);
         sdsfree(output);
-        // printf("Name: <%s>\n", testcase_obj.name);
-        // printf("Description: <%s>\n", testcase_obj.description);
-        // printf("Input: <%s>\n", testcase_obj.input);
-        // printf("Type: <%d>\n", testcase_obj.type);
-        // printf("Expected output: <%s>\n", testcase_obj.expectedoutput);
-        // printf("Not Expected output: <%s>\n",
-        // testcase_obj.notexpectedoutput);
     }
     sdsfree(binary_file);
     cJSON_Delete(testcases);
