@@ -44,4 +44,5 @@ testcase parse_testcase(cJSON *);
 int runtests(char *);
 sds execute(char **, char *);
 int passed_or_not(char *, testcase);
+int get_testcase_count(char *);
 #endif

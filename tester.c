@@ -19,7 +19,12 @@ int runtests(char *json)
     sds output;
     char **args;
     int i;
+    int passed = 0;
+    int failed = 0;
+    int testcase_count;
+    int testcase_counter;
     get_binary_json(&binary_file, json);
+    testcase_count = get_testcase_count(json);
     testcases = cJSON_Parse(json);
     if (!testcases)
     {
@@ -29,6 +34,7 @@ int runtests(char *json)
         return 1;
     }
 
+    testcase_counter = 1;
     cJSON_ArrayForEach(testcase_objjson,
                        cJSON_GetObjectItemCaseSensitive(testcases, "testcases"))
     {
@@ -57,11 +63,15 @@ int runtests(char *json)
         output = execute(args, testcase_obj.input);
         if (passed_or_not(output, testcase_obj))
         {
-            printf("Test '%s' passed!\n", testcase_obj.name);
+            printf("Test (%d/%d) %s - \033[1m\033[92mPASSED\033[0m\n",
+                   testcase_counter, testcase_count, testcase_obj.name);
+            passed++;
         }
         else
         {
-            printf("Test '%s' didn't pass...\n", testcase_obj.name);
+            printf("Test (%d/%d) %s - \033[1m\033[91mFAILED\033[0m\n",
+                   testcase_counter, testcase_count, testcase_obj.name);
+            failed++;
         }
         sdsfree(args[0]);
         for (int j = 1; j < i + 1; j++)
@@ -70,7 +80,12 @@ int runtests(char *json)
         }
         free(args);
         sdsfree(output);
+        testcase_counter++;
     }
+    printf("\n────────────────────────────────────────────\n");
+    printf("Pass rate:\n\t%f%% - %d / %d\n",
+           (((double)passed / ((double)passed + (double)failed)) * 100), passed,
+           passed + failed);
     sdsfree(binary_file);
     cJSON_Delete(testcases);
     return 0;

@@ -37,6 +37,25 @@ void get_binary_json(sds *binary_file, char *json_string)
     cJSON_Delete(json);
 }
 
+int get_testcase_count(char *json_string)
+{
+    cJSON *json = cJSON_Parse(json_string);
+    cJSON *testcases;
+    cJSON *i;
+    int count = 0;
+    if (!json)
+    {
+        const char *error = get_error();
+        if (error != NULL)
+            fprintf(stderr, "Error before: %s\n", error);
+        return -1;
+    }
+    testcases = cJSON_GetObjectItemCaseSensitive(json, "testcases");
+    cJSON_ArrayForEach(i, testcases) { count++; }
+    cJSON_Delete(json);
+    return count;
+}
+
 testcase parse_testcase(cJSON *testcase_obj)
 {
     testcase test_case;
