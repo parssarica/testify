@@ -1,5 +1,5 @@
 CC = gcc
-SRCS = cli.c gui.c json.c main.c tester.c utils.c sds.c
+SRCS = cli.c gui.c json.c main.c tester.c utils.c sds.c execute.c
 LIBS = -lcjson
 TARGET = testify
 PREFIX = /usr/local

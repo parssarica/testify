@@ -13,6 +13,8 @@ int runtests(char *json)
     cJSON *testcases;
     cJSON *testcase_objjson;
     sds binary_file = sdsempty();
+    sds output;
+    char *args[] = {"cat", NULL};
     get_binary_json(&binary_file, json);
     testcases = cJSON_Parse(json);
     if (!testcases)
@@ -27,12 +29,16 @@ int runtests(char *json)
                        cJSON_GetObjectItemCaseSensitive(testcases, "testcases"))
     {
         testcase_obj = parse_testcase(testcase_objjson);
-        printf("Name: <%s>\n", testcase_obj.name);
-        printf("Description: <%s>\n", testcase_obj.description);
-        printf("Input: <%s>\n", testcase_obj.input);
-        printf("Type: <%d>\n", testcase_obj.type);
-        printf("Expected output: <%s>\n", testcase_obj.expectedoutput);
-        printf("Not Expected output: <%s>\n", testcase_obj.notexpectedoutput);
+        output = execute(args, "word");
+        printf("%s\n", output);
+        sdsfree(output);
+        // printf("Name: <%s>\n", testcase_obj.name);
+        // printf("Description: <%s>\n", testcase_obj.description);
+        // printf("Input: <%s>\n", testcase_obj.input);
+        // printf("Type: <%d>\n", testcase_obj.type);
+        // printf("Expected output: <%s>\n", testcase_obj.expectedoutput);
+        // printf("Not Expected output: <%s>\n",
+        // testcase_obj.notexpectedoutput);
     }
     sdsfree(binary_file);
     cJSON_Delete(testcases);
