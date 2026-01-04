@@ -17,12 +17,14 @@ int runtests(char *json)
     cJSON *testcase_input_str;
     sds binary_file = sdsempty();
     sds output;
+    sds reason = sdsempty();
     char **args;
     int i;
     int passed = 0;
     int failed = 0;
     int testcase_count;
     int testcase_counter;
+    int fault;
     get_binary_json(&binary_file, json);
     testcase_count = get_testcase_count(json);
     testcases = cJSON_Parse(json);
@@ -55,8 +57,8 @@ int runtests(char *json)
         }
         args = realloc(args, sizeof(char **) * ++i + sizeof(NULL));
         args[i] = NULL;
-        output = execute(args, testcase_obj.input);
-        if (passed_or_not(output, testcase_obj))
+        output = execute(args, testcase_obj.input, &fault);
+        if (passed_or_not(output, testcase_obj, fault, &reason))
         {
             printf("Test (%d/%d) %s - \033[1m\033[92mPASSED\033[0m\n",
                    testcase_counter, testcase_count, testcase_obj.name);
@@ -64,8 +66,9 @@ int runtests(char *json)
         }
         else
         {
-            printf("Test (%d/%d) %s - \033[1m\033[91mFAILED\033[0m\n",
-                   testcase_counter, testcase_count, testcase_obj.name);
+            printf(
+                "Test (%d/%d) %s - \033[1m\033[91mFAILED\033[0m - Reason: %s\n",
+                testcase_counter, testcase_count, testcase_obj.name, reason);
             failed++;
         }
         for (int j = 0; j < i + 1; j++)
@@ -87,13 +90,20 @@ int runtests(char *json)
     printf("Pass rate:\n\t%f%% - %d / %d\n",
            (((double)passed / ((double)passed + (double)failed)) * 100), passed,
            passed + failed);
+    sdsfree(reason);
     sdsfree(binary_file);
     cJSON_Delete(testcases);
     return 0;
 }
 
-int passed_or_not(char *output, testcase testcase_obj)
+int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason)
 {
+    if (fault)
+    {
+        *reason = sdscpylen(*reason, "Segmentation fault detected.", 28);
+        return 0;
+    }
+
     if (testcase_obj.expectedoutputgiven)
     {
         if (strcmp(output, testcase_obj.expectedoutput) == 0)
@@ -102,6 +112,10 @@ int passed_or_not(char *output, testcase testcase_obj)
         }
         else
         {
+            *reason = sdscpylen(*reason,
+                                "Program output was not exacty same with the "
+                                "output written in JSON file.",
+                                72);
             return 0;
         }
     }
@@ -113,6 +127,10 @@ int passed_or_not(char *output, testcase testcase_obj)
         }
         else
         {
+            *reason = sdscpylen(*reason,
+                                "Program output was not containing the string "
+                                "written in JSON file.",
+                                66);
             return 0;
         }
     }
@@ -124,6 +142,10 @@ int passed_or_not(char *output, testcase testcase_obj)
         }
         else
         {
+            *reason = sdscpylen(*reason,
+                                "Program output was exactly the same with the "
+                                "output written in JSON file.",
+                                73);
             return 0;
         }
     }
@@ -135,6 +157,10 @@ int passed_or_not(char *output, testcase testcase_obj)
         }
         else
         {
+            *reason = sdscpylen(*reason,
+                                "Program output was containing the string "
+                                "written in JSON file.",
+                                62);
             return 0;
         }
     }

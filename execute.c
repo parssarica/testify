@@ -15,7 +15,7 @@ Pars SARICA <pars@parssarica.com>
 
 extern char **environ;
 
-sds execute(char **process_args, char *input)
+sds execute(char **process_args, char *input, int *fault)
 {
     sds output = sdsempty();
     posix_spawn_file_actions_t actions;
@@ -23,6 +23,7 @@ sds execute(char **process_args, char *input)
     char buf[4096];
     ssize_t n;
     int master_fd, slave_fd;
+    int status;
 
     if (openpty(&master_fd, &slave_fd, NULL, NULL, NULL) == -1)
     {
@@ -55,7 +56,15 @@ sds execute(char **process_args, char *input)
     }
 
     close(master_fd);
-    waitpid(pid, NULL, 0);
+    waitpid(pid, &status, 0);
+    *fault = 0;
+    if (!WIFEXITED(status))
+    {
+        if (WIFSIGNALED(status) && WTERMSIG(status) == SIGSEGV)
+        {
+            *fault = 1;
+        }
+    }
 
     return output;
 }
