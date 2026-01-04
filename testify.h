@@ -12,6 +12,7 @@ Pars SARICA <pars@parssarica.com>
 typedef struct
 {
     int help_shown;
+    int reason;
     sds filename;
 } arguments;
 

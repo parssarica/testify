@@ -18,7 +18,7 @@ int runtests(char *json)
     sds binary_file = sdsempty();
     sds output;
     sds reason = sdsempty();
-    char **args;
+    char **program_args;
     int i;
     int passed = 0;
     int failed = 0;
@@ -41,23 +41,24 @@ int runtests(char *json)
                        cJSON_GetObjectItemCaseSensitive(testcases, "testcases"))
     {
         testcase_obj = parse_testcase(testcase_objjson);
-        args = malloc(sizeof(char **));
-        args[0] = strdup(binary_file);
+        program_args = malloc(sizeof(char **));
+        program_args[0] = strdup(binary_file);
         i = 1;
         cJSON_ArrayForEach(
             testcase_input_str,
             cJSON_GetObjectItemCaseSensitive(testcase_objjson, "commandArgs"))
         {
-            args = realloc(args, sizeof(char **) * ++i);
+            program_args = realloc(program_args, sizeof(char **) * ++i);
             if (cJSON_IsString(testcase_input_str) &&
                 (testcase_input_str->valuestring != NULL))
             {
-                args[i - 1] = strdup(testcase_input_str->valuestring);
+                program_args[i - 1] = strdup(testcase_input_str->valuestring);
             }
         }
-        args = realloc(args, sizeof(char **) * ++i + sizeof(NULL));
-        args[i] = NULL;
-        output = execute(args, testcase_obj.input, &fault);
+        program_args =
+            realloc(program_args, sizeof(char **) * ++i + sizeof(NULL));
+        program_args[i] = NULL;
+        output = execute(program_args, testcase_obj.input, &fault);
         if (passed_or_not(output, testcase_obj, fault, &reason))
         {
             printf("Test (%d/%d) %s - \033[1m\033[92mPASSED\033[0m\n",
@@ -66,16 +67,25 @@ int runtests(char *json)
         }
         else
         {
-            printf(
-                "Test (%d/%d) %s - \033[1m\033[91mFAILED\033[0m - Reason: %s\n",
-                testcase_counter, testcase_count, testcase_obj.name, reason);
+            if (args.reason)
+            {
+                printf("Test (%d/%d) %s - \033[1m\033[91mFAILED\033[0m - "
+                       "Reason: %s\n",
+                       testcase_counter, testcase_count, testcase_obj.name,
+                       reason);
+            }
+            else
+            {
+                printf("Test (%d/%d) %s - \033[1m\033[91mFAILED\033[0m\n",
+                       testcase_counter, testcase_count, testcase_obj.name);
+            }
             failed++;
         }
         for (int j = 0; j < i + 1; j++)
         {
-            free(args[j]);
+            free(program_args[j]);
         }
-        free(args);
+        free(program_args);
         sdsfree(output);
         sdsfree(testcase_obj.expectedoutput);
         sdsfree(testcase_obj.notexpectedoutput);

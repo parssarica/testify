@@ -12,9 +12,11 @@ void parse_run(char **argv, int argc)
 {
     int opt, option_index;
     int help_shown = 0;
+    int reason = 1;
     sds filename = sdsnew("testcases.json");
 
     struct option long_options[] = {{"file", required_argument, NULL, 'f'},
+                                    {"no-reason", no_argument, NULL, 0},
                                     {"help", no_argument, NULL, 'h'},
                                     {NULL, 0, NULL, 0}};
 
@@ -40,10 +42,15 @@ void parse_run(char **argv, int argc)
                 runhelp();
                 help_shown = 1;
             }
+            else if (strcmp(long_options[option_index].name, "no-reason") == 0)
+            {
+                reason = 0;
+            }
         }
     }
 
     args.filename = sdsdup(filename);
     args.help_shown = help_shown;
+    args.reason = reason;
     sdsfree(filename);
 }
