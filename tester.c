@@ -5,9 +5,11 @@ Pars SARICA <pars@parssarica.com>
 #include "sds.h"
 #include "testify.h"
 #include <cjson/cJSON.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 int runtests(char *json)
 {
@@ -25,6 +27,10 @@ int runtests(char *json)
     int testcase_count;
     int testcase_counter;
     int fault;
+    int64_t start_date;
+    int64_t end_date;
+    struct timespec ts;
+    struct timespec ts2;
     get_binary_json(&binary_file, json);
     testcase_count = get_testcase_count(json);
     testcases = cJSON_Parse(json);
@@ -58,8 +64,27 @@ int runtests(char *json)
         program_args =
             realloc(program_args, sizeof(char **) * ++i + sizeof(NULL));
         program_args[i] = NULL;
+        if (clock_gettime(CLOCK_REALTIME, &ts) == 0)
+        {
+            start_date = ((int64_t)ts.tv_sec * 1000) + (ts.tv_nsec / 1000000);
+        }
+        else
+        {
+            perror("clock_gettime");
+            start_date = 0;
+        }
         output = execute(program_args, testcase_obj.input, &fault);
-        if (passed_or_not(output, testcase_obj, fault, &reason))
+        if (clock_gettime(CLOCK_REALTIME, &ts2) == 0)
+        {
+            end_date = ((int64_t)ts2.tv_sec * 1000) + (ts2.tv_nsec / 1000000);
+        }
+        else
+        {
+            perror("clock_gettime");
+            end_date = 0;
+        }
+        if (passed_or_not(output, testcase_obj, fault, &reason,
+                          end_date - start_date))
         {
             printf("Test (%d/%d) %s - \033[1m\033[92mPASSED\033[0m\n",
                    testcase_counter, testcase_count, testcase_obj.name);
@@ -106,11 +131,19 @@ int runtests(char *json)
     return 0;
 }
 
-int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason)
+int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
+                  int64_t duration)
 {
     if (fault)
     {
         *reason = sdscpylen(*reason, "Segmentation fault detected.", 28);
+        return 0;
+    }
+
+    if (duration != 0 && testcase_obj.timeout != -1 &&
+        duration > testcase_obj.timeout)
+    {
+        *reason = sdscpylen(*reason, "Timeout expired.", 16);
         return 0;
     }
 

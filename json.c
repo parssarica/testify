@@ -67,6 +67,7 @@ testcase parse_testcase(cJSON *testcase_obj)
     const cJSON *notexpectedoutput;
     const cJSON *containingoutput;
     const cJSON *notcontainingoutput;
+    const cJSON *timeout;
     test_case.name = sdsempty();
     test_case.description = sdsempty();
     test_case.input = sdsempty();
@@ -78,6 +79,7 @@ testcase parse_testcase(cJSON *testcase_obj)
     test_case.notexpectedoutputgiven = 0;
     test_case.containingoutputgiven = 0;
     test_case.notcontainingoutputgiven = 0;
+    test_case.timeout = -1;
     type = cJSON_GetObjectItemCaseSensitive(testcase_obj, "type");
     if (cJSON_IsNumber(type))
     {
@@ -147,6 +149,12 @@ testcase parse_testcase(cJSON *testcase_obj)
             test_case.notcontainingoutput, notcontainingoutput->valuestring,
             strlen(notcontainingoutput->valuestring));
         test_case.notcontainingoutputgiven = 1;
+    }
+
+    timeout = cJSON_GetObjectItemCaseSensitive(testcase_obj, "timeout");
+    if (cJSON_IsNumber(timeout))
+    {
+        test_case.timeout = timeout->valuedouble;
     }
 
     return test_case;

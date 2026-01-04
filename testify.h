@@ -4,6 +4,7 @@ Pars SARICA <pars@parssarica.com>
 
 #include "sds.h"
 #include <cjson/cJSON.h>
+#include <stdint.h>
 
 #define VERSION "0.1"
 
@@ -28,6 +29,7 @@ typedef struct
     sds containingoutput;
     sds notcontainingoutput;
     int type;
+    int timeout;
     int expectedoutputgiven;
     int notexpectedoutputgiven;
     int containingoutputgiven;
@@ -44,7 +46,7 @@ void get_binary_json(sds *, char *);
 testcase parse_testcase(cJSON *);
 int runtests(char *);
 sds execute(char **, char *, int *);
-int passed_or_not(char *, testcase, int, sds *);
+int passed_or_not(char *, testcase, int, sds *, int64_t);
 int get_testcase_count(char *);
 void create_json();
 #endif
