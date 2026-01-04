@@ -46,4 +46,5 @@ int runtests(char *);
 sds execute(char **, char *, int *);
 int passed_or_not(char *, testcase, int, sds *);
 int get_testcase_count(char *);
+void create_json();
 #endif

@@ -14,6 +14,8 @@ int main(int argc, char **argv)
     FILE *fptr;
     long size;
     char *json_file;
+    int is_creating_json = 0;
+    int run_tests = 0;
     if (argc == 1)
     {
         help();
@@ -32,9 +34,14 @@ int main(int argc, char **argv)
     }
     else if (strcmp(argv[1], "run") == 0)
     {
+        run_tests = 1;
         parse_run(&argv[1], argc - 1);
         if (args.help_shown == 1)
             goto exit;
+    }
+    else if (strcmp(argv[1], "create") == 0)
+    {
+        is_creating_json = 1;
     }
     else
     {
@@ -42,26 +49,33 @@ int main(int argc, char **argv)
         goto exit;
     }
 
-    fptr = fopen(args.filename, "rt");
-    if (fptr == NULL)
+    if (run_tests)
     {
-        perror("fopen");
-        goto exit;
-    }
-    fseek(fptr, 0, SEEK_END);
-    size = ftell(fptr);
-    fseek(fptr, 0, SEEK_SET);
-    if (size < 0)
-    {
-        perror("ftell");
+        fptr = fopen(args.filename, "rt");
+        if (fptr == NULL)
+        {
+            perror("fopen");
+            goto exit;
+        }
+        fseek(fptr, 0, SEEK_END);
+        size = ftell(fptr);
+        fseek(fptr, 0, SEEK_SET);
+        if (size < 0)
+        {
+            perror("ftell");
+            fclose(fptr);
+            return 1;
+        }
+        json_file = malloc(size);
+        fread(json_file, 1, size, fptr);
+        runtests(json_file);
         fclose(fptr);
-        return 1;
+        free(json_file);
     }
-    json_file = malloc(size);
-    fread(json_file, 1, size, fptr);
-    runtests(json_file);
-    fclose(fptr);
-    free(json_file);
+    else if (is_creating_json)
+    {
+        create_json();
+    }
 exit:
     sdsfree(args.filename);
 }

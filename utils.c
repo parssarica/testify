@@ -22,6 +22,7 @@ void help()
     printf("\thelp\tShows this help message and exit\n");
     printf("\tversion\tShows the version of program\n");
     printf("\trun\tReads the test cases and runs them\n");
+    printf("\tcreate\tCreates the JSON file\n");
 }
 
 void runhelp()
