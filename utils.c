@@ -28,9 +28,10 @@ void runhelp()
 {
     logo();
     printf("testify run <options>\n");
-    printf("\tOptions:\n\n");
+    printf("\nOptions:\n\n");
     printf("\t-h / --help\tShows this help message and exit\n");
     printf("\t-f / --file\tSpecifies the file including test cases\n");
+    printf("\t--no-reason\tDoesn't shows the reason on test report\n");
 }
 
 void version()
