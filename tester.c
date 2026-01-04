@@ -39,26 +39,21 @@ int runtests(char *json)
                        cJSON_GetObjectItemCaseSensitive(testcases, "testcases"))
     {
         testcase_obj = parse_testcase(testcase_objjson);
-        args = malloc(sizeof(char *));
-        args[0] = sdsnew(binary_file);
-        i = 0;
+        args = malloc(sizeof(char **));
+        args[0] = strdup(binary_file);
+        i = 1;
         cJSON_ArrayForEach(
             testcase_input_str,
             cJSON_GetObjectItemCaseSensitive(testcase_objjson, "commandArgs"))
         {
-            args = realloc(args, sizeof(sds) * ++i);
+            args = realloc(args, sizeof(char **) * ++i);
             if (cJSON_IsString(testcase_input_str) &&
                 (testcase_input_str->valuestring != NULL))
             {
-                args[i] = malloc(strlen(testcase_input_str->valuestring));
-                for (int j = 0;
-                     (size_t)j < strlen(testcase_input_str->valuestring); j++)
-                {
-                    args[i][j] = testcase_input_str->valuestring[j];
-                }
+                args[i - 1] = strdup(testcase_input_str->valuestring);
             }
         }
-        args = realloc(args, sizeof(char *) * ++i + sizeof(NULL));
+        args = realloc(args, sizeof(char **) * ++i + sizeof(NULL));
         args[i] = NULL;
         output = execute(args, testcase_obj.input);
         if (passed_or_not(output, testcase_obj))
@@ -73,13 +68,19 @@ int runtests(char *json)
                    testcase_counter, testcase_count, testcase_obj.name);
             failed++;
         }
-        sdsfree(args[0]);
-        for (int j = 1; j < i + 1; j++)
+        for (int j = 0; j < i + 1; j++)
         {
             free(args[j]);
         }
         free(args);
         sdsfree(output);
+        sdsfree(testcase_obj.expectedoutput);
+        sdsfree(testcase_obj.notexpectedoutput);
+        sdsfree(testcase_obj.containingoutput);
+        sdsfree(testcase_obj.notcontainingoutput);
+        sdsfree(testcase_obj.name);
+        sdsfree(testcase_obj.description);
+        sdsfree(testcase_obj.input);
         testcase_counter++;
     }
     printf("\n────────────────────────────────────────────\n");
