@@ -113,10 +113,30 @@ int runtests(char *json)
         }
         free(program_args);
         sdsfree(output);
-        sdsfree(testcase_obj.expectedoutput);
-        sdsfree(testcase_obj.notexpectedoutput);
-        sdsfree(testcase_obj.containingoutput);
-        sdsfree(testcase_obj.notcontainingoutput);
+        for (i = 1; i <= testcase_obj.expectedoutput->count; i++)
+        {
+            sdsfree(testcase_obj.expectedoutput->outputs[i]);
+        }
+        free(testcase_obj.expectedoutput->outputs);
+        free(testcase_obj.expectedoutput);
+        for (i = 1; i <= testcase_obj.notexpectedoutput->count; i++)
+        {
+            sdsfree(testcase_obj.notexpectedoutput->outputs[i]);
+        }
+        free(testcase_obj.notexpectedoutput->outputs);
+        free(testcase_obj.notexpectedoutput);
+        for (i = 1; i <= testcase_obj.containingoutput->count; i++)
+        {
+            sdsfree(testcase_obj.containingoutput->outputs[i]);
+        }
+        free(testcase_obj.containingoutput->outputs);
+        free(testcase_obj.containingoutput);
+        for (i = 1; i <= testcase_obj.notcontainingoutput->count; i++)
+        {
+            sdsfree(testcase_obj.notcontainingoutput->outputs[i]);
+        }
+        free(testcase_obj.notcontainingoutput->outputs);
+        free(testcase_obj.notcontainingoutput);
         sdsfree(testcase_obj.name);
         sdsfree(testcase_obj.description);
         sdsfree(testcase_obj.input);
@@ -135,6 +155,8 @@ int runtests(char *json)
 int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
                   int64_t duration)
 {
+    int i = 0;
+    int found = 0;
     if (fault)
     {
         *reason = sdscpylen(*reason, "Segmentation fault detected.", 28);
@@ -150,63 +172,78 @@ int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
 
     if (testcase_obj.expectedoutputgiven)
     {
-        if (strcmp(output, testcase_obj.expectedoutput) == 0)
+        found = 0;
+        for (i = 0; i < testcase_obj.expectedoutput->count; i++)
         {
-            return 1;
+            if (strcmp(output, testcase_obj.expectedoutput->outputs[i]) == 0)
+            {
+                found = 1;
+                break;
+            }
         }
-        else
-        {
+        if (!found)
             *reason = sdscpylen(*reason,
                                 "Program output was not exacty same with the "
                                 "output written in JSON file.",
                                 72);
-            return 0;
-        }
+        return found;
     }
     else if (testcase_obj.containingoutputgiven)
     {
-        if (strstr(output, testcase_obj.containingoutput) != NULL)
+        found = 0;
+        for (i = 0; i < testcase_obj.containingoutput->count; i++)
         {
-            return 1;
-        }
-        else
-        {
-            *reason = sdscpylen(*reason,
-                                "Program output was not containing the string "
-                                "written in JSON file.",
-                                66);
-            return 0;
+            if (strstr(output, testcase_obj.containingoutput->outputs[i]) !=
+                NULL)
+            {
+                found = 1;
+                break;
+            }
+            if (!found)
+                *reason =
+                    sdscpylen(*reason,
+                              "Program output was not containing the string "
+                              "written in JSON file.",
+                              66);
+            return found;
         }
     }
     else if (testcase_obj.notexpectedoutputgiven)
     {
-        if (strcmp(output, testcase_obj.notexpectedoutput) != 0)
+        found = 0;
+        for (i = 0; i < testcase_obj.notexpectedoutput->count; i++)
         {
-            return 1;
+            if (strcmp(output, testcase_obj.notexpectedoutput->outputs[i]) != 0)
+            {
+                found = 1;
+                break;
+            }
         }
-        else
-        {
+        if (!found)
             *reason = sdscpylen(*reason,
                                 "Program output was exactly the same with the "
                                 "output written in JSON file.",
                                 73);
-            return 0;
-        }
+        return found;
     }
     else if (testcase_obj.notcontainingoutputgiven)
     {
-        if (strstr(output, testcase_obj.notcontainingoutput) == NULL)
+        found = 0;
+        for (i = 0; i < testcase_obj.notcontainingoutput->count; i++)
         {
-            return 1;
+            if (strstr(output, testcase_obj.notcontainingoutput->outputs[i]) ==
+                NULL)
+            {
+                found = 1;
+                break;
+            }
         }
-        else
-        {
+        if (!found)
             *reason = sdscpylen(*reason,
                                 "Program output was containing the string "
                                 "written in JSON file.",
                                 62);
-            return 0;
-        }
+        return found;
     }
 
     return 1;

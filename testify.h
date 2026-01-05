@@ -22,13 +22,19 @@ extern arguments args;
 
 typedef struct
 {
+    int count;
+    sds *outputs;
+} output;
+
+typedef struct
+{
     sds name;
     sds description;
     sds input;
-    sds expectedoutput;
-    sds notexpectedoutput;
-    sds containingoutput;
-    sds notcontainingoutput;
+    output *expectedoutput;
+    output *notexpectedoutput;
+    output *containingoutput;
+    output *notcontainingoutput;
     int type;
     int timeout;
     int expectedoutputgiven;

@@ -6,6 +6,7 @@ Pars SARICA <pars@parssarica.com>
 #include "testify.h"
 #include <cjson/cJSON.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 const char *get_error()
@@ -88,13 +89,12 @@ testcase parse_testcase(cJSON *testcase_obj)
     const cJSON *containingoutput;
     const cJSON *notcontainingoutput;
     const cJSON *timeout;
+    const cJSON *i;
+    int count = 0;
+    int j;
     test_case.name = sdsempty();
     test_case.description = sdsempty();
     test_case.input = sdsempty();
-    test_case.expectedoutput = sdsempty();
-    test_case.notexpectedoutput = sdsempty();
-    test_case.containingoutput = sdsempty();
-    test_case.notcontainingoutput = sdsempty();
     test_case.expectedoutputgiven = 0;
     test_case.notexpectedoutputgiven = 0;
     test_case.containingoutputgiven = 0;
@@ -132,10 +132,25 @@ testcase parse_testcase(cJSON *testcase_obj)
         cJSON_GetObjectItemCaseSensitive(testcase_obj, "expectedOutput");
     if (cJSON_IsString(expectedoutput) && (expectedoutput->valuestring != NULL))
     {
-        test_case.expectedoutput =
-            sdscpylen(test_case.expectedoutput, expectedoutput->valuestring,
-                      strlen(expectedoutput->valuestring));
+        test_case.expectedoutput = malloc(sizeof(output));
+        test_case.expectedoutput->count = 1;
+        test_case.expectedoutput->outputs = malloc(sizeof(sds));
+        test_case.expectedoutput->outputs[0] =
+            sdsnew(expectedoutput->valuestring);
         test_case.expectedoutputgiven = 1;
+    }
+    else
+    {
+        count = 0;
+        cJSON_ArrayForEach(i, expectedoutput) { count++; }
+        test_case.expectedoutput = malloc(sizeof(output));
+        test_case.expectedoutput->count = count;
+        test_case.expectedoutput->outputs = malloc(sizeof(sds) * count);
+        j = 0;
+        cJSON_ArrayForEach(i, expectedoutput)
+        {
+            test_case.expectedoutput->outputs[j++] = sdsnew(i->valuestring);
+        }
     }
 
     notexpectedoutput =
@@ -143,10 +158,25 @@ testcase parse_testcase(cJSON *testcase_obj)
     if (cJSON_IsString(notexpectedoutput) &&
         (notexpectedoutput->valuestring != NULL))
     {
-        test_case.notexpectedoutput = sdscpylen(
-            test_case.notexpectedoutput, notexpectedoutput->valuestring,
-            strlen(notexpectedoutput->valuestring));
+        test_case.notexpectedoutput = malloc(sizeof(testcase));
+        test_case.notexpectedoutput->count = 1;
+        test_case.notexpectedoutput->outputs = malloc(sizeof(sds));
+        test_case.notexpectedoutput->outputs[0] =
+            sdsnew(notexpectedoutput->valuestring);
         test_case.notexpectedoutputgiven = 1;
+    }
+    else
+    {
+        count = 0;
+        cJSON_ArrayForEach(i, notexpectedoutput) { count++; }
+        test_case.notexpectedoutput = malloc(sizeof(output));
+        test_case.notexpectedoutput->count = count;
+        test_case.notexpectedoutput->outputs = malloc(sizeof(sds) * count);
+        j = 0;
+        cJSON_ArrayForEach(i, notexpectedoutput)
+        {
+            test_case.notexpectedoutput->outputs[j++] = sdsnew(i->valuestring);
+        }
     }
 
     containingoutput =
@@ -154,10 +184,25 @@ testcase parse_testcase(cJSON *testcase_obj)
     if (cJSON_IsString(containingoutput) &&
         (containingoutput->valuestring != NULL))
     {
-        test_case.containingoutput =
-            sdscpylen(test_case.containingoutput, containingoutput->valuestring,
-                      strlen(containingoutput->valuestring));
+        test_case.containingoutput = malloc(sizeof(testcase));
+        test_case.containingoutput->count = 1;
+        test_case.containingoutput->outputs = malloc(sizeof(sds));
+        test_case.containingoutput->outputs[0] =
+            sdsnew(containingoutput->valuestring);
         test_case.containingoutputgiven = 1;
+    }
+    else
+    {
+        count = 0;
+        cJSON_ArrayForEach(i, containingoutput) { count++; }
+        test_case.containingoutput = malloc(sizeof(output));
+        test_case.containingoutput->count = count;
+        test_case.containingoutput->outputs = malloc(sizeof(sds) * count);
+        j = 0;
+        cJSON_ArrayForEach(i, containingoutput)
+        {
+            test_case.containingoutput->outputs[j++] = sdsnew(i->valuestring);
+        }
     }
 
     notcontainingoutput =
@@ -165,10 +210,26 @@ testcase parse_testcase(cJSON *testcase_obj)
     if (cJSON_IsString(notcontainingoutput) &&
         (notcontainingoutput->valuestring != NULL))
     {
-        test_case.notcontainingoutput = sdscpylen(
-            test_case.notcontainingoutput, notcontainingoutput->valuestring,
-            strlen(notcontainingoutput->valuestring));
+        test_case.notcontainingoutput = malloc(sizeof(testcase));
+        test_case.notcontainingoutput->count = 1;
+        test_case.notcontainingoutput->outputs = malloc(sizeof(sds));
+        test_case.notcontainingoutput->outputs[0] =
+            sdsnew(notcontainingoutput->valuestring);
         test_case.notcontainingoutputgiven = 1;
+    }
+    else
+    {
+        count = 0;
+        cJSON_ArrayForEach(i, notcontainingoutput) { count++; }
+        test_case.notcontainingoutput = malloc(sizeof(output));
+        test_case.notcontainingoutput->count = count;
+        test_case.notcontainingoutput->outputs = malloc(sizeof(sds) * count);
+        j = 0;
+        cJSON_ArrayForEach(i, notcontainingoutput)
+        {
+            test_case.notcontainingoutput->outputs[j++] =
+                sdsnew(i->valuestring);
+        }
     }
 
     timeout = cJSON_GetObjectItemCaseSensitive(testcase_obj, "timeout");
