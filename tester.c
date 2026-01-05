@@ -32,6 +32,7 @@ int runtests(char *json)
     struct timespec ts;
     struct timespec ts2;
     get_binary_json(&binary_file, json);
+    get_timeout_json(json);
     testcase_count = get_testcase_count(json);
     testcases = cJSON_Parse(json);
     if (!testcases)

@@ -37,6 +37,26 @@ void get_binary_json(sds *binary_file, char *json_string)
     cJSON_Delete(json);
 }
 
+void get_timeout_json(char *json_string)
+{
+    cJSON *json = cJSON_Parse(json_string);
+    cJSON *timeout;
+    if (!json)
+    {
+        const char *error = get_error();
+        if (error != NULL)
+            fprintf(stderr, "Error before: %s\n", error);
+        return;
+    }
+
+    timeout = cJSON_GetObjectItemCaseSensitive(json, "timeout");
+    if (cJSON_IsNumber(timeout))
+    {
+        args.timeout = timeout->valuedouble;
+    }
+    cJSON_Delete(json);
+}
+
 int get_testcase_count(char *json_string)
 {
     cJSON *json = cJSON_Parse(json_string);
@@ -155,6 +175,11 @@ testcase parse_testcase(cJSON *testcase_obj)
     if (cJSON_IsNumber(timeout))
     {
         test_case.timeout = timeout->valuedouble;
+    }
+
+    if (test_case.timeout == -1)
+    {
+        test_case.timeout = args.timeout;
     }
 
     return test_case;

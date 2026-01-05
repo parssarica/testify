@@ -14,6 +14,7 @@ typedef struct
 {
     int help_shown;
     int reason;
+    int timeout;
     sds filename;
 } arguments;
 
@@ -48,5 +49,6 @@ int runtests(char *);
 sds execute(char **, char *, int *);
 int passed_or_not(char *, testcase, int, sds *, int64_t);
 int get_testcase_count(char *);
+void get_timeout_json(char *);
 void create_json();
 #endif
