@@ -150,7 +150,7 @@ testcase parse_testcase(cJSON *testcase_obj)
             sdsnew(expectedoutput->valuestring);
         test_case.expectedoutputgiven = 1;
     }
-    else
+    else if (cJSON_IsArray(expectedoutput))
     {
         count = 0;
         cJSON_ArrayForEach(i, expectedoutput) { count++; }
@@ -178,7 +178,7 @@ testcase parse_testcase(cJSON *testcase_obj)
             sdsnew(notexpectedoutput->valuestring);
         test_case.notexpectedoutputgiven = 1;
     }
-    else
+    else if (cJSON_IsArray(notexpectedoutput))
     {
         count = 0;
         cJSON_ArrayForEach(i, notexpectedoutput) { count++; }
@@ -206,7 +206,7 @@ testcase parse_testcase(cJSON *testcase_obj)
             sdsnew(containingoutput->valuestring);
         test_case.containingoutputgiven = 1;
     }
-    else
+    else if (cJSON_IsArray(containingoutput))
     {
         count = 0;
         cJSON_ArrayForEach(i, containingoutput) { count++; }
@@ -234,7 +234,7 @@ testcase parse_testcase(cJSON *testcase_obj)
             sdsnew(notcontainingoutput->valuestring);
         test_case.notcontainingoutputgiven = 1;
     }
-    else
+    else if (cJSON_IsArray(notcontainingoutput))
     {
         count = 0;
         cJSON_ArrayForEach(i, notcontainingoutput) { count++; }

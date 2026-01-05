@@ -113,30 +113,42 @@ int runtests(char *json)
         }
         free(program_args);
         sdsfree(output);
-        for (i = 1; i <= testcase_obj.expectedoutput->count; i++)
+        if (testcase_obj.expectedoutputgiven)
         {
-            sdsfree(testcase_obj.expectedoutput->outputs[i]);
+            for (i = 0; i < testcase_obj.expectedoutput->count; i++)
+            {
+                sdsfree(testcase_obj.expectedoutput->outputs[i]);
+            }
+            free(testcase_obj.expectedoutput->outputs);
+            free(testcase_obj.expectedoutput);
         }
-        free(testcase_obj.expectedoutput->outputs);
-        free(testcase_obj.expectedoutput);
-        for (i = 1; i <= testcase_obj.notexpectedoutput->count; i++)
+        if (testcase_obj.notexpectedoutputgiven)
         {
-            sdsfree(testcase_obj.notexpectedoutput->outputs[i]);
+            for (i = 0; i < testcase_obj.notexpectedoutput->count; i++)
+            {
+                sdsfree(testcase_obj.notexpectedoutput->outputs[i]);
+            }
+            free(testcase_obj.notexpectedoutput->outputs);
+            free(testcase_obj.notexpectedoutput);
         }
-        free(testcase_obj.notexpectedoutput->outputs);
-        free(testcase_obj.notexpectedoutput);
-        for (i = 1; i <= testcase_obj.containingoutput->count; i++)
+        if (testcase_obj.containingoutputgiven)
         {
-            sdsfree(testcase_obj.containingoutput->outputs[i]);
+            for (i = 0; i < testcase_obj.containingoutput->count; i++)
+            {
+                sdsfree(testcase_obj.containingoutput->outputs[i]);
+            }
+            free(testcase_obj.containingoutput->outputs);
+            free(testcase_obj.containingoutput);
         }
-        free(testcase_obj.containingoutput->outputs);
-        free(testcase_obj.containingoutput);
-        for (i = 1; i <= testcase_obj.notcontainingoutput->count; i++)
+        if (testcase_obj.notcontainingoutputgiven)
         {
-            sdsfree(testcase_obj.notcontainingoutput->outputs[i]);
+            for (i = 0; i < testcase_obj.notcontainingoutput->count; i++)
+            {
+                sdsfree(testcase_obj.notcontainingoutput->outputs[i]);
+            }
+            free(testcase_obj.notcontainingoutput->outputs);
+            free(testcase_obj.notcontainingoutput);
         }
-        free(testcase_obj.notcontainingoutput->outputs);
-        free(testcase_obj.notcontainingoutput);
         sdsfree(testcase_obj.name);
         sdsfree(testcase_obj.description);
         sdsfree(testcase_obj.input);
