@@ -140,6 +140,7 @@ int runtests(char *json)
         sdsfree(testcase_obj.name);
         sdsfree(testcase_obj.description);
         sdsfree(testcase_obj.input);
+        sdsfree(testcase_obj.validationtype);
         testcase_counter++;
     }
     printf("\n────────────────────────────────────────────\n");
@@ -178,7 +179,12 @@ int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
             if (strcmp(output, testcase_obj.expectedoutput->outputs[i]) == 0)
             {
                 found = 1;
-                break;
+                if (strcmp(testcase_obj.validationtype, "OR") == 0)
+                    break;
+            }
+            else if (strcmp(testcase_obj.validationtype, "AND") == 0)
+            {
+                found = 0;
             }
         }
         if (!found)
@@ -197,7 +203,12 @@ int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
                 NULL)
             {
                 found = 1;
-                break;
+                if (strcmp(testcase_obj.validationtype, "OR") == 0)
+                    break;
+            }
+            else if (strcmp(testcase_obj.validationtype, "AND") == 0)
+            {
+                found = 0;
             }
             if (!found)
                 *reason =
@@ -216,7 +227,12 @@ int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
             if (strcmp(output, testcase_obj.notexpectedoutput->outputs[i]) != 0)
             {
                 found = 1;
-                break;
+                if (strcmp(testcase_obj.validationtype, "OR") == 0)
+                    break;
+            }
+            else if (strcmp(testcase_obj.validationtype, "AND") == 0)
+            {
+                found = 0;
             }
         }
         if (!found)
@@ -235,7 +251,12 @@ int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
                 NULL)
             {
                 found = 1;
-                break;
+                if (strcmp(testcase_obj.validationtype, "OR") == 0)
+                    break;
+            }
+            else if (strcmp(testcase_obj.validationtype, "AND") == 0)
+            {
+                found = 0;
             }
         }
         if (!found)

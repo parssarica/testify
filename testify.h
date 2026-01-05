@@ -31,6 +31,7 @@ typedef struct
     sds name;
     sds description;
     sds input;
+    sds validationtype;
     output *expectedoutput;
     output *notexpectedoutput;
     output *containingoutput;
