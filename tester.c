@@ -64,7 +64,7 @@ int runtests(char *json)
         }
         program_args =
             realloc(program_args, sizeof(char **) * ++i + sizeof(NULL));
-        program_args[i] = NULL;
+        program_args[i - 1] = NULL;
         if (clock_gettime(CLOCK_REALTIME, &ts) == 0)
         {
             start_date = ((int64_t)ts.tv_sec * 1000) + (ts.tv_nsec / 1000000);
@@ -107,7 +107,7 @@ int runtests(char *json)
             }
             failed++;
         }
-        for (int j = 0; j < i + 1; j++)
+        for (int j = 0; j < i; j++)
         {
             free(program_args[j]);
         }
