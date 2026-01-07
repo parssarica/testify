@@ -20,6 +20,7 @@ int runtests(char *json)
     sds binary_file = sdsempty();
     sds output;
     sds reason = sdsempty();
+    sds duration = sdsempty();
     char **program_args;
     int i;
     int passed = 0;
@@ -84,29 +85,99 @@ int runtests(char *json)
             perror("clock_gettime");
             end_date = 0;
         }
+        duration = sdscpylen(duration, "", 0);
+        if (end_date - start_date <= 100)
+            duration = sdscatprintf(duration, "\033[92m(%ld ms)\033[0m",
+                                    end_date - start_date);
+        else if (end_date - start_date > 100 && end_date - start_date <= 500)
+            duration = sdscatprintf(duration, "\033[93m(%ld ms)\033[0m",
+                                    end_date - start_date);
+        else if (end_date - start_date > 500 && end_date - start_date < 1000)
+            duration = sdscatprintf(duration, "\033[91m(%ld ms)\033[0m",
+                                    end_date - start_date);
+        else
+            duration = sdscatprintf(duration, "\033[91m(%ld s)\033[0m",
+                                    (end_date - start_date) / 1000);
+
         if (passed_or_not(output, testcase_obj, fault, &reason,
                           end_date - start_date))
         {
-            printf("Test (%d/%d) %s - \033[1m\033[92mPASSED\033[0m\n",
-                   testcase_counter, testcase_count, testcase_obj.name);
+            printf("\033[1m\033[92m[PASSED]\033[0m Test (%d/%d): "
+                   "\033[1m%s\033[0m %s\n",
+                   testcase_counter, testcase_count, testcase_obj.name,
+                   duration);
+            printf("      \033[96mDescription: %s\033[0m\n",
+                   testcase_obj.description);
             passed++;
         }
         else
         {
+            printf("\033[1m\033[91m[FAILED]\033[0m Test (%d/%d): "
+                   "\033[1m%s\033[0m %s\n",
+                   testcase_counter, testcase_count, testcase_obj.name,
+                   duration);
+            printf("      \033[96mDescription: %s\033[0m\n",
+                   testcase_obj.description);
             if (args.reason)
             {
-                printf("Test (%d/%d) %s - \033[1m\033[91mFAILED\033[0m - "
-                       "Reason: %s\n",
-                       testcase_counter, testcase_count, testcase_obj.name,
-                       reason);
+                printf("      \033[91m✘ Reason: %s\033[0m\n", reason);
             }
-            else
+            if (testcase_obj.expectedoutputgiven)
             {
-                printf("Test (%d/%d) %s - \033[1m\033[91mFAILED\033[0m\n",
-                       testcase_counter, testcase_count, testcase_obj.name);
+                printf("      \033[93mExpected:\033[0m ");
+                for (i = 0; i < testcase_obj.expectedoutput->count; i++)
+                {
+                    printf("'%s'", testcase_obj.expectedoutput->outputs[i]);
+                    if (i != testcase_obj.expectedoutput->count - 1)
+                    {
+                        printf(", ");
+                    }
+                }
             }
+            else if (testcase_obj.notexpectedoutputgiven)
+            {
+                printf("      \033[93mNot expected:\033[0m ");
+                for (i = 0; i < testcase_obj.notexpectedoutput->count; i++)
+                {
+                    printf("'%s'", testcase_obj.notexpectedoutput->outputs[i]);
+                    if (i != testcase_obj.notexpectedoutput->count - 1)
+                    {
+                        printf(", ");
+                    }
+                }
+            }
+            else if (testcase_obj.containingoutputgiven)
+            {
+                printf("      \033[93mExpected containing:\033[0m ");
+                for (i = 0; i < testcase_obj.containingoutput->count; i++)
+                {
+                    printf("'%s'", testcase_obj.containingoutput->outputs[i]);
+                    if (i != testcase_obj.containingoutput->count - 1)
+                    {
+                        printf(", ");
+                    }
+                }
+            }
+            else if (testcase_obj.notcontainingoutputgiven)
+            {
+                printf("      \033[93mNot expected containing:\033[0m ");
+                for (i = 0; i < testcase_obj.notcontainingoutput->count; i++)
+                {
+                    printf("'%s'",
+                           testcase_obj.notcontainingoutput->outputs[i]);
+                    if (i != testcase_obj.notcontainingoutput->count - 1)
+                    {
+                        printf(", ");
+                    }
+                }
+            }
+            printf("\n      \033[93mActual:  \033[0m '%s'", output);
+            printf("\n");
             failed++;
         }
+        printf("\033["
+               "90m────────────────────────────────────────────────────────────"
+               "\033[0m\n");
         for (int j = 0; j < i; j++)
         {
             free(program_args[j]);
@@ -155,10 +226,20 @@ int runtests(char *json)
         sdsfree(testcase_obj.validationtype);
         testcase_counter++;
     }
-    printf("\n────────────────────────────────────────────\n");
-    printf("Pass rate:\n\t%f%% - %d / %d\n",
-           (((double)passed / ((double)passed + (double)failed)) * 100), passed,
-           passed + failed);
+    execution_summary(passed, failed);
+    // printf("┌──────────────────────────────────────────┐\n");
+    // printf("│             EXECUTION SUMMARY            │\n");
+    // printf("├──────────────────┬───────────────────────┤\n");
+    // printf("│ Passed           │ %d\t\t│\n", passed);
+    // printf("│ Failed           │ %d\t\t│\n", failed);
+    // printf("│ Success Rate     │ %f%%\t\t│\n",
+    //        (((double)passed / ((double)passed + (double)failed)) * 100));
+    // printf("└──────────────────┴───────────────────────┘\n");
+
+    // printf("\n────────────────────────────────────────────\n");
+    // printf("Pass rate:\n\t%f%% - %d / %d\n",
+    //        (((double)passed / ((double)passed + (double)failed)) * 100),
+    //        passed, passed + failed);
     sdsfree(reason);
     sdsfree(binary_file);
     cJSON_Delete(testcases);
