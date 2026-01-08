@@ -193,12 +193,10 @@ void execution_summary(int passed, int failed)
     }
     else
     {
-        firstspace = (length(fourthline) - 17) / 2;
-        secondspace = (length(fourthline) - 17) / 2;
+        firstspace = (length(fourthline) - 17) / 2 - 1;
+        secondspace = (length(fourthline) - 17) / 2 - 1;
     }
 
-    firstspace--;
-    secondspace--;
     for (int i = 0; i < firstspace; i++)
         secondline = sdscat(secondline, " ");
 
@@ -220,4 +218,67 @@ void execution_summary(int passed, int failed)
     sdsfree(passed_str);
     sdsfree(failed_str);
     sdsfree(successrate_str);
+}
+
+void replaced_print(char *string)
+{
+    char byte[2];
+    int skip = 0;
+    int strip_characters = 0;
+    printf("'");
+    for (size_t i = strlen(string) - 1; i > 0; i--)
+    {
+        if (string[i] != ' ' && string[i] != '\n' && string[i] != '\t' &&
+            string[i] != '\r')
+            break;
+        else
+            strip_characters++;
+    }
+    for (size_t i = 0; i < strlen(string); i++)
+    {
+        if (skip)
+        {
+            skip = 0;
+            continue;
+        }
+        if (i == 0)
+        {
+            if (string[i] == ' ')
+            {
+                printf("\033[90m·\033[0m");
+                continue;
+            }
+        }
+        else
+        {
+            if (string[i] == ' ' &&
+                (string[i + 1] == ' ' || string[i - 1] == ' '))
+            {
+                printf("\033[90m·\033[0m");
+                continue;
+            }
+        }
+
+        if (string[i] == '\n' || (string[i] == '\r' && string[i + 1] == '\n'))
+        {
+            printf("\033[90m↵\033[0m");
+            if (string[i] == '\r')
+                skip = 1;
+            if (string[i] != '\r' &&
+                i != (strlen(string) - strip_characters - 1))
+            {
+                printf("\n");
+            }
+        }
+        else if (string[i] == '\t')
+        {
+            printf("\033[90m→···\033[0m");
+        }
+        else
+        {
+            byte[0] = string[i];
+            printf("%s", byte);
+        }
+    }
+    printf("'");
 }

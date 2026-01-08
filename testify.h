@@ -59,4 +59,5 @@ int get_testcase_count(char *);
 void get_timeout_json(char *);
 void create_json();
 void execution_summary(int, int);
+void replaced_print(char *);
 #endif

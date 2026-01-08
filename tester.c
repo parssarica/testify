@@ -30,6 +30,7 @@ int runtests(char *json)
     int fault;
     int64_t start_date;
     int64_t end_date;
+    int program_args_length;
     struct timespec ts;
     struct timespec ts2;
     get_binary_json(&binary_file, json);
@@ -66,6 +67,7 @@ int runtests(char *json)
         program_args =
             realloc(program_args, sizeof(char **) * ++i + sizeof(NULL));
         program_args[i - 1] = NULL;
+        program_args_length = i;
         if (clock_gettime(CLOCK_REALTIME, &ts) == 0)
         {
             start_date = ((int64_t)ts.tv_sec * 1000) + (ts.tv_nsec / 1000000);
@@ -127,7 +129,7 @@ int runtests(char *json)
                 printf("      \033[93mExpected:\033[0m ");
                 for (i = 0; i < testcase_obj.expectedoutput->count; i++)
                 {
-                    printf("'%s'", testcase_obj.expectedoutput->outputs[i]);
+                    replaced_print(testcase_obj.expectedoutput->outputs[i]);
                     if (i != testcase_obj.expectedoutput->count - 1)
                     {
                         printf(", ");
@@ -139,7 +141,7 @@ int runtests(char *json)
                 printf("      \033[93mNot expected:\033[0m ");
                 for (i = 0; i < testcase_obj.notexpectedoutput->count; i++)
                 {
-                    printf("'%s'", testcase_obj.notexpectedoutput->outputs[i]);
+                    replaced_print(testcase_obj.notexpectedoutput->outputs[i]);
                     if (i != testcase_obj.notexpectedoutput->count - 1)
                     {
                         printf(", ");
@@ -151,7 +153,7 @@ int runtests(char *json)
                 printf("      \033[93mExpected containing:\033[0m ");
                 for (i = 0; i < testcase_obj.containingoutput->count; i++)
                 {
-                    printf("'%s'", testcase_obj.containingoutput->outputs[i]);
+                    replaced_print(testcase_obj.containingoutput->outputs[i]);
                     if (i != testcase_obj.containingoutput->count - 1)
                     {
                         printf(", ");
@@ -163,22 +165,24 @@ int runtests(char *json)
                 printf("      \033[93mNot expected containing:\033[0m ");
                 for (i = 0; i < testcase_obj.notcontainingoutput->count; i++)
                 {
-                    printf("'%s'",
-                           testcase_obj.notcontainingoutput->outputs[i]);
+                    replaced_print(
+                        testcase_obj.notcontainingoutput->outputs[i]);
                     if (i != testcase_obj.notcontainingoutput->count - 1)
                     {
                         printf(", ");
                     }
                 }
             }
-            printf("\n      \033[93mActual:  \033[0m '%s'", output);
+            printf("\n      \033[93mActual:  \033[0m ");
+            replaced_print(output);
+            // replaced_print("\n      \033[93mActual:  \033[0m '%s'", output);
             printf("\n");
             failed++;
         }
         printf("\033["
                "90m────────────────────────────────────────────────────────────"
                "\033[0m\n");
-        for (int j = 0; j < i; j++)
+        for (int j = 0; j < program_args_length; j++)
         {
             free(program_args[j]);
         }
@@ -242,6 +246,7 @@ int runtests(char *json)
     //        passed, passed + failed);
     sdsfree(reason);
     sdsfree(binary_file);
+    sdsfree(duration);
     cJSON_Delete(testcases);
     return 0;
 }
