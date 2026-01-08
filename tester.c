@@ -274,13 +274,13 @@ int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
         found = 0;
         for (i = 0; i < testcase_obj.expectedoutput->count; i++)
         {
-            if (strcmp(output, testcase_obj.expectedoutput->outputs[i]) == 0)
+            if (compare(output, testcase_obj.expectedoutput->outputs[i]) == 0)
             {
                 found = 1;
-                if (strcmp(testcase_obj.validationtype, "OR") == 0)
+                if (compare(testcase_obj.validationtype, "OR") == 0)
                     break;
             }
-            else if (strcmp(testcase_obj.validationtype, "AND") == 0)
+            else if (compare(testcase_obj.validationtype, "AND") == 0)
             {
                 found = 0;
             }
@@ -301,10 +301,10 @@ int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
                 NULL)
             {
                 found = 1;
-                if (strcmp(testcase_obj.validationtype, "OR") == 0)
+                if (compare(testcase_obj.validationtype, "OR") == 0)
                     break;
             }
-            else if (strcmp(testcase_obj.validationtype, "AND") == 0)
+            else if (compare(testcase_obj.validationtype, "AND") == 0)
             {
                 found = 0;
             }
@@ -322,13 +322,14 @@ int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
         found = 0;
         for (i = 0; i < testcase_obj.notexpectedoutput->count; i++)
         {
-            if (strcmp(output, testcase_obj.notexpectedoutput->outputs[i]) != 0)
+            if (compare(output, testcase_obj.notexpectedoutput->outputs[i]) !=
+                0)
             {
                 found = 1;
-                if (strcmp(testcase_obj.validationtype, "OR") == 0)
+                if (compare(testcase_obj.validationtype, "OR") == 0)
                     break;
             }
-            else if (strcmp(testcase_obj.validationtype, "AND") == 0)
+            else if (compare(testcase_obj.validationtype, "AND") == 0)
             {
                 found = 0;
             }
@@ -349,10 +350,10 @@ int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
                 NULL)
             {
                 found = 1;
-                if (strcmp(testcase_obj.validationtype, "OR") == 0)
+                if (compare(testcase_obj.validationtype, "OR") == 0)
                     break;
             }
-            else if (strcmp(testcase_obj.validationtype, "AND") == 0)
+            else if (compare(testcase_obj.validationtype, "AND") == 0)
             {
                 found = 0;
             }

@@ -265,7 +265,7 @@ void replaced_print(char *string)
             if (string[i] == '\r')
                 skip = 1;
             if (string[i] != '\r' &&
-                i != (strlen(string) - strip_characters - 1))
+                i < (strlen(string) - strip_characters - 1))
             {
                 printf("\n");
             }
@@ -281,4 +281,56 @@ void replaced_print(char *string)
         }
     }
     printf("'");
+}
+
+int compare(char *s1, char *s2)
+{
+    char byte[2];
+    byte[1] = 0;
+    sds string1 = sdsempty();
+    sds string2 = sdsempty();
+    int output;
+    size_t i;
+    for (i = 0; i < strlen(s1); i++)
+    {
+        if (s1[i] == '\r')
+        {
+            if (i + 1 < strlen(s1))
+            {
+                if (s1[i + 1] != '\n')
+                {
+                    string1 = sdscatlen(string1, "\r", 1);
+                }
+            }
+        }
+        else
+        {
+            byte[0] = s1[i];
+            string1 = sdscatlen(string1, byte, 1);
+        }
+    }
+
+    for (i = 0; i < strlen(s2); i++)
+    {
+        if (s2[i] == '\r')
+        {
+            if (i + 1 < strlen(s2))
+            {
+                if (s2[i + 1] != '\n')
+                {
+                    string2 = sdscatlen(string2, "\r", 1);
+                }
+            }
+        }
+        else
+        {
+            byte[0] = s2[i];
+            string2 = sdscatlen(string2, byte, 1);
+        }
+    }
+
+    output = strcmp(string1, string2);
+    sdsfree(string1);
+    sdsfree(string2);
+    return output;
 }
