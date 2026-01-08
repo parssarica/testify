@@ -256,6 +256,7 @@ int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
 {
     int i = 0;
     int found = 0;
+    int validation_type_or = 0;
     if (fault)
     {
         *reason = sdscpylen(*reason, "Segmentation fault detected.", 28);
@@ -268,6 +269,9 @@ int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
         *reason = sdscpylen(*reason, "Timeout expired.", 16);
         return 0;
     }
+
+    if (compare(testcase_obj.validationtype, "OR") == 0)
+        validation_type_or = 1;
 
     if (testcase_obj.expectedoutputgiven)
     {
@@ -286,10 +290,12 @@ int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
             }
         }
         if (!found)
+        {
             *reason = sdscpylen(*reason,
-                                "Program output was not exacty same with the "
-                                "output written in JSON file.",
-                                72);
+                                "Program output was not exactly same with any "
+                                "of the provided strings.",
+                                69);
+        }
         return found;
     }
     else if (testcase_obj.containingoutputgiven)
@@ -309,13 +315,24 @@ int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
                 found = 0;
             }
             if (!found)
-                *reason =
-                    sdscpylen(*reason,
-                              "Program output was not containing the string "
-                              "written in JSON file.",
-                              66);
-            return found;
+            {
+                if (validation_type_or)
+                {
+                    *reason = sdscpylen(*reason,
+                                        "Program output did not contain any of "
+                                        "the provided strings.",
+                                        59);
+                }
+                else
+                {
+                    *reason = sdscpylen(
+                        *reason,
+                        "Program output did not contain all required strings.",
+                        52);
+                }
+            }
         }
+        return found;
     }
     else if (testcase_obj.notexpectedoutputgiven)
     {
@@ -359,10 +376,22 @@ int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
             }
         }
         if (!found)
-            *reason = sdscpylen(*reason,
-                                "Program output was containing the string "
-                                "written in JSON file.",
-                                62);
+        {
+            if (validation_type_or)
+            {
+                *reason = sdscpylen(
+                    *reason,
+                    "Program output contained any of the provided strings.",
+                    53);
+            }
+            else
+            {
+                *reason = sdscpylen(
+                    *reason,
+                    "Program output contained all of the provided strings.",
+                    53);
+            }
+        }
         return found;
     }
 

@@ -68,6 +68,7 @@ void execution_summary(int passed, int failed)
     sds passed_str = sdsempty();
     sds failed_str = sdsempty();
     sds successrate_str = sdsempty();
+    sds legend = sdsempty();
     size_t max = 0;
     size_t which_max = 0;
     int firstspace;
@@ -77,7 +78,7 @@ void execution_summary(int passed, int failed)
     passed_str = sdscatprintf(passed_str, "%d", passed);
     failed_str = sdscatprintf(failed_str, "%d", failed);
     successrate_str = sdscatprintf(
-        successrate_str, "%f%%",
+        successrate_str, "%.1f%%",
         (((double)passed / ((double)passed + (double)failed)) * 100));
     fourthline =
         sdscatprintf(fourthline, "│ Passed           │ %s", passed_str);
@@ -206,8 +207,17 @@ void execution_summary(int passed, int failed)
         secondline = sdscat(secondline, " ");
 
     secondline = sdscat(secondline, "│");
-    printf("%s\n%s\n%s\n%s\n%s\n%s\n%s\n", firstline, secondline, thirdline,
-           fourthline, fifthline, sixthline, seventhline);
+    // Legend: ↵ Newline, · Space, →··· Tab
+    if (length(fourthline) > 36)
+    {
+        for (size_t i = 0; i < ((length(fourthline) - 36) / 2); i++)
+        {
+            legend = sdscat(legend, " ");
+        }
+    }
+    legend = sdscat(legend, "Legend: ↵ Newline, · Space, →··· Tab");
+    printf("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n", firstline, secondline, thirdline,
+           fourthline, fifthline, sixthline, seventhline, legend);
     sdsfree(firstline);
     sdsfree(secondline);
     sdsfree(thirdline);
@@ -218,6 +228,7 @@ void execution_summary(int passed, int failed)
     sdsfree(passed_str);
     sdsfree(failed_str);
     sdsfree(successrate_str);
+    sdsfree(legend);
 }
 
 void replaced_print(char *string)
