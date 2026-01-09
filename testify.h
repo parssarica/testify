@@ -28,6 +28,12 @@ typedef struct
 
 typedef struct
 {
+    int count;
+    size_t *diffs;
+} difference;
+
+typedef struct
+{
     sds name;
     sds description;
     sds input;
@@ -59,6 +65,7 @@ int get_testcase_count(char *);
 void get_timeout_json(char *);
 void create_json();
 void execution_summary(int, int);
-void replaced_print(char *);
+void replaced_print(char *, difference *);
 int compare(char *, char *);
+difference *diff(char *, char *);
 #endif

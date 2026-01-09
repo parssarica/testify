@@ -5,6 +5,7 @@ Pars SARICA <pars@parssarica.com>
 #include "testify.h"
 #include <locale.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 void logo()
@@ -231,11 +232,12 @@ void execution_summary(int passed, int failed)
     sdsfree(legend);
 }
 
-void replaced_print(char *string)
+void replaced_print(char *string, difference *diff)
 {
     char byte[2];
     int skip = 0;
     int strip_characters = 0;
+    int j;
     printf("'");
     for (size_t i = strlen(string) - 1; i > 0; i--)
     {
@@ -251,6 +253,16 @@ void replaced_print(char *string)
         {
             skip = 0;
             continue;
+        }
+        if (diff != NULL)
+        {
+            for (j = 0; j < diff->count; j++)
+            {
+                if (i == diff->diffs[j])
+                {
+                    printf("\033[1m\033[91m");
+                }
+            }
         }
         if (i == 0)
         {
@@ -290,8 +302,24 @@ void replaced_print(char *string)
             byte[0] = string[i];
             printf("%s", byte);
         }
+
+        if (diff != NULL)
+        {
+            for (j = 0; j < diff->count; j++)
+            {
+                if (i == diff->diffs[j])
+                {
+                    printf("\033[0m");
+                }
+            }
+        }
     }
     printf("'");
+    if (diff != NULL)
+    {
+        free(diff->diffs);
+        free(diff);
+    }
 }
 
 int compare(char *s1, char *s2)
@@ -344,4 +372,64 @@ int compare(char *s1, char *s2)
     sdsfree(string1);
     sdsfree(string2);
     return output;
+}
+
+difference *diff(char *s1, char *s2)
+{
+    difference *diffs = malloc(sizeof(difference));
+    int len1 = strlen(s1);
+    int len2 = strlen(s2);
+    int i = 0;
+    int j = 0;
+    int size = 0;
+    int count = 0;
+    int malloced = 0;
+    // diffs->diffs = malloc(sizeof(int *));
+
+    while (i < len1 || j < len2)
+    {
+        if (i < len1 && j < len2 && s1[i] == s2[i])
+        {
+            i++;
+            j++;
+        }
+        else if (j < len2)
+        {
+            if (!malloced)
+            {
+                diffs->diffs = malloc(sizeof(int *));
+                size = 1;
+                malloced = 1;
+            }
+            else
+            {
+                diffs->diffs = realloc(diffs->diffs, sizeof(int *) * ++size);
+            }
+            diffs->diffs[size - 1] = i;
+            count++;
+            if (len2 > len1 && (i < len1 && s1[i] == s2[j + 1]))
+            {
+                j++;
+            }
+            else
+            {
+                i++;
+                j++;
+            }
+        }
+        else
+        {
+            i++;
+        }
+    }
+
+    if (size == 1)
+    {
+        free(diffs->diffs);
+        free(diffs);
+        return NULL;
+    }
+
+    diffs->count = count;
+    return diffs;
 }

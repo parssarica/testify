@@ -31,6 +31,7 @@ int runtests(char *json)
     int64_t start_date;
     int64_t end_date;
     int program_args_length;
+    int most_similar;
     struct timespec ts;
     struct timespec ts2;
     get_binary_json(&binary_file, json);
@@ -129,7 +130,8 @@ int runtests(char *json)
                 printf("      \033[93mExpected:\033[0m ");
                 for (i = 0; i < testcase_obj.expectedoutput->count; i++)
                 {
-                    replaced_print(testcase_obj.expectedoutput->outputs[i]);
+                    replaced_print(testcase_obj.expectedoutput->outputs[i],
+                                   NULL);
                     if (i != testcase_obj.expectedoutput->count - 1)
                     {
                         printf(", ");
@@ -141,7 +143,8 @@ int runtests(char *json)
                 printf("      \033[93mNot expected:\033[0m ");
                 for (i = 0; i < testcase_obj.notexpectedoutput->count; i++)
                 {
-                    replaced_print(testcase_obj.notexpectedoutput->outputs[i]);
+                    replaced_print(testcase_obj.notexpectedoutput->outputs[i],
+                                   NULL);
                     if (i != testcase_obj.notexpectedoutput->count - 1)
                     {
                         printf(", ");
@@ -153,7 +156,8 @@ int runtests(char *json)
                 printf("      \033[93mExpected containing:\033[0m ");
                 for (i = 0; i < testcase_obj.containingoutput->count; i++)
                 {
-                    replaced_print(testcase_obj.containingoutput->outputs[i]);
+                    replaced_print(testcase_obj.containingoutput->outputs[i],
+                                   NULL);
                     if (i != testcase_obj.containingoutput->count - 1)
                     {
                         printf(", ");
@@ -165,8 +169,8 @@ int runtests(char *json)
                 printf("      \033[93mNot expected containing:\033[0m ");
                 for (i = 0; i < testcase_obj.notcontainingoutput->count; i++)
                 {
-                    replaced_print(
-                        testcase_obj.notcontainingoutput->outputs[i]);
+                    replaced_print(testcase_obj.notcontainingoutput->outputs[i],
+                                   NULL);
                     if (i != testcase_obj.notcontainingoutput->count - 1)
                     {
                         printf(", ");
@@ -174,8 +178,23 @@ int runtests(char *json)
                 }
             }
             printf("\n      \033[93mActual:  \033[0m ");
-            replaced_print(output);
-            // replaced_print("\n      \033[93mActual:  \033[0m '%s'", output);
+            if (testcase_obj.expectedoutputgiven)
+            {
+                most_similar = 0;
+                for (i = 0; i < testcase_obj.expectedoutput->count; i++)
+                {
+                    if (strcmp(output,
+                               testcase_obj.expectedoutput->outputs[i]) <
+                        most_similar)
+                        most_similar = i;
+                }
+                replaced_print(
+                    output,
+                    diff(output,
+                         testcase_obj.expectedoutput->outputs[most_similar]));
+            }
+            else
+                replaced_print(output, NULL);
             printf("\n");
             failed++;
         }
