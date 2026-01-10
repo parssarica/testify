@@ -28,6 +28,8 @@ int runtests(char *json)
     int testcase_count;
     int testcase_counter;
     int fault;
+    int exitcode;
+    int exitcode_shouldbe;
     int64_t start_date;
     int64_t end_date;
     int program_args_length;
@@ -78,7 +80,7 @@ int runtests(char *json)
             perror("clock_gettime");
             start_date = 0;
         }
-        output = execute(program_args, testcase_obj.input, &fault);
+        output = execute(program_args, testcase_obj.input, &fault, &exitcode);
         if (clock_gettime(CLOCK_REALTIME, &ts2) == 0)
         {
             end_date = ((int64_t)ts2.tv_sec * 1000) + (ts2.tv_nsec / 1000000);
@@ -102,8 +104,17 @@ int runtests(char *json)
             duration = sdscatprintf(duration, "\033[91m(%ld s)\033[0m",
                                     (end_date - start_date) / 1000);
 
+        testcase_obj.exitcode = exitcode;
+        if (testcase_obj.exitcodesmallergiven)
+            exitcode_shouldbe = testcase_obj.exitcodesmaller;
+        else if (testcase_obj.exitcodeequalsgiven)
+            exitcode_shouldbe = testcase_obj.exitcodeequals;
+        else if (testcase_obj.exitcodegreatergiven)
+            exitcode_shouldbe = testcase_obj.exitcodegreater;
+        else
+            exitcode_shouldbe = 1000;
         if (passed_or_not(output, testcase_obj, fault, &reason,
-                          end_date - start_date))
+                          end_date - start_date, exitcode_shouldbe))
         {
             printf("\033[1m\033[92m[PASSED]\033[0m Test (%d/%d): "
                    "\033[1m%s\033[0m %s\n",
@@ -177,6 +188,23 @@ int runtests(char *json)
                     }
                 }
             }
+            else if (testcase_obj.exitcodesmallergiven)
+            {
+                printf(
+                    "      \033[93mExit code should be smaller than:\033[0m %d",
+                    testcase_obj.exitcodesmaller);
+            }
+            else if (testcase_obj.exitcodeequalsgiven)
+            {
+                printf("      \033[93mExit code should be equal to:\033[0m %d",
+                       testcase_obj.exitcodeequals);
+            }
+            else if (testcase_obj.exitcodegreatergiven)
+            {
+                printf(
+                    "      \033[93mExit code should be greater than:\033[0m %d",
+                    testcase_obj.exitcodegreater);
+            }
             printf("\n      \033[93mActual:  \033[0m ");
             if (testcase_obj.expectedoutputgiven)
             {
@@ -193,6 +221,10 @@ int runtests(char *json)
                     diff(output,
                          testcase_obj.expectedoutput->outputs[most_similar]));
             }
+            else if (testcase_obj.exitcodesmallergiven ||
+                     testcase_obj.exitcodeequalsgiven ||
+                     testcase_obj.exitcodegreatergiven)
+                printf("%d", testcase_obj.exitcode);
             else
                 replaced_print(output, NULL);
             printf("\n");
@@ -271,7 +303,7 @@ int runtests(char *json)
 }
 
 int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
-                  int64_t duration)
+                  int64_t duration, int exitcode_shouldbe)
 {
     int i = 0;
     int found = 0;
@@ -412,6 +444,35 @@ int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
             }
         }
         return found;
+    }
+    else if (testcase_obj.exitcodesmallergiven)
+    {
+        if (!(testcase_obj.exitcode < exitcode_shouldbe))
+        {
+            *reason = sdscpylen(
+                *reason, "Exit code was not smaller than it should be.", 44);
+            return 0;
+        }
+    }
+    else if (testcase_obj.exitcodeequalsgiven)
+    {
+        if (!(testcase_obj.exitcode == exitcode_shouldbe))
+        {
+            *reason = sdscpylen(
+                *reason,
+                "Exit code was not exactly same with the value it should be.",
+                59);
+            return 0;
+        }
+    }
+    else if (testcase_obj.exitcodegreatergiven)
+    {
+        if (!(testcase_obj.exitcode > exitcode_shouldbe))
+        {
+            *reason = sdscpylen(
+                *reason, "Exit code was not greater than it should be.", 44);
+            return 0;
+        }
     }
 
     return 1;

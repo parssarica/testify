@@ -15,7 +15,7 @@ Pars SARICA <pars@parssarica.com>
 
 extern char **environ;
 
-sds execute(char **process_args, char *input, int *fault)
+sds execute(char **process_args, char *input, int *fault, int *exitcode)
 {
     sds output = sdsempty();
     posix_spawn_file_actions_t actions;
@@ -64,6 +64,11 @@ sds execute(char **process_args, char *input, int *fault)
         {
             *fault = 1;
         }
+    }
+
+    if (WIFEXITED(status))
+    {
+        *exitcode = WEXITSTATUS(status);
     }
 
     return output;

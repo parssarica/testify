@@ -89,6 +89,9 @@ testcase parse_testcase(cJSON *testcase_obj)
     const cJSON *notexpectedoutput;
     const cJSON *containingoutput;
     const cJSON *notcontainingoutput;
+    const cJSON *exitcodesmaller;
+    const cJSON *exitcodeequals;
+    const cJSON *exitcodegreater;
     const cJSON *timeout;
     const cJSON *i;
     int count = 0;
@@ -101,6 +104,9 @@ testcase parse_testcase(cJSON *testcase_obj)
     test_case.notexpectedoutputgiven = 0;
     test_case.containingoutputgiven = 0;
     test_case.notcontainingoutputgiven = 0;
+    test_case.exitcodesmallergiven = 0;
+    test_case.exitcodeequalsgiven = 0;
+    test_case.exitcodegreatergiven = 0;
     test_case.timeout = -1;
     type = cJSON_GetObjectItemCaseSensitive(testcase_obj, "type");
     if (cJSON_IsNumber(type))
@@ -260,6 +266,30 @@ testcase parse_testcase(cJSON *testcase_obj)
     if (test_case.timeout == -1)
     {
         test_case.timeout = args.timeout;
+    }
+
+    exitcodesmaller =
+        cJSON_GetObjectItemCaseSensitive(testcase_obj, "exitCodeSmaller");
+    if (cJSON_IsNumber(exitcodesmaller))
+    {
+        test_case.exitcodesmaller = exitcodesmaller->valuedouble;
+        test_case.exitcodesmallergiven = 1;
+    }
+
+    exitcodeequals =
+        cJSON_GetObjectItemCaseSensitive(testcase_obj, "exitCodeEquals");
+    if (cJSON_IsNumber(exitcodeequals))
+    {
+        test_case.exitcodeequals = exitcodeequals->valuedouble;
+        test_case.exitcodeequalsgiven = 1;
+    }
+
+    exitcodegreater =
+        cJSON_GetObjectItemCaseSensitive(testcase_obj, "exitCodeGreater");
+    if (cJSON_IsNumber(exitcodegreater))
+    {
+        test_case.exitcodegreater = exitcodegreater->valuedouble;
+        test_case.exitcodegreatergiven = 1;
     }
 
     return test_case;
