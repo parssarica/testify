@@ -234,7 +234,6 @@ void execution_summary(int passed, int failed)
 
 void replaced_print(char *string, difference *diff)
 {
-    char byte[2];
     int skip = 0;
     int strip_characters = 0;
     int j;
@@ -299,8 +298,7 @@ void replaced_print(char *string, difference *diff)
         }
         else
         {
-            byte[0] = string[i];
-            printf("%s", byte);
+            printf("%c", string[i]);
         }
 
         if (diff != NULL)
