@@ -237,6 +237,7 @@ void replaced_print(char *string, difference *diff)
     int skip = 0;
     int strip_characters = 0;
     int j;
+    int is_diff_on = 0;
     printf("'");
     for (size_t i = strlen(string) - 1; i > 0; i--)
     {
@@ -253,13 +254,16 @@ void replaced_print(char *string, difference *diff)
             skip = 0;
             continue;
         }
+        is_diff_on = 0;
         if (diff != NULL)
         {
             for (j = 0; j < diff->count; j++)
             {
                 if (i == diff->diffs[j])
                 {
+                    is_diff_on = 1;
                     printf("\033[1m\033[91m");
+                    break;
                 }
             }
         }
@@ -267,7 +271,9 @@ void replaced_print(char *string, difference *diff)
         {
             if (string[i] == ' ')
             {
-                printf("\033[90m·\033[0m");
+                if (!is_diff_on)
+                    printf("\033[90m");
+                printf("·\033[0m");
                 continue;
             }
         }
@@ -276,14 +282,18 @@ void replaced_print(char *string, difference *diff)
             if (string[i] == ' ' &&
                 (string[i + 1] == ' ' || string[i - 1] == ' '))
             {
-                printf("\033[90m·\033[0m");
+                if (!is_diff_on)
+                    printf("\033[90m");
+                printf("·\033[0m");
                 continue;
             }
         }
 
         if (string[i] == '\n' || (string[i] == '\r' && string[i + 1] == '\n'))
         {
-            printf("\033[90m↵\033[0m");
+            if (!is_diff_on)
+                printf("\033[90m");
+            printf("↵\033[0m");
             if (string[i] == '\r')
                 skip = 1;
             if (string[i] != '\r' &&
@@ -294,7 +304,9 @@ void replaced_print(char *string, difference *diff)
         }
         else if (string[i] == '\t')
         {
-            printf("\033[90m→···\033[0m");
+            if (!is_diff_on)
+                printf("\033[90m");
+            printf("→···\033[0m");
         }
         else
         {
