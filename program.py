@@ -20,5 +20,8 @@ elif sys.argv[1] == "waitquarter":
     time.sleep(0.25)
 elif sys.argv[1] == "greet":
     print("Helllo!")
+elif sys.argv[1] == "greetname":
+    if len(sys.argv) != 3:
+        print(f"Helllo {sys.argv[2]}!")
 elif sys.argv[1] == "tab":
     print("\t")

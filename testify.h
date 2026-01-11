@@ -42,6 +42,8 @@ typedef struct
     output *notexpectedoutput;
     output *containingoutput;
     output *notcontainingoutput;
+    output *matchregex;
+    output *notmatchregex;
     int exitcodesmaller;
     int exitcodeequals;
     int exitcodegreater;
@@ -54,6 +56,8 @@ typedef struct
     int exitcodesmallergiven;
     int exitcodeequalsgiven;
     int exitcodegreatergiven;
+    int matchregexgiven;
+    int notmatchregexgiven;
     int exitcode;
 } testcase;
 
@@ -75,4 +79,5 @@ void execution_summary(int, int);
 void replaced_print(char *, difference *);
 int compare(char *, char *);
 difference *diff(char *, char *);
+int regex_pass(char *, char *, int);
 #endif

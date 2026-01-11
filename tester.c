@@ -188,6 +188,31 @@ int runtests(char *json)
                     }
                 }
             }
+            else if (testcase_obj.matchregexgiven)
+            {
+                printf("      \033[93mNot matched regexes:\033[0m ");
+                for (i = 0; i < testcase_obj.matchregex->count; i++)
+                {
+                    replaced_print(testcase_obj.matchregex->outputs[i], NULL);
+                    if (i != testcase_obj.matchregex->count - 1)
+                    {
+                        printf(", ");
+                    }
+                }
+            }
+            else if (testcase_obj.notmatchregexgiven)
+            {
+                printf("      \033[93mMatched regexes:\033[0m ");
+                for (i = 0; i < testcase_obj.notmatchregex->count; i++)
+                {
+                    replaced_print(testcase_obj.notmatchregex->outputs[i],
+                                   NULL);
+                    if (i != testcase_obj.notmatchregex->count - 1)
+                    {
+                        printf(", ");
+                    }
+                }
+            }
             else if (testcase_obj.exitcodesmallergiven)
             {
                 printf(
@@ -274,6 +299,24 @@ int runtests(char *json)
             }
             free(testcase_obj.notcontainingoutput->outputs);
             free(testcase_obj.notcontainingoutput);
+        }
+        if (testcase_obj.matchregexgiven)
+        {
+            for (i = 0; i < testcase_obj.matchregex->count; i++)
+            {
+                sdsfree(testcase_obj.matchregex->outputs[i]);
+            }
+            free(testcase_obj.matchregex->outputs);
+            free(testcase_obj.matchregex);
+        }
+        if (testcase_obj.notmatchregexgiven)
+        {
+            for (i = 0; i < testcase_obj.notmatchregex->count; i++)
+            {
+                sdsfree(testcase_obj.notmatchregex->outputs[i]);
+            }
+            free(testcase_obj.notmatchregex->outputs);
+            free(testcase_obj.notmatchregex);
         }
         sdsfree(testcase_obj.name);
         sdsfree(testcase_obj.description);
@@ -441,6 +484,76 @@ int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
                     *reason,
                     "Program output contained all of the provided strings.",
                     53);
+            }
+        }
+        return found;
+    }
+    else if (testcase_obj.matchregexgiven)
+    {
+        found = 0;
+        for (i = 0; i < testcase_obj.matchregex->count; i++)
+        {
+            if (regex_pass(testcase_obj.matchregex->outputs[i], output,
+                           strlen(output)))
+            {
+                found = 1;
+                if (compare(testcase_obj.validationtype, "OR") == 0)
+                    break;
+            }
+            else if (compare(testcase_obj.validationtype, "AND") == 0)
+            {
+                found = 0;
+            }
+        }
+        if (!found)
+        {
+            if (validation_type_or)
+            {
+                *reason = sdscpylen(
+                    *reason,
+                    "Program output didn't match of the provided patterns.",
+                    53);
+            }
+            else
+            {
+                *reason = sdscpylen(*reason,
+                                    "Program output didn't matched one of the "
+                                    "provided patterns.",
+                                    59);
+            }
+        }
+        return found;
+    }
+    else if (testcase_obj.notmatchregexgiven)
+    {
+        found = 0;
+        for (i = 0; i < testcase_obj.notmatchregex->count; i++)
+        {
+            if (!regex_pass(testcase_obj.notmatchregex->outputs[i], output,
+                            strlen(output)))
+            {
+                found = 1;
+                if (compare(testcase_obj.validationtype, "OR") == 0)
+                    break;
+            }
+            else if (compare(testcase_obj.validationtype, "AND") == 0)
+            {
+                found = 0;
+            }
+        }
+        if (!found)
+        {
+            if (validation_type_or)
+            {
+                *reason = sdscpylen(
+                    *reason,
+                    "Program output matched one of the provided patterns.", 52);
+            }
+            else
+            {
+                *reason = sdscpylen(
+                    *reason,
+                    "Program output matched all of the provided patterns.", 52);
             }
         }
         return found;

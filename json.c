@@ -92,6 +92,8 @@ testcase parse_testcase(cJSON *testcase_obj)
     const cJSON *exitcodesmaller;
     const cJSON *exitcodeequals;
     const cJSON *exitcodegreater;
+    const cJSON *matchregex;
+    const cJSON *notmatchregex;
     const cJSON *timeout;
     const cJSON *i;
     int count = 0;
@@ -107,6 +109,8 @@ testcase parse_testcase(cJSON *testcase_obj)
     test_case.exitcodesmallergiven = 0;
     test_case.exitcodeequalsgiven = 0;
     test_case.exitcodegreatergiven = 0;
+    test_case.matchregexgiven = 0;
+    test_case.notmatchregexgiven = 0;
     test_case.timeout = -1;
     type = cJSON_GetObjectItemCaseSensitive(testcase_obj, "type");
     if (cJSON_IsNumber(type))
@@ -254,6 +258,58 @@ testcase parse_testcase(cJSON *testcase_obj)
         {
             test_case.notcontainingoutput->outputs[j++] =
                 sdsnew(i->valuestring);
+        }
+    }
+
+    matchregex = cJSON_GetObjectItemCaseSensitive(testcase_obj, "matchRegex");
+    if (cJSON_IsString(matchregex) && (matchregex->valuestring != NULL))
+    {
+        test_case.matchregex = malloc(sizeof(testcase));
+        test_case.matchregex->count = 1;
+        test_case.matchregex->outputs = malloc(sizeof(sds));
+        test_case.matchregex->outputs[0] = sdsnew(matchregex->valuestring);
+        test_case.matchregexgiven = 1;
+    }
+    else if (cJSON_IsArray(matchregex))
+    {
+        count = 0;
+        cJSON_ArrayForEach(i, matchregex) { count++; }
+        test_case.matchregex = malloc(sizeof(output));
+        test_case.matchregex->count = count;
+        test_case.matchregex->outputs = malloc(sizeof(sds) * count);
+        if (count > 0)
+            test_case.matchregexgiven = 1;
+        j = 0;
+        cJSON_ArrayForEach(i, matchregex)
+        {
+            test_case.matchregex->outputs[j++] = sdsnew(i->valuestring);
+        }
+    }
+
+    notmatchregex =
+        cJSON_GetObjectItemCaseSensitive(testcase_obj, "notMatchRegex");
+    if (cJSON_IsString(notmatchregex) && (notmatchregex->valuestring != NULL))
+    {
+        test_case.notmatchregex = malloc(sizeof(testcase));
+        test_case.notmatchregex->count = 1;
+        test_case.notmatchregex->outputs = malloc(sizeof(sds));
+        test_case.notmatchregex->outputs[0] =
+            sdsnew(notmatchregex->valuestring);
+        test_case.notmatchregexgiven = 1;
+    }
+    else if (cJSON_IsArray(notmatchregex))
+    {
+        count = 0;
+        cJSON_ArrayForEach(i, notmatchregex) { count++; }
+        test_case.notmatchregex = malloc(sizeof(output));
+        test_case.notmatchregex->count = count;
+        test_case.notmatchregex->outputs = malloc(sizeof(sds) * count);
+        if (count > 0)
+            test_case.notmatchregexgiven = 1;
+        j = 0;
+        cJSON_ArrayForEach(i, notmatchregex)
+        {
+            test_case.notmatchregex->outputs[j++] = sdsnew(i->valuestring);
         }
     }
 
