@@ -8,7 +8,7 @@ Pars SARICA <pars@parssarica.com>
 #include <stdlib.h>
 #include <string.h>
 
-arguments args = {0, 0, -1, NULL};
+arguments args = {0, 0, -1, 0, 0, NULL, NULL};
 int main(int argc, char **argv)
 {
     FILE *fptr;
@@ -78,4 +78,6 @@ int main(int argc, char **argv)
     }
 exit:
     sdsfree(args.filename);
+    if (run_tests)
+        sdsfree(args.binary_file);
 }

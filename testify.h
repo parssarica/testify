@@ -15,7 +15,10 @@ typedef struct
     int help_shown;
     int reason;
     int timeout;
+    int testcase_count;
+    int testcase_counter;
     sds filename;
+    sds binary_file;
 } arguments;
 
 extern arguments args;
@@ -59,6 +62,7 @@ typedef struct
     int matchregexgiven;
     int notmatchregexgiven;
     int exitcode;
+    int64_t duration;
 } testcase;
 
 void logo();
@@ -80,4 +84,6 @@ void replaced_print(char *, difference *);
 int compare(char *, char *);
 difference *diff(char *, char *);
 int regex_pass(char *, char *, int);
+int test(cJSON *);
+void print_output(testcase, int, sds *, sds *);
 #endif
