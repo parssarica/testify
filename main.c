@@ -8,7 +8,7 @@ Pars SARICA <pars@parssarica.com>
 #include <stdlib.h>
 #include <string.h>
 
-arguments args = {0, 0, -1, 0, 0, NULL, NULL};
+arguments args = {0, 0, -1, 0, 0, 0, NULL, NULL, NULL};
 int main(int argc, char **argv)
 {
     FILE *fptr;

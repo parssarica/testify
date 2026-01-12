@@ -17,8 +17,10 @@ typedef struct
     int timeout;
     int testcase_count;
     int testcase_counter;
+    int env_count;
     sds filename;
     sds binary_file;
+    sds *enviromental_values;
 } arguments;
 
 extern arguments args;

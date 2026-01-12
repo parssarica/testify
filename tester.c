@@ -76,8 +76,12 @@ int test(cJSON *testcase_json)
         perror("clock_gettime");
         start_date = 0;
     }
-    output = execute(program_args, testcase_obj.input, &fault, &exitcode,
-                     testcase_obj.enviromental_values, env_count);
+    if (env_count == 0)
+        output = execute(program_args, testcase_obj.input, &fault, &exitcode,
+                         args.enviromental_values, args.env_count);
+    else
+        output = execute(program_args, testcase_obj.input, &fault, &exitcode,
+                         testcase_obj.enviromental_values, env_count);
     if (clock_gettime(CLOCK_REALTIME, &ts2) == 0)
     {
         end_date = ((int64_t)ts2.tv_sec * 1000) + (ts2.tv_nsec / 1000000);
@@ -336,10 +340,13 @@ void print_output(testcase testcase_obj, int result, sds *reason, sds *output)
 int runtests(char *json)
 {
     cJSON *testcases;
+    cJSON *env_var;
     cJSON *testcase_objjson;
     int passed = 0;
     int failed = 0;
     int result;
+    int env_count = 0;
+    int i;
     args.binary_file = sdsempty();
     get_binary_json(&args.binary_file, json);
     get_timeout_json(json);
@@ -352,6 +359,25 @@ int runtests(char *json)
             fprintf(stderr, "Error before: %s\n", error);
         return 1;
     }
+
+    cJSON_ArrayForEach(env_var, cJSON_GetObjectItemCaseSensitive(
+                                    testcases, "enviromentalVariables"))
+    {
+        env_count++;
+    }
+
+    args.enviromental_values = malloc(sizeof(sds *) * env_count);
+    i = 0;
+    cJSON_ArrayForEach(env_var, cJSON_GetObjectItemCaseSensitive(
+                                    testcases, "enviromentalVariables"))
+    {
+        if (cJSON_IsString(env_var) && (env_var->valuestring != NULL))
+        {
+            args.enviromental_values[i++] = sdsnew(env_var->valuestring);
+        }
+    }
+
+    args.env_count = env_count;
 
     args.testcase_counter = 1;
     cJSON_ArrayForEach(testcase_objjson,
@@ -369,6 +395,11 @@ int runtests(char *json)
         args.testcase_counter++;
     }
     execution_summary(passed, failed);
+    for (int j = 0; j < env_count; j++)
+    {
+        sdsfree(args.enviromental_values[j]);
+    }
+    free(args.enviromental_values);
     cJSON_Delete(testcases);
     return 0;
 }

@@ -22,7 +22,7 @@ elif sys.argv[1] == "waitquarter":
 elif sys.argv[1] == "greet":
     print("Helllo!")
 elif sys.argv[1] == "greetname":
-    if len(sys.argv) != 3:
+    if len(sys.argv) == 3:
         print(f"Helllo {sys.argv[2]}!")
 elif sys.argv[1] == "tab":
     print("\t")
@@ -33,3 +33,6 @@ elif sys.argv[1] == "env":
         print("0")
 elif sys.argv[1] == "envlist":
     print("\n".join(os.environ))
+elif sys.argv[1] == "envlist2":
+    if len(sys.argv) == 3:
+        print(sys.argv[2] in "\n".join(os.environ))
