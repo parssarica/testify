@@ -15,7 +15,7 @@ Pars SARICA <pars@parssarica.com>
 
 extern char **environ;
 
-char **make_env(sds *env_vars, int env_count)
+char **make_env(sds *env_vars, int env_count, int *memorysize)
 {
     int count;
     char **env;
@@ -34,6 +34,7 @@ char **make_env(sds *env_vars, int env_count)
         env[j] = strdup(env_vars[j - count]);
 
     env[j] = NULL;
+    *memorysize = count + env_count + 1;
 
     return env;
 }
@@ -48,7 +49,8 @@ sds execute(char **process_args, char *input, int *fault, int *exitcode,
     ssize_t n;
     int master_fd, slave_fd;
     int status;
-    char **envp = make_env(env_vars, env_count);
+    int memorysize;
+    char **envp = make_env(env_vars, env_count, &memorysize);
 
     if (openpty(&master_fd, &slave_fd, NULL, NULL, NULL) == -1)
     {
@@ -96,5 +98,10 @@ sds execute(char **process_args, char *input, int *fault, int *exitcode,
         *exitcode = WEXITSTATUS(status);
     }
 
+    for (int i = 0; i < memorysize; i++)
+    {
+        free(envp[i]);
+    }
+    free(envp);
     return output;
 }

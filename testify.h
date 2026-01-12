@@ -89,5 +89,5 @@ difference *diff(char *, char *);
 int regex_pass(char *, char *, int);
 int test(cJSON *);
 void print_output(testcase, int, sds *, sds *);
-char **make_env(sds *, int);
+char **make_env(sds *, int, int *);
 #endif
