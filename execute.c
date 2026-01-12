@@ -27,7 +27,7 @@ char **make_env(sds *env_vars, int env_count, int *memorysize)
     env = malloc((count + env_count + 1) * sizeof(char *));
     for (i = 0; i < count; i++)
     {
-        env[i] = environ[i];
+        env[i] = strdup(environ[i]);
     }
 
     for (j = count; j < count + env_count; j++)

@@ -90,4 +90,5 @@ int regex_pass(char *, char *, int);
 int test(cJSON *);
 void print_output(testcase, int, sds *, sds *);
 char **make_env(sds *, int, int *);
+int complex_test(cJSON *);
 #endif

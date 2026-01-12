@@ -342,10 +342,12 @@ int runtests(char *json)
     cJSON *testcases;
     cJSON *env_var;
     cJSON *testcase_objjson;
+    cJSON *type;
     int passed = 0;
     int failed = 0;
     int result;
     int env_count = 0;
+    int type_val = 0;
     int i;
     args.binary_file = sdsempty();
     get_binary_json(&args.binary_file, json);
@@ -383,7 +385,17 @@ int runtests(char *json)
     cJSON_ArrayForEach(testcase_objjson,
                        cJSON_GetObjectItemCaseSensitive(testcases, "testcases"))
     {
-        result = test(testcase_objjson);
+        type = cJSON_GetObjectItemCaseSensitive(testcase_objjson, "type");
+        if (cJSON_IsNumber(type))
+        {
+            type_val = type->valuedouble;
+        }
+        if (type_val == 2)
+            result = complex_test(testcase_objjson);
+        else if (type_val == 1)
+            result = test(testcase_objjson);
+        else
+            result = 0;
         if (result)
         {
             passed++;
