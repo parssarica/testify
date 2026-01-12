@@ -63,6 +63,7 @@ typedef struct
     int notmatchregexgiven;
     int exitcode;
     int64_t duration;
+    sds *enviromental_values;
 } testcase;
 
 void logo();
@@ -74,7 +75,7 @@ const char *get_error();
 void get_binary_json(sds *, char *);
 testcase parse_testcase(cJSON *);
 int runtests(char *);
-sds execute(char **, char *, int *, int *);
+sds execute(char **, char *, int *, int *, sds *, int);
 int passed_or_not(char *, testcase, int, sds *, int64_t, int);
 int get_testcase_count(char *);
 void get_timeout_json(char *);
@@ -86,4 +87,5 @@ difference *diff(char *, char *);
 int regex_pass(char *, char *, int);
 int test(cJSON *);
 void print_output(testcase, int, sds *, sds *);
+char **make_env(sds *, int);
 #endif

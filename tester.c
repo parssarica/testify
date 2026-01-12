@@ -26,8 +26,10 @@ int test(cJSON *testcase_json)
     sds reason = sdsempty();
     char **program_args;
     cJSON *testcase_input_str;
+    cJSON *env_var;
     int result;
     int i;
+    int env_count;
     int64_t duration;
 
     testcase_obj = parse_testcase(testcase_json);
@@ -47,6 +49,24 @@ int test(cJSON *testcase_json)
     program_args = realloc(program_args, sizeof(char **) * ++i + sizeof(NULL));
     program_args[i - 1] = NULL;
     program_args_length = i;
+    env_count = 0;
+    cJSON_ArrayForEach(env_var, cJSON_GetObjectItemCaseSensitive(
+                                    testcase_json, "enviromentalVariables"))
+    {
+        env_count++;
+    }
+
+    testcase_obj.enviromental_values = malloc(sizeof(sds *) * env_count);
+    i = 0;
+    cJSON_ArrayForEach(env_var, cJSON_GetObjectItemCaseSensitive(
+                                    testcase_json, "enviromentalVariables"))
+    {
+        if (cJSON_IsString(env_var) && (env_var->valuestring != NULL))
+        {
+            testcase_obj.enviromental_values[i] = sdsnew(env_var->valuestring);
+            i++;
+        }
+    }
     if (clock_gettime(CLOCK_REALTIME, &ts) == 0)
     {
         start_date = ((int64_t)ts.tv_sec * 1000) + (ts.tv_nsec / 1000000);
@@ -56,7 +76,8 @@ int test(cJSON *testcase_json)
         perror("clock_gettime");
         start_date = 0;
     }
-    output = execute(program_args, testcase_obj.input, &fault, &exitcode);
+    output = execute(program_args, testcase_obj.input, &fault, &exitcode,
+                     testcase_obj.enviromental_values, env_count);
     if (clock_gettime(CLOCK_REALTIME, &ts2) == 0)
     {
         end_date = ((int64_t)ts2.tv_sec * 1000) + (ts2.tv_nsec / 1000000);
@@ -89,6 +110,11 @@ int test(cJSON *testcase_json)
     }
     free(program_args);
     sdsfree(output);
+    for (int j = 0; j < env_count; j++)
+    {
+        sdsfree(testcase_obj.enviromental_values[j]);
+    }
+    free(testcase_obj.enviromental_values);
     if (testcase_obj.expectedoutputgiven)
     {
         for (i = 0; i < testcase_obj.expectedoutput->count; i++)

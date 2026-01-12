@@ -2,6 +2,7 @@
 
 import time
 import sys
+import os
 
 if len(sys.argv) == 1:
     print("Usage: " + sys.argv[0] + " <Options>")
@@ -25,3 +26,10 @@ elif sys.argv[1] == "greetname":
         print(f"Helllo {sys.argv[2]}!")
 elif sys.argv[1] == "tab":
     print("\t")
+elif sys.argv[1] == "env":
+    if "HELLO" in os.environ:
+        print("1")
+    else:
+        print("0")
+elif sys.argv[1] == "envlist":
+    print("\n".join(os.environ))

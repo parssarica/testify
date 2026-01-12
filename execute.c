@@ -15,7 +15,31 @@ Pars SARICA <pars@parssarica.com>
 
 extern char **environ;
 
-sds execute(char **process_args, char *input, int *fault, int *exitcode)
+char **make_env(sds *env_vars, int env_count)
+{
+    int count;
+    char **env;
+    int i;
+    int j;
+    for (count = 0; environ[count]; count++)
+        ;
+
+    env = malloc((count + env_count + 1) * sizeof(char *));
+    for (i = 0; i < count; i++)
+    {
+        env[i] = environ[i];
+    }
+
+    for (j = count; j < count + env_count; j++)
+        env[j] = strdup(env_vars[j - count]);
+
+    env[j] = NULL;
+
+    return env;
+}
+
+sds execute(char **process_args, char *input, int *fault, int *exitcode,
+            sds *env_vars, int env_count)
 {
     sds output = sdsempty();
     posix_spawn_file_actions_t actions;
@@ -24,6 +48,7 @@ sds execute(char **process_args, char *input, int *fault, int *exitcode)
     ssize_t n;
     int master_fd, slave_fd;
     int status;
+    char **envp = make_env(env_vars, env_count);
 
     if (openpty(&master_fd, &slave_fd, NULL, NULL, NULL) == -1)
     {
@@ -38,7 +63,7 @@ sds execute(char **process_args, char *input, int *fault, int *exitcode)
     posix_spawn_file_actions_addclose(&actions, master_fd);
 
     if (posix_spawnp(&pid, process_args[0], &actions, NULL, process_args,
-                     environ) != 0)
+                     envp) != 0)
     {
         perror("posix_spawn");
         exit(1);
