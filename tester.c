@@ -390,10 +390,10 @@ int runtests(char *json)
         {
             type_val = type->valuedouble;
         }
-        if (type_val == 2)
-            result = complex_test(testcase_objjson);
-        else if (type_val == 1)
+        if (type_val == 1)
             result = test(testcase_objjson);
+        else if (type_val == 2)
+            result = complex_test(testcase_objjson);
         else
             result = 0;
         if (result)

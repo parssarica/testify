@@ -10,6 +10,11 @@ Pars SARICA <pars@parssarica.com>
 
 #ifndef TESTIFY_H
 #define TESTIFY_H
+
+#define VARIABLE_STRING 0
+#define VARIABLE_INT 1
+#define VARIABLE_DOUBLE 2
+
 typedef struct
 {
     int help_shown;
@@ -68,6 +73,25 @@ typedef struct
     sds *enviromental_values;
 } testcase;
 
+typedef struct
+{
+    sds cmd;
+    sds source;
+    sds store;
+    sds lhs;
+    sds rhs;
+    size_t index;
+} command;
+
+typedef struct
+{
+    int type;
+    sds name;
+    sds valuestring;
+    int valueint;
+    double valuedouble;
+} variable;
+
 void logo();
 void help();
 void version();
@@ -91,4 +115,9 @@ int test(cJSON *);
 void print_output(testcase, int, sds *, sds *);
 char **make_env(sds *, int, int *);
 int complex_test(cJSON *);
+void new_variable(char *, int, char *, int, double);
+char *get_source_str(char *, char *);
+int get_source_int(char *);
+double get_source_double(char *);
+int define_variable_type(char *);
 #endif
