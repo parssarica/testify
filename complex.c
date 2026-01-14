@@ -278,6 +278,66 @@ int complex_test(cJSON *testcase_json)
                                      get_source_double(commands[i].rhs));
             }
         }
+        else if (!strcmp(commands[i].cmd, "subtract"))
+        {
+            if (strcmp(commands[i].store, ""))
+            {
+                if (define_variable_type(commands[i].lhs) == VARIABLE_INT &&
+                    define_variable_type(commands[i].rhs) == VARIABLE_INT)
+                    new_variable(commands[i].store, VARIABLE_INT, NULL,
+                                 get_source_int(commands[i].lhs) -
+                                     get_source_int(commands[i].rhs),
+                                 -1);
+                if (define_variable_type(commands[i].lhs) == VARIABLE_DOUBLE &&
+                    define_variable_type(commands[i].rhs) == VARIABLE_DOUBLE)
+                    new_variable(commands[i].store, VARIABLE_INT, NULL, -1,
+                                 get_source_double(commands[i].lhs) -
+                                     get_source_double(commands[i].rhs));
+            }
+        }
+        else if (!strcmp(commands[i].cmd, "multiply"))
+        {
+            if (strcmp(commands[i].store, ""))
+            {
+                if (define_variable_type(commands[i].lhs) == VARIABLE_INT &&
+                    define_variable_type(commands[i].rhs) == VARIABLE_INT)
+                    new_variable(commands[i].store, VARIABLE_INT, NULL,
+                                 get_source_int(commands[i].lhs) *
+                                     get_source_int(commands[i].rhs),
+                                 -1);
+                if (define_variable_type(commands[i].lhs) == VARIABLE_DOUBLE &&
+                    define_variable_type(commands[i].rhs) == VARIABLE_DOUBLE)
+                    new_variable(commands[i].store, VARIABLE_INT, NULL, -1,
+                                 get_source_double(commands[i].lhs) *
+                                     get_source_double(commands[i].rhs));
+            }
+        }
+        else if (!strcmp(commands[i].cmd, "divide"))
+        {
+            if (strcmp(commands[i].store, ""))
+            {
+                if (define_variable_type(commands[i].lhs) == VARIABLE_INT &&
+                    define_variable_type(commands[i].rhs) == VARIABLE_INT)
+                    new_variable(commands[i].store, VARIABLE_DOUBLE, NULL, -1,
+                                 get_source_int(commands[i].lhs) /
+                                     get_source_int(commands[i].rhs));
+                if (define_variable_type(commands[i].lhs) == VARIABLE_DOUBLE &&
+                    define_variable_type(commands[i].rhs) == VARIABLE_DOUBLE)
+                    new_variable(commands[i].store, VARIABLE_DOUBLE, NULL, -1,
+                                 get_source_double(commands[i].lhs) *
+                                     get_source_double(commands[i].rhs));
+                if (define_variable_type(commands[i].lhs) == VARIABLE_DOUBLE &&
+                    define_variable_type(commands[i].rhs) == VARIABLE_INT)
+                    new_variable(commands[i].store, VARIABLE_DOUBLE, NULL, -1,
+                                 get_source_double(commands[i].lhs) *
+                                     get_source_int(commands[i].rhs));
+                if (define_variable_type(commands[i].lhs) == VARIABLE_INT &&
+                    define_variable_type(commands[i].rhs) == VARIABLE_DOUBLE)
+                    new_variable(commands[i].store, VARIABLE_DOUBLE, NULL, -1,
+                                 get_source_int(commands[i].lhs) *
+                                     get_source_double(commands[i].rhs));
+            }
+        }
     }
     result = 1;
     testcase_obj.duration = duration;
@@ -359,9 +419,18 @@ char *get_source_str(char *source, char *output)
     if (!strcmp(source, "{{output}}") || !strcmp(source, "output"))
         return output;
 
-    sds varname = sdsnewlen(source + 2, strlen(source) - 4);
+    sds varname;
     int i;
     int index = -1;
+    if (source[0] == '{' && source[1] == '{' &&
+        source[strlen(source) - 1] == '}' && source[strlen(source) - 2] == '}')
+    {
+        varname = sdsnewlen(source + 2, strlen(source) - 4);
+    }
+    else
+    {
+        varname = sdsnewlen(source, strlen(source));
+    }
     for (i = 0; i < variable_count; i++)
     {
         if (!strcmp(variables[i].name, varname))
@@ -373,7 +442,7 @@ char *get_source_str(char *source, char *output)
 
     sdsfree(varname);
     if (index == -1)
-        return NULL;
+        return source;
     return variables[index].valuestring;
 }
 
@@ -382,9 +451,20 @@ int get_source_int(char *source)
     if (!strcmp(source, "{{output}}") || !strcmp(source, "output"))
         return -1;
 
-    sds varname = sdsnewlen(source + 2, strlen(source) - 4);
+    sds varname;
     int i;
     int index = -1;
+
+    if (source[0] == '{' && source[1] == '{' &&
+        source[strlen(source) - 1] == '}' && source[strlen(source) - 2] == '}')
+    {
+        varname = sdsnewlen(source + 2, strlen(source) - 4);
+    }
+    else
+    {
+        varname = sdsnewlen(source, strlen(source));
+    }
+
     for (i = 0; i < variable_count; i++)
     {
         if (!strcmp(variables[i].name, varname))
@@ -396,7 +476,7 @@ int get_source_int(char *source)
 
     sdsfree(varname);
     if (index == -1)
-        return -1;
+        return atoi(source);
     return variables[index].valueint;
 }
 
@@ -405,9 +485,21 @@ double get_source_double(char *source)
     if (!strcmp(source, "{{output}}") || !strcmp(source, "output"))
         return -1;
 
-    sds varname = sdsnewlen(source + 2, strlen(source) - 4);
+    sds varname;
     int i;
     int index = -1;
+    char *endptr;
+
+    if (source[0] == '{' && source[1] == '{' &&
+        source[strlen(source) - 1] == '}' && source[strlen(source) - 2] == '}')
+    {
+        varname = sdsnewlen(source + 2, strlen(source) - 4);
+    }
+    else
+    {
+        varname = sdsnewlen(source, strlen(source));
+    }
+
     for (i = 0; i < variable_count; i++)
     {
         if (!strcmp(variables[i].name, varname))
@@ -419,7 +511,7 @@ double get_source_double(char *source)
 
     sdsfree(varname);
     if (index == -1)
-        return -1;
+        return strtod(source, &endptr);
     return variables[index].valuedouble;
 }
 
@@ -427,7 +519,10 @@ int define_variable_type(char *varname)
 {
     sds variablename;
     int i;
+    size_t j;
     int type = -1;
+    int dot_seen = 0;
+    int letter_seen = 0;
     if (!strcmp(varname, ""))
         return -1;
     if (varname[0] == '{' && varname[1] == '{' &&
@@ -454,5 +549,26 @@ int define_variable_type(char *varname)
         }
     }
     sdsfree(variablename);
+    if (type == -1)
+    {
+        for (j = 0; j < strlen(varname); j++)
+        {
+            if (varname[j] == '.')
+            {
+                dot_seen = 1;
+                continue;
+            }
+            if (!(varname[j] >= 0x30 && varname[j] <= 0x39))
+            {
+                letter_seen = 1;
+            }
+        }
+        if (letter_seen)
+            return VARIABLE_STRING;
+        else if (dot_seen)
+            return VARIABLE_DOUBLE;
+        else
+            return VARIABLE_INT;
+    }
     return type;
 }
