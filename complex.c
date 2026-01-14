@@ -39,12 +39,13 @@ int complex_test(cJSON *testcase_json)
     char extract_char_character[2];
     sds cmd = sdsempty();
     sds source_string = sdsempty();
-    int source_int;
-    double source_double;
+    int source_int = 0;
+    double source_double = 0;
     int commandcount = 0;
     int result;
     int i;
     int env_count;
+    int k;
     int64_t duration = 0;
 
     variable_count = 0;
@@ -219,6 +220,46 @@ int complex_test(cJSON *testcase_json)
                                  extract_char_character, -1, -1);
             }
         }
+        else if (!strcmp(commands[i].cmd, "atoi"))
+        {
+            if (strcmp(commands[i].store, ""))
+            {
+                k = 1;
+                if (define_variable_type(commands[i].source) == VARIABLE_STRING)
+                {
+                    for (size_t j = 0; j < strlen(source_string); j++)
+                    {
+                        if (!((size_t)(source_string[j]) >= 0x30 &&
+                              (size_t)(source_string[j]) <= 0x39))
+                        {
+                            k = 0;
+                            break;
+                        }
+                    }
+                    if (k)
+                    {
+                        new_variable(commands[i].store, VARIABLE_INT, NULL,
+                                     atoi(source_string), -1);
+                    }
+                }
+                else if (define_variable_type(commands[i].source) ==
+                         VARIABLE_DOUBLE)
+                {
+                    new_variable(commands[i].store, VARIABLE_INT, NULL,
+                                 (int)source_double, -1);
+                }
+            }
+        }
+        else if (!strcmp(commands[i].cmd, "to_int"))
+        {
+            if (strcmp(commands[i].store, "") &&
+                define_variable_type(commands[i].source) == VARIABLE_STRING &&
+                strlen(source_string) == 1)
+            {
+                new_variable(commands[i].store, VARIABLE_INT, NULL,
+                             (int)(source_string[0]), -1);
+            }
+        }
     }
     result = 1;
     testcase_obj.duration = duration;
@@ -369,6 +410,8 @@ int define_variable_type(char *varname)
     sds variablename;
     int i;
     int type = -1;
+    if (!strcmp(varname, ""))
+        return -1;
     if (varname[0] == '{' && varname[1] == '{' &&
         varname[strlen(varname) - 1] == '}' &&
         varname[strlen(varname) - 2] == '}')
