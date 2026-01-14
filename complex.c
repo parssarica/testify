@@ -213,7 +213,8 @@ int complex_test(cJSON *testcase_json)
             if (define_variable_type(commands[i].source) == VARIABLE_STRING)
             {
                 if (strlen(source_string) > commands[i].index)
-                    extract_char_character[0] = source_string[i];
+                    extract_char_character[0] =
+                        source_string[commands[i].index];
 
                 if (strcmp(commands[i].store, ""))
                     new_variable(commands[i].store, VARIABLE_STRING,
@@ -258,6 +259,23 @@ int complex_test(cJSON *testcase_json)
             {
                 new_variable(commands[i].store, VARIABLE_INT, NULL,
                              (int)(source_string[0]), -1);
+            }
+        }
+        else if (!strcmp(commands[i].cmd, "add"))
+        {
+            if (strcmp(commands[i].store, ""))
+            {
+                if (define_variable_type(commands[i].lhs) == VARIABLE_INT &&
+                    define_variable_type(commands[i].rhs) == VARIABLE_INT)
+                    new_variable(commands[i].store, VARIABLE_INT, NULL,
+                                 get_source_int(commands[i].lhs) +
+                                     get_source_int(commands[i].rhs),
+                                 -1);
+                if (define_variable_type(commands[i].lhs) == VARIABLE_DOUBLE &&
+                    define_variable_type(commands[i].rhs) == VARIABLE_DOUBLE)
+                    new_variable(commands[i].store, VARIABLE_INT, NULL, -1,
+                                 get_source_double(commands[i].lhs) +
+                                     get_source_double(commands[i].rhs));
             }
         }
     }
