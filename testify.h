@@ -80,6 +80,12 @@ typedef struct
     sds store;
     sds lhs;
     sds rhs;
+    int lhs_int;
+    int rhs_int;
+    double lhs_double;
+    double rhs_double;
+    int lhs_type;
+    int rhs_type;
     size_t index;
 } command;
 
@@ -121,5 +127,5 @@ int get_source_int(char *);
 double get_source_double(char *);
 int define_variable_type(char *);
 sds to_str(variable);
-variable get_var_object(char *);
+variable get_var_object(char *, int, double, int);
 #endif

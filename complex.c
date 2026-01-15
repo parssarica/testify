@@ -134,6 +134,21 @@ int complex_test(cJSON *testcase_json)
         if (cJSON_IsString(lhs_json) && (lhs_json->valuestring != NULL))
         {
             commands[i].lhs = sdsnew(lhs_json->valuestring);
+            commands[i].lhs_type = VARIABLE_STRING;
+        }
+        else if (cJSON_IsNumber(lhs_json))
+        {
+            if (lhs_json->valueint == lhs_json->valuedouble)
+            {
+                commands[i].lhs_int = lhs_json->valueint;
+                commands[i].lhs_type = VARIABLE_INT;
+            }
+            else
+            {
+                commands[i].lhs_double = lhs_json->valuedouble;
+                commands[i].lhs_double = VARIABLE_DOUBLE;
+            }
+            commands[i].lhs = sdsempty();
         }
         else
         {
@@ -144,6 +159,21 @@ int complex_test(cJSON *testcase_json)
         if (cJSON_IsString(rhs_json) && (rhs_json->valuestring != NULL))
         {
             commands[i].rhs = sdsnew(rhs_json->valuestring);
+            commands[i].rhs_type = VARIABLE_STRING;
+        }
+        else if (cJSON_IsNumber(rhs_json))
+        {
+            if (rhs_json->valueint == rhs_json->valuedouble)
+            {
+                commands[i].rhs_int = rhs_json->valueint;
+                commands[i].rhs_type = VARIABLE_INT;
+            }
+            else
+            {
+                commands[i].rhs_double = rhs_json->valuedouble;
+                commands[i].rhs_type = VARIABLE_DOUBLE;
+            }
+            commands[i].rhs = sdsempty();
         }
         else
         {
@@ -342,8 +372,30 @@ int complex_test(cJSON *testcase_json)
         }
         else if (!strcmp(commands[i].cmd, "assert_equals"))
         {
-            assert_lhs = to_str(get_var_object(commands[i].lhs));
-            assert_rhs = to_str(get_var_object(commands[i].rhs));
+            if (commands[i].lhs_type == VARIABLE_STRING)
+                assert_lhs = to_str(
+                    get_var_object(commands[i].lhs, -1, -1, VARIABLE_STRING));
+            else if (commands[i].lhs_type == VARIABLE_INT)
+                assert_lhs = to_str(get_var_object(NULL, commands[i].lhs_int,
+                                                   -1, VARIABLE_INT));
+            else if (commands[i].lhs_type == VARIABLE_DOUBLE)
+                assert_lhs = to_str(get_var_object(
+                    NULL, -1, commands[i].lhs_double, VARIABLE_DOUBLE));
+            else
+                assert_lhs = sdsempty();
+
+            if (commands[i].rhs_type == VARIABLE_STRING)
+                assert_rhs = to_str(
+                    get_var_object(commands[i].rhs, -1, -1, VARIABLE_STRING));
+            else if (commands[i].rhs_type == VARIABLE_INT)
+                assert_rhs = to_str(get_var_object(NULL, commands[i].rhs_int,
+                                                   -1, VARIABLE_INT));
+            else if (commands[i].rhs_type == VARIABLE_DOUBLE)
+                assert_rhs = to_str(get_var_object(
+                    NULL, -1, commands[i].rhs_double, VARIABLE_DOUBLE));
+            else
+                assert_rhs = sdsempty();
+
             if (!strcmp(assert_lhs, assert_rhs))
             {
                 result = 1;
@@ -613,7 +665,7 @@ sds to_str(variable var)
     return NULL;
 }
 
-variable get_var_object(char *name)
+variable get_var_object(char *name, int name_int, double name_double, int type)
 {
     variable emptyobj = {-1, NULL, NULL, -1, -1};
     sds namesds;
@@ -621,6 +673,20 @@ variable get_var_object(char *name)
     int i;
     int name_type;
     char *endptr;
+
+    if (name == NULL)
+    {
+        if (type == VARIABLE_INT)
+        {
+            emptyobj.valueint = name_int;
+        }
+        else if (type == VARIABLE_DOUBLE)
+        {
+            emptyobj.valuedouble = name_double;
+        }
+        emptyobj.type = type;
+        return emptyobj;
+    }
     if (name[0] == '{' && name[1] == '{' && name[strlen(name) - 1] == '}' &&
         name[strlen(name) - 2] == '}')
         namesds = sdsnewlen(name + 2, strlen(name) - 4);
