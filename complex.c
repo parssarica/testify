@@ -39,10 +39,12 @@ int complex_test(cJSON *testcase_json)
     char extract_char_character[2];
     sds cmd = sdsempty();
     sds source_string = sdsempty();
+    sds assert_lhs;
+    sds assert_rhs;
     int source_int = 0;
     double source_double = 0;
     int commandcount = 0;
-    int result;
+    int result = 0;
     int i;
     int env_count;
     int k;
@@ -338,9 +340,24 @@ int complex_test(cJSON *testcase_json)
                                      get_source_double(commands[i].rhs));
             }
         }
+        else if (!strcmp(commands[i].cmd, "assert_equals"))
+        {
+            assert_lhs = to_str(get_var_object(commands[i].lhs));
+            assert_rhs = to_str(get_var_object(commands[i].rhs));
+            if (!strcmp(assert_lhs, assert_rhs))
+            {
+                result = 1;
+            }
+            else
+            {
+                result = 0;
+            }
+            sdsfree(assert_lhs);
+            sdsfree(assert_rhs);
+        }
     }
-    result = 1;
     testcase_obj.duration = duration;
+    reason = sdscpylen(reason, "Assertion failed.", 17);
     print_output(testcase_obj, result, &reason, &output);
     sdsfree(testcase_obj.name);
     sdsfree(testcase_obj.description);
@@ -571,4 +588,73 @@ int define_variable_type(char *varname)
             return VARIABLE_INT;
     }
     return type;
+}
+
+sds to_str(variable var)
+{
+    sds stringified_str;
+    if (var.type == VARIABLE_STRING)
+    {
+        return var.valuestring;
+    }
+    else if (var.type == VARIABLE_INT)
+    {
+        stringified_str = sdsempty();
+        stringified_str = sdscatprintf(stringified_str, "%d", var.valueint);
+        return stringified_str;
+    }
+    else if (var.type == VARIABLE_DOUBLE)
+    {
+        stringified_str = sdsempty();
+        stringified_str = sdscatprintf(stringified_str, "%f", var.valuedouble);
+        return stringified_str;
+    }
+
+    return NULL;
+}
+
+variable get_var_object(char *name)
+{
+    variable emptyobj = {-1, NULL, NULL, -1, -1};
+    sds namesds;
+    int found = 0;
+    int i;
+    int name_type;
+    char *endptr;
+    if (name[0] == '{' && name[1] == '{' && name[strlen(name) - 1] == '}' &&
+        name[strlen(name) - 2] == '}')
+        namesds = sdsnewlen(name + 2, strlen(name) - 4);
+    else
+        namesds = sdsnewlen(name, strlen(name));
+    for (i = 0; i < variable_count; i++)
+    {
+        if (!strcmp(namesds, variables[i].name))
+        {
+            found = 1;
+            break;
+        }
+    }
+
+    sdsfree(namesds);
+    if (found)
+        return variables[i];
+    else
+    {
+        name_type = define_variable_type(name);
+        if (name_type == VARIABLE_STRING)
+        {
+            emptyobj.valuestring =
+                sdscpylen(emptyobj.valuestring, name, strlen(name));
+        }
+        else if (name_type == VARIABLE_INT)
+        {
+            emptyobj.valueint = atoi(name);
+        }
+        else if (name_type == VARIABLE_DOUBLE)
+        {
+            emptyobj.valuedouble = strtod(name, &endptr);
+        }
+        emptyobj.type = name_type;
+        return emptyobj;
+    }
 }

@@ -307,7 +307,16 @@ void print_output(testcase testcase_obj, int result, sds *reason, sds *output)
             printf("      \033[93mExit code should be greater than:\033[0m %d",
                    testcase_obj.exitcodegreater);
         }
-        printf("\n      \033[93mActual:  \033[0m ");
+        if (testcase_obj.expectedoutputgiven ||
+            testcase_obj.notexpectedoutputgiven ||
+            testcase_obj.containingoutputgiven ||
+            testcase_obj.notcontainingoutputgiven ||
+            testcase_obj.matchregexgiven || testcase_obj.notmatchregexgiven ||
+            testcase_obj.exitcodesmallergiven ||
+            testcase_obj.exitcodeequalsgiven ||
+            testcase_obj.exitcodegreatergiven)
+            printf("\n");
+        printf("      \033[93mActual:  \033[0m ");
         if (testcase_obj.expectedoutputgiven)
         {
             most_similar = 0;

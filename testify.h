@@ -120,4 +120,6 @@ char *get_source_str(char *, char *);
 int get_source_int(char *);
 double get_source_double(char *);
 int define_variable_type(char *);
+sds to_str(variable);
+variable get_var_object(char *);
 #endif
