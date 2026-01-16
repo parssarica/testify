@@ -41,10 +41,12 @@ int complex_test(cJSON *testcase_json)
     sds source_string = sdsempty();
     sds assert_lhs;
     sds assert_rhs;
+    double assert_lhs_double = 0;
+    double assert_rhs_double = 0;
     int source_int = 0;
     double source_double = 0;
     int commandcount = 0;
-    int result = 0;
+    int result = 1;
     int i;
     int env_count;
     int k;
@@ -407,6 +409,37 @@ int complex_test(cJSON *testcase_json)
             sdsfree(assert_lhs);
             sdsfree(assert_rhs);
         }
+        else if (!strcmp(commands[i].cmd, "assert_less"))
+        {
+            if (commands[i].lhs_type == VARIABLE_STRING)
+                assert_lhs_double = to_double(
+                    get_var_object(commands[i].lhs, -1, -1, VARIABLE_STRING));
+            else if (commands[i].lhs_type == VARIABLE_INT)
+                assert_lhs_double = to_double(get_var_object(
+                    NULL, commands[i].lhs_int, -1, VARIABLE_INT));
+            else if (commands[i].lhs_type == VARIABLE_DOUBLE)
+                assert_lhs_double = to_double(get_var_object(
+                    NULL, -1, commands[i].lhs_double, VARIABLE_DOUBLE));
+
+            if (commands[i].rhs_type == VARIABLE_STRING)
+                assert_rhs_double = to_double(
+                    get_var_object(commands[i].rhs, -1, -1, VARIABLE_STRING));
+            else if (commands[i].rhs_type == VARIABLE_INT)
+                assert_rhs_double = to_double(get_var_object(
+                    NULL, commands[i].rhs_int, -1, VARIABLE_INT));
+            else if (commands[i].rhs_type == VARIABLE_DOUBLE)
+                assert_rhs_double = to_double(get_var_object(
+                    NULL, -1, commands[i].rhs_double, VARIABLE_DOUBLE));
+
+            if (assert_lhs_double < assert_rhs_double)
+            {
+                result = 1;
+            }
+            else
+            {
+                result = 0;
+            }
+        }
     }
     testcase_obj.duration = duration;
     reason = sdscpylen(reason, "Assertion failed.", 17);
@@ -663,6 +696,27 @@ sds to_str(variable var)
     }
 
     return NULL;
+}
+
+double to_double(variable var)
+{
+    double converted;
+    char *end_ptr;
+    if (var.type == VARIABLE_STRING)
+    {
+        converted = strtod(var.valuestring, &end_ptr);
+        return converted;
+    }
+    else if (var.type == VARIABLE_INT)
+    {
+        return var.valueint;
+    }
+    else if (var.type == VARIABLE_DOUBLE)
+    {
+        return var.valuedouble;
+    }
+
+    return -1;
 }
 
 variable get_var_object(char *name, int name_int, double name_double, int type)

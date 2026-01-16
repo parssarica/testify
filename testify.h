@@ -127,5 +127,6 @@ int get_source_int(char *);
 double get_source_double(char *);
 int define_variable_type(char *);
 sds to_str(variable);
+double to_double(variable);
 variable get_var_object(char *, int, double, int);
 #endif
