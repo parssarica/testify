@@ -440,6 +440,43 @@ int complex_test(cJSON *testcase_json)
                 result = 0;
             }
         }
+        else if (!strcmp(commands[i].cmd, "assert_not_equals"))
+        {
+            if (commands[i].lhs_type == VARIABLE_STRING)
+                assert_lhs = to_str(
+                    get_var_object(commands[i].lhs, -1, -1, VARIABLE_STRING));
+            else if (commands[i].lhs_type == VARIABLE_INT)
+                assert_lhs = to_str(get_var_object(NULL, commands[i].lhs_int,
+                                                   -1, VARIABLE_INT));
+            else if (commands[i].lhs_type == VARIABLE_DOUBLE)
+                assert_lhs = to_str(get_var_object(
+                    NULL, -1, commands[i].lhs_double, VARIABLE_DOUBLE));
+            else
+                assert_lhs = sdsempty();
+
+            if (commands[i].rhs_type == VARIABLE_STRING)
+                assert_rhs = to_str(
+                    get_var_object(commands[i].rhs, -1, -1, VARIABLE_STRING));
+            else if (commands[i].rhs_type == VARIABLE_INT)
+                assert_rhs = to_str(get_var_object(NULL, commands[i].rhs_int,
+                                                   -1, VARIABLE_INT));
+            else if (commands[i].rhs_type == VARIABLE_DOUBLE)
+                assert_rhs = to_str(get_var_object(
+                    NULL, -1, commands[i].rhs_double, VARIABLE_DOUBLE));
+            else
+                assert_rhs = sdsempty();
+
+            if (strcmp(assert_lhs, assert_rhs))
+            {
+                result = 1;
+            }
+            else
+            {
+                result = 0;
+            }
+            sdsfree(assert_lhs);
+            sdsfree(assert_rhs);
+        }
     }
     testcase_obj.duration = duration;
     reason = sdscpylen(reason, "Assertion failed.", 17);
