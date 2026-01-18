@@ -372,7 +372,8 @@ int complex_test(cJSON *testcase_json)
                                      get_source_double(commands[i].rhs));
             }
         }
-        else if (!strcmp(commands[i].cmd, "assert_equals"))
+        else if (!strcmp(commands[i].cmd, "assert_equals") ||
+                 !strcmp(commands[i].cmd, "assert_not_equals"))
         {
             if (commands[i].lhs_type == VARIABLE_STRING)
                 assert_lhs = to_str(
@@ -398,18 +399,33 @@ int complex_test(cJSON *testcase_json)
             else
                 assert_rhs = sdsempty();
 
-            if (!strcmp(assert_lhs, assert_rhs))
+            if (!strcmp(commands[i].cmd, "assert_equals"))
             {
-                result = 1;
+                if (!strcmp(assert_lhs, assert_rhs))
+                {
+                    result = 1;
+                }
+                else
+                {
+                    result = 0;
+                }
             }
             else
             {
-                result = 0;
+                if (strcmp(assert_lhs, assert_rhs))
+                {
+                    result = 1;
+                }
+                else
+                {
+                    result = 0;
+                }
             }
             sdsfree(assert_lhs);
             sdsfree(assert_rhs);
         }
-        else if (!strcmp(commands[i].cmd, "assert_less"))
+        else if (!strcmp(commands[i].cmd, "assert_less") ||
+                 !strcmp(commands[i].cmd, "assert_greater"))
         {
             if (commands[i].lhs_type == VARIABLE_STRING)
                 assert_lhs_double = to_double(
@@ -431,51 +447,28 @@ int complex_test(cJSON *testcase_json)
                 assert_rhs_double = to_double(get_var_object(
                     NULL, -1, commands[i].rhs_double, VARIABLE_DOUBLE));
 
-            if (assert_lhs_double < assert_rhs_double)
+            if (!strcmp(commands[i].cmd, "assert_less"))
             {
-                result = 1;
+                if (assert_lhs_double < assert_rhs_double)
+                {
+                    result = 1;
+                }
+                else
+                {
+                    result = 0;
+                }
             }
             else
             {
-                result = 0;
+                if (assert_lhs_double > assert_rhs_double)
+                {
+                    result = 1;
+                }
+                else
+                {
+                    result = 0;
+                }
             }
-        }
-        else if (!strcmp(commands[i].cmd, "assert_not_equals"))
-        {
-            if (commands[i].lhs_type == VARIABLE_STRING)
-                assert_lhs = to_str(
-                    get_var_object(commands[i].lhs, -1, -1, VARIABLE_STRING));
-            else if (commands[i].lhs_type == VARIABLE_INT)
-                assert_lhs = to_str(get_var_object(NULL, commands[i].lhs_int,
-                                                   -1, VARIABLE_INT));
-            else if (commands[i].lhs_type == VARIABLE_DOUBLE)
-                assert_lhs = to_str(get_var_object(
-                    NULL, -1, commands[i].lhs_double, VARIABLE_DOUBLE));
-            else
-                assert_lhs = sdsempty();
-
-            if (commands[i].rhs_type == VARIABLE_STRING)
-                assert_rhs = to_str(
-                    get_var_object(commands[i].rhs, -1, -1, VARIABLE_STRING));
-            else if (commands[i].rhs_type == VARIABLE_INT)
-                assert_rhs = to_str(get_var_object(NULL, commands[i].rhs_int,
-                                                   -1, VARIABLE_INT));
-            else if (commands[i].rhs_type == VARIABLE_DOUBLE)
-                assert_rhs = to_str(get_var_object(
-                    NULL, -1, commands[i].rhs_double, VARIABLE_DOUBLE));
-            else
-                assert_rhs = sdsempty();
-
-            if (strcmp(assert_lhs, assert_rhs))
-            {
-                result = 1;
-            }
-            else
-            {
-                result = 0;
-            }
-            sdsfree(assert_lhs);
-            sdsfree(assert_rhs);
         }
     }
     testcase_obj.duration = duration;
