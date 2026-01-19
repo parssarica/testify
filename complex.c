@@ -372,8 +372,28 @@ int complex_test(cJSON *testcase_json)
                                      get_source_double(commands[i].rhs));
             }
         }
+        else if (!strcmp(commands[i].cmd, "set"))
+        {
+            if (commands[i].lhs_type == VARIABLE_STRING)
+            {
+                assert_lhs = sdsempty();
+                if (commands[i].rhs_type == VARIABLE_STRING)
+                    assert_lhs = sdscpylen(assert_lhs, commands[i].rhs,
+                                           strlen(commands[i].rhs));
+                else if (commands[i].rhs_type == VARIABLE_INT)
+                    assert_lhs =
+                        sdscatprintf(assert_lhs, "%d", commands[i].rhs_int);
+                else if (commands[i].rhs_type == VARIABLE_DOUBLE)
+                    assert_lhs =
+                        sdscatprintf(assert_lhs, "%f", commands[i].rhs_double);
+                new_variable(commands[i].lhs, VARIABLE_STRING, assert_lhs, -1,
+                             -1);
+                sdsfree(assert_lhs);
+            }
+        }
         else if (!strcmp(commands[i].cmd, "assert_equals") ||
-                 !strcmp(commands[i].cmd, "assert_not_equals"))
+                 !strcmp(commands[i].cmd, "assert_not_equals") ||
+                 !strcmp(commands[i].cmd, "assert_regex_match"))
         {
             if (commands[i].lhs_type == VARIABLE_STRING)
                 assert_lhs = to_str(
@@ -410,9 +430,20 @@ int complex_test(cJSON *testcase_json)
                     result = 0;
                 }
             }
-            else
+            else if (!strcmp(commands[i].cmd, "assert_not_equals"))
             {
                 if (strcmp(assert_lhs, assert_rhs))
+                {
+                    result = 1;
+                }
+                else
+                {
+                    result = 0;
+                }
+            }
+            else if (!strcmp(commands[i].cmd, "assert_regex_match"))
+            {
+                if (regex_pass(assert_rhs, assert_lhs, sdslen(assert_lhs)))
                 {
                     result = 1;
                 }
@@ -710,19 +741,19 @@ sds to_str(variable var)
     sds stringified_str;
     if (var.type == VARIABLE_STRING)
     {
-        return var.valuestring;
+        return sdsnew(var.valuestring);
     }
     else if (var.type == VARIABLE_INT)
     {
         stringified_str = sdsempty();
         stringified_str = sdscatprintf(stringified_str, "%d", var.valueint);
-        return stringified_str;
+        return sdsnew(stringified_str);
     }
     else if (var.type == VARIABLE_DOUBLE)
     {
         stringified_str = sdsempty();
         stringified_str = sdscatprintf(stringified_str, "%f", var.valuedouble);
-        return stringified_str;
+        return sdsnew(stringified_str);
     }
 
     return NULL;
