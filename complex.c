@@ -824,8 +824,7 @@ variable get_var_object(char *name, int name_int, double name_double, int type)
         name_type = define_variable_type(name);
         if (name_type == VARIABLE_STRING)
         {
-            emptyobj.valuestring =
-                sdscpylen(emptyobj.valuestring, name, strlen(name));
+            emptyobj.valuestring = sdsnewlen(name, strlen(name));
         }
         else if (name_type == VARIABLE_INT)
         {
