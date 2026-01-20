@@ -557,6 +557,7 @@ void new_variable(char *name, int type, char *valuestring, int valueint,
 
     variables[variable_count - 1].type = type;
     variables[variable_count - 1].name = sdsnew(name);
+    variables[variable_count - 1].empty = 0;
     if (type == VARIABLE_STRING)
     {
         variables[variable_count - 1].valuestring = sdsnew(valuestring);
@@ -739,23 +740,28 @@ int define_variable_type(char *varname)
 sds to_str(variable var)
 {
     sds stringified_str;
+    stringified_str = sdsempty();
     if (var.type == VARIABLE_STRING)
     {
-        return sdsnew(var.valuestring);
+        stringified_str = sdscpylen(stringified_str, var.valuestring,
+                                    strlen(var.valuestring));
+        destroy_empty_variable(var);
+        return stringified_str;
     }
     else if (var.type == VARIABLE_INT)
     {
-        stringified_str = sdsempty();
         stringified_str = sdscatprintf(stringified_str, "%d", var.valueint);
-        return sdsnew(stringified_str);
+        destroy_empty_variable(var);
+        return stringified_str;
     }
     else if (var.type == VARIABLE_DOUBLE)
     {
-        stringified_str = sdsempty();
         stringified_str = sdscatprintf(stringified_str, "%f", var.valuedouble);
-        return sdsnew(stringified_str);
+        destroy_empty_variable(var);
+        return stringified_str;
     }
 
+    destroy_empty_variable(var);
     return NULL;
 }
 
@@ -782,7 +788,7 @@ double to_double(variable var)
 
 variable get_var_object(char *name, int name_int, double name_double, int type)
 {
-    variable emptyobj = {-1, NULL, NULL, -1, -1};
+    variable emptyobj = {-1, NULL, NULL, -1, -1, 1};
     sds namesds;
     int found = 0;
     int i;
@@ -825,13 +831,19 @@ variable get_var_object(char *name, int name_int, double name_double, int type)
         if (name_type == VARIABLE_STRING)
         {
             emptyobj.valuestring = sdsnewlen(name, strlen(name));
+            emptyobj.valueint = -1;
+            emptyobj.valuedouble = -1;
         }
         else if (name_type == VARIABLE_INT)
         {
+            emptyobj.valuestring = sdsempty();
             emptyobj.valueint = atoi(name);
+            emptyobj.valuedouble = -1;
         }
         else if (name_type == VARIABLE_DOUBLE)
         {
+            emptyobj.valuestring = sdsempty();
+            emptyobj.valueint = -1;
             emptyobj.valuedouble = strtod(name, &endptr);
         }
         emptyobj.type = name_type;

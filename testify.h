@@ -96,6 +96,7 @@ typedef struct
     sds valuestring;
     int valueint;
     double valuedouble;
+    int empty;
 } variable;
 
 void logo();
@@ -129,4 +130,5 @@ int define_variable_type(char *);
 sds to_str(variable);
 double to_double(variable);
 variable get_var_object(char *, int, double, int);
+void destroy_empty_variable(variable);
 #endif

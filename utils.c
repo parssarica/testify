@@ -443,3 +443,12 @@ difference *diff(char *s1, char *s2)
     diffs->count = count;
     return diffs;
 }
+
+void destroy_empty_variable(variable obj)
+{
+    if (!obj.empty)
+        return;
+
+    sdsfree(obj.name);
+    sdsfree(obj.valuestring);
+}
