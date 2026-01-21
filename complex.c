@@ -395,7 +395,8 @@ int complex_test(cJSON *testcase_json)
                  !strcmp(commands[i].cmd, "assert_not_equals") ||
                  !strcmp(commands[i].cmd, "assert_regex_match") ||
                  !strcmp(commands[i].cmd, "assert_not_regex_match") ||
-                 !strcmp(commands[i].cmd, "assert_contains"))
+                 !strcmp(commands[i].cmd, "assert_contains") ||
+                 !strcmp(commands[i].cmd, "assert_not_contains"))
         {
             if (commands[i].lhs_type == VARIABLE_STRING)
                 assert_lhs = to_str(
@@ -468,6 +469,17 @@ int complex_test(cJSON *testcase_json)
             else if (!strcmp(commands[i].cmd, "assert_contains"))
             {
                 if (strstr(assert_lhs, assert_rhs))
+                {
+                    result = 1;
+                }
+                else
+                {
+                    result = 0;
+                }
+            }
+            else if (!strcmp(commands[i].cmd, "assert_not_contains"))
+            {
+                if (!strstr(assert_lhs, assert_rhs))
                 {
                     result = 1;
                 }
