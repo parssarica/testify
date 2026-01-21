@@ -398,6 +398,7 @@ int complex_test(cJSON *testcase_json)
                  !strcmp(commands[i].cmd, "assert_contains") ||
                  !strcmp(commands[i].cmd, "assert_not_contains") ||
                  !strcmp(commands[i].cmd, "assert_starts_with") ||
+                 !strcmp(commands[i].cmd, "assert_not_starts_with") ||
                  !strcmp(commands[i].cmd, "assert_ends_with"))
         {
             if (commands[i].lhs_type == VARIABLE_STRING)
@@ -493,6 +494,17 @@ int complex_test(cJSON *testcase_json)
             else if (!strcmp(commands[i].cmd, "assert_starts_with"))
             {
                 if (!strncmp(assert_lhs, assert_rhs, strlen(assert_rhs)))
+                {
+                    result = 1;
+                }
+                else
+                {
+                    result = 0;
+                }
+            }
+            else if (!strcmp(commands[i].cmd, "assert_not_starts_with"))
+            {
+                if (strncmp(assert_lhs, assert_rhs, strlen(assert_rhs)))
                 {
                     result = 1;
                 }
