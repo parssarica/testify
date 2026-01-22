@@ -547,7 +547,8 @@ int complex_test(cJSON *testcase_json)
         }
         else if (!strcmp(commands[i].cmd, "assert_less") ||
                  !strcmp(commands[i].cmd, "assert_greater") ||
-                 !strcmp(commands[i].cmd, "assert_less_or_equal"))
+                 !strcmp(commands[i].cmd, "assert_less_or_equal") ||
+                 !strcmp(commands[i].cmd, "assert_greater_or_equal"))
         {
             if (commands[i].lhs_type == VARIABLE_STRING)
                 assert_lhs_double = to_double(
@@ -594,6 +595,17 @@ int complex_test(cJSON *testcase_json)
             else if (!strcmp(commands[i].cmd, "assert_less_or_equal"))
             {
                 if (assert_lhs_double <= assert_rhs_double)
+                {
+                    result = 1;
+                }
+                else
+                {
+                    result = 0;
+                }
+            }
+            else if (!strcmp(commands[i].cmd, "assert_greater_or_equal"))
+            {
+                if (assert_lhs_double >= assert_rhs_double)
                 {
                     result = 1;
                 }
