@@ -15,6 +15,8 @@ if sys.argv[1] == "help":
     print("\twaitquarter\tWaits for a quarter sec")
     print("\tgreet\t\tSays hello")
     print("\ttab\t\tPrints a tab character")
+    print("\tgenerate_file\tCreates a file")
+    print("\tremove_file\tRemoves a file")
 elif sys.argv[1] == "wait":
     time.sleep(1)
 elif sys.argv[1] == "waitquarter":
@@ -36,3 +38,9 @@ elif sys.argv[1] == "envlist":
 elif sys.argv[1] == "envlist2":
     if len(sys.argv) == 3:
         print(sys.argv[2] in "\n".join(os.environ))
+elif sys.argv[1] == "generate_file":
+    with open("/tmp/program.txt", "wt") as f:
+        f.write("A really important revolutionary program.")
+elif sys.argv[1] == "remove_file":
+    if os.path.exists("/tmp/program.txt"):
+        os.remove("/tmp/program.txt")

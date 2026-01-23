@@ -131,4 +131,5 @@ sds to_str(variable);
 double to_double(variable);
 variable get_var_object(char *, int, double, int);
 void destroy_empty_variable(variable);
+int file_exists(char *);
 #endif

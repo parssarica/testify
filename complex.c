@@ -401,7 +401,8 @@ int complex_test(cJSON *testcase_json)
                  !strcmp(commands[i].cmd, "assert_starts_with") ||
                  !strcmp(commands[i].cmd, "assert_not_starts_with") ||
                  !strcmp(commands[i].cmd, "assert_ends_with") ||
-                 !strcmp(commands[i].cmd, "assert_not_ends_with"))
+                 !strcmp(commands[i].cmd, "assert_not_ends_with") ||
+                 !strcmp(commands[i].cmd, "assert_file_exists"))
         {
             if (commands[i].lhs_type == VARIABLE_STRING)
                 assert_lhs = to_str(
@@ -535,6 +536,17 @@ int complex_test(cJSON *testcase_json)
                       (!(strncmp(assert_lhs + strlen(assert_lhs) -
                                      strlen(assert_rhs),
                                  assert_rhs, strlen(assert_rhs))))))
+                {
+                    result = 1;
+                }
+                else
+                {
+                    result = 0;
+                }
+            }
+            else if (!strcmp(commands[i].cmd, "assert_file_exists"))
+            {
+                if (file_exists(assert_lhs))
                 {
                     result = 1;
                 }

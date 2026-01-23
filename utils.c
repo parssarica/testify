@@ -452,3 +452,15 @@ void destroy_empty_variable(variable obj)
     sdsfree(obj.name);
     sdsfree(obj.valuestring);
 }
+
+int file_exists(char *filename)
+{
+    FILE *fptr = fopen(filename, "rb");
+    if (fptr)
+    {
+        fclose(fptr);
+        return 1;
+    }
+
+    return 0;
+}
