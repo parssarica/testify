@@ -616,7 +616,8 @@ int complex_test(cJSON *testcase_json)
             }
         }
         else if (!strcmp(commands[i].cmd, "assert_exitcode") ||
-                 !strcmp(commands[i].cmd, "assert_exitcode_less"))
+                 !strcmp(commands[i].cmd, "assert_exitcode_less") ||
+                 !strcmp(commands[i].cmd, "assert_exitcode_greater"))
         {
             assert_lhs_double = exitcode;
 
@@ -641,9 +642,20 @@ int complex_test(cJSON *testcase_json)
                     result = 0;
                 }
             }
-            if (!strcmp(commands[i].cmd, "assert_exitcode_less"))
+            else if (!strcmp(commands[i].cmd, "assert_exitcode_less"))
             {
                 if (assert_lhs_double < assert_rhs_double)
+                {
+                    result = 1;
+                }
+                else
+                {
+                    result = 0;
+                }
+            }
+            else if (!strcmp(commands[i].cmd, "assert_exitcode_greater"))
+            {
+                if (assert_lhs_double > assert_rhs_double)
                 {
                     result = 1;
                 }
