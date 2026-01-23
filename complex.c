@@ -615,6 +615,29 @@ int complex_test(cJSON *testcase_json)
                 }
             }
         }
+        else if (!strcmp(commands[i].cmd, "assert_exitcode"))
+        {
+            assert_lhs_double = exitcode;
+
+            if (commands[i].rhs_type == VARIABLE_STRING)
+                assert_rhs_double = to_double(
+                    get_var_object(commands[i].lhs, -1, -1, VARIABLE_STRING));
+            else if (commands[i].rhs_type == VARIABLE_INT)
+                assert_rhs_double = to_double(get_var_object(
+                    NULL, commands[i].lhs_int, -1, VARIABLE_INT));
+            else if (commands[i].rhs_type == VARIABLE_DOUBLE)
+                assert_rhs_double = to_double(get_var_object(
+                    NULL, -1, commands[i].lhs_double, VARIABLE_DOUBLE));
+
+            if (assert_lhs_double == assert_rhs_double)
+            {
+                result = 1;
+            }
+            else
+            {
+                result = 0;
+            }
+        }
     }
     testcase_obj.duration = duration;
     reason = sdscpylen(reason, "Assertion failed.", 17);
