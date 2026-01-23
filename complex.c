@@ -9,6 +9,7 @@ Pars SARICA <pars@parssarica.com>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
 variable *variables;
 int variable_count = 0;
@@ -41,6 +42,7 @@ int complex_test(cJSON *testcase_json)
     sds source_string = sdsempty();
     sds assert_lhs;
     sds assert_rhs;
+    sds file_content;
     double assert_lhs_double = 0;
     double assert_rhs_double = 0;
     int source_int = 0;
@@ -51,6 +53,7 @@ int complex_test(cJSON *testcase_json)
     int env_count;
     int k;
     int64_t duration = 0;
+    FILE *fptr;
 
     variable_count = 0;
     extract_char_character[1] = 0;
@@ -403,7 +406,9 @@ int complex_test(cJSON *testcase_json)
                  !strcmp(commands[i].cmd, "assert_ends_with") ||
                  !strcmp(commands[i].cmd, "assert_not_ends_with") ||
                  !strcmp(commands[i].cmd, "assert_file_exists") ||
-                 !strcmp(commands[i].cmd, "assert_file_not_exists"))
+                 !strcmp(commands[i].cmd, "assert_file_not_exists") ||
+                 !strcmp(commands[i].cmd, "assert_file_contains") ||
+                 !strcmp(commands[i].cmd, "assert_file_not_contains"))
         {
             if (commands[i].lhs_type == VARIABLE_STRING)
                 assert_lhs = to_str(
@@ -567,6 +572,66 @@ int complex_test(cJSON *testcase_json)
                     result = 0;
                 }
             }
+            else if (!strcmp(commands[i].cmd, "assert_file_contains") ||
+                     !strcmp(commands[i].cmd, "assert_file_not_contains"))
+            {
+                if (!file_exists(assert_lhs))
+                {
+                    result = 0;
+                    sdsfree(assert_lhs);
+                    sdsfree(assert_rhs);
+                    continue;
+                }
+                fptr = fopen(assert_lhs, "rt");
+                if (fptr == NULL)
+                {
+                    perror("fopen");
+                    result = 0;
+                    sdsfree(assert_lhs);
+                    sdsfree(assert_rhs);
+                    continue;
+                }
+                fseek(fptr, 0, SEEK_END);
+                k = ftell(fptr);
+                fseek(fptr, 0, SEEK_SET);
+                if (k < 0)
+                {
+                    perror("ftell");
+                    fclose(fptr);
+                    sdsfree(assert_lhs);
+                    sdsfree(assert_rhs);
+                    continue;
+                }
+
+                file_content = sdsempty();
+                file_content = sdsgrowzero(file_content, k);
+                fread(file_content, 1, k, fptr);
+                if (!strcmp(commands[i].cmd, "assert_file_contains"))
+                {
+                    if (strstr(file_content, assert_rhs))
+                    {
+                        result = 1;
+                    }
+                    else
+                    {
+                        result = 0;
+                    }
+                }
+                else
+                {
+                    if (strstr(file_content, assert_rhs) == NULL)
+                    {
+                        result = 1;
+                    }
+                    else
+                    {
+                        result = 0;
+                    }
+                }
+                sdsfree(file_content);
+                fclose(fptr);
+            }
+
             sdsfree(assert_lhs);
             sdsfree(assert_rhs);
         }
