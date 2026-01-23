@@ -615,7 +615,8 @@ int complex_test(cJSON *testcase_json)
                 }
             }
         }
-        else if (!strcmp(commands[i].cmd, "assert_exitcode"))
+        else if (!strcmp(commands[i].cmd, "assert_exitcode") ||
+                 !strcmp(commands[i].cmd, "assert_exitcode_less"))
         {
             assert_lhs_double = exitcode;
 
@@ -629,13 +630,27 @@ int complex_test(cJSON *testcase_json)
                 assert_rhs_double = to_double(get_var_object(
                     NULL, -1, commands[i].lhs_double, VARIABLE_DOUBLE));
 
-            if (assert_lhs_double == assert_rhs_double)
+            if (!strcmp(commands[i].cmd, "assert_exitcode"))
             {
-                result = 1;
+                if (assert_lhs_double == assert_rhs_double)
+                {
+                    result = 1;
+                }
+                else
+                {
+                    result = 0;
+                }
             }
-            else
+            if (!strcmp(commands[i].cmd, "assert_exitcode_less"))
             {
-                result = 0;
+                if (assert_lhs_double < assert_rhs_double)
+                {
+                    result = 1;
+                }
+                else
+                {
+                    result = 0;
+                }
             }
         }
     }
