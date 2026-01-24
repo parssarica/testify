@@ -246,6 +246,7 @@ int complex_test(cJSON *testcase_json)
             }
             duration = end_date - start_date;
             testcase_obj.duration = duration;
+            new_variable("output", VARIABLE_STRING, output, -1, -1);
         }
         else if (!strcmp(commands[i].cmd, "extract_char"))
         {
@@ -353,6 +354,18 @@ int complex_test(cJSON *testcase_json)
             {
                 new_variable(commands[i].store, VARIABLE_INT, NULL,
                              (int)(source_string[0]), -1);
+            }
+        }
+        else if (!strcmp(commands[i].cmd, "trim"))
+        {
+            if (define_variable_type(commands[i].source) == VARIABLE_STRING)
+            {
+                assert_lhs = to_str(get_var_object(commands[i].source, -1, -1,
+                                                   VARIABLE_STRING));
+                sdstrim(assert_lhs, " \n\t\r");
+                new_variable(commands[i].store, VARIABLE_STRING, assert_lhs, -1,
+                             -1);
+                sdsfree(assert_lhs);
             }
         }
         else if (!strcmp(commands[i].cmd, "add"))
