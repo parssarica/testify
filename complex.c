@@ -1031,30 +1031,23 @@ int define_variable_type(char *varname)
 
 sds to_str(variable var)
 {
-    sds stringified_str;
-    stringified_str = sdsempty();
+    sds stringified_str = sdsempty();
     if (var.type == VARIABLE_STRING)
     {
         stringified_str = sdscpylen(stringified_str, var.valuestring,
                                     strlen(var.valuestring));
-        destroy_empty_variable(var);
-        return stringified_str;
     }
     else if (var.type == VARIABLE_INT)
     {
         stringified_str = sdscatprintf(stringified_str, "%d", var.valueint);
-        destroy_empty_variable(var);
-        return stringified_str;
     }
     else if (var.type == VARIABLE_DOUBLE)
     {
         stringified_str = sdscatprintf(stringified_str, "%f", var.valuedouble);
-        destroy_empty_variable(var);
-        return stringified_str;
     }
 
     destroy_empty_variable(var);
-    return NULL;
+    return stringified_str;
 }
 
 double to_double(variable var)
@@ -1064,17 +1057,21 @@ double to_double(variable var)
     if (var.type == VARIABLE_STRING)
     {
         converted = strtod(var.valuestring, &end_ptr);
+        destroy_empty_variable(var);
         return converted;
     }
     else if (var.type == VARIABLE_INT)
     {
+        destroy_empty_variable(var);
         return var.valueint;
     }
     else if (var.type == VARIABLE_DOUBLE)
     {
+        destroy_empty_variable(var);
         return var.valuedouble;
     }
 
+    destroy_empty_variable(var);
     return -1;
 }
 
