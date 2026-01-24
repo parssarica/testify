@@ -482,6 +482,19 @@ int complex_test(cJSON *testcase_json)
                                      get_source_double(commands[i].rhs));
             }
         }
+        else if (!strcmp(commands[i].cmd, "mod"))
+        {
+            if (strcmp(commands[i].store, "") &&
+                define_variable_type(commands[i].lhs) == VARIABLE_INT &&
+                define_variable_type(commands[i].rhs) == VARIABLE_INT &&
+                get_source_int(commands[i].rhs) != 0)
+            {
+                new_variable(commands[i].store, VARIABLE_INT, NULL,
+                             get_source_int(commands[i].lhs) %
+                                 get_source_int(commands[i].rhs),
+                             -1);
+            }
+        }
         else if (!strcmp(commands[i].cmd, "set"))
         {
             if (commands[i].lhs_type == VARIABLE_STRING)
