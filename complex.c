@@ -52,6 +52,7 @@ int complex_test(cJSON *testcase_json)
     int i;
     int env_count;
     int k;
+    size_t tmp;
     int64_t duration = 0;
     FILE *fptr;
     char *endptr;
@@ -363,6 +364,24 @@ int complex_test(cJSON *testcase_json)
                 assert_lhs = to_str(get_var_object(commands[i].source, -1, -1,
                                                    VARIABLE_STRING));
                 sdstrim(assert_lhs, " \n\t\r");
+                new_variable(commands[i].store, VARIABLE_STRING, assert_lhs, -1,
+                             -1);
+                sdsfree(assert_lhs);
+            }
+        }
+        else if (!strcmp(commands[i].cmd, "upper"))
+        {
+            if (define_variable_type(commands[i].source) == VARIABLE_STRING)
+            {
+                assert_lhs = to_str(get_var_object(commands[i].source, -1, -1,
+                                                   VARIABLE_STRING));
+                for (tmp = 0; tmp < sdslen(assert_lhs); tmp++)
+                {
+                    if (assert_lhs[tmp] >= 0x61 && assert_lhs[tmp] <= 0x7a)
+                    {
+                        assert_lhs[tmp] -= 0x20;
+                    }
+                }
                 new_variable(commands[i].store, VARIABLE_STRING, assert_lhs, -1,
                              -1);
                 sdsfree(assert_lhs);
