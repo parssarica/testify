@@ -387,6 +387,24 @@ int complex_test(cJSON *testcase_json)
                 sdsfree(assert_lhs);
             }
         }
+        else if (!strcmp(commands[i].cmd, "lower"))
+        {
+            if (define_variable_type(commands[i].source) == VARIABLE_STRING)
+            {
+                assert_lhs = to_str(get_var_object(commands[i].source, -1, -1,
+                                                   VARIABLE_STRING));
+                for (tmp = 0; tmp < sdslen(assert_lhs); tmp++)
+                {
+                    if (assert_lhs[tmp] >= 0x41 && assert_lhs[tmp] <= 0x5a)
+                    {
+                        assert_lhs[tmp] += 0x20;
+                    }
+                }
+                new_variable(commands[i].store, VARIABLE_STRING, assert_lhs, -1,
+                             -1);
+                sdsfree(assert_lhs);
+            }
+        }
         else if (!strcmp(commands[i].cmd, "add"))
         {
             if (strcmp(commands[i].store, ""))
