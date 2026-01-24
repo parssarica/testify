@@ -299,8 +299,8 @@ int complex_test(cJSON *testcase_json)
                 {
                     for (size_t j = 0; j < strlen(source_string); j++)
                     {
-                        if (!((size_t)(source_string[j]) >= 0x30 &&
-                              (size_t)(source_string[j]) <= 0x39 &&
+                        if (!(((size_t)(source_string[j]) >= 0x30 &&
+                               (size_t)(source_string[j]) <= 0x39) ||
                               (size_t)(source_string[j] == 0x2e)))
                         {
                             k = 0;
@@ -310,7 +310,7 @@ int complex_test(cJSON *testcase_json)
                     if (k)
                     {
                         new_variable(commands[i].store, VARIABLE_DOUBLE, NULL,
-                                     strtod(source_string, &endptr), -1);
+                                     -1, strtod(source_string, &endptr));
                     }
                 }
                 else if (define_variable_type(commands[i].source) ==
@@ -319,6 +319,30 @@ int complex_test(cJSON *testcase_json)
                     new_variable(commands[i].store, VARIABLE_DOUBLE, NULL, -1,
                                  (double)source_int);
                 }
+            }
+        }
+        else if (!strcmp(commands[i].cmd, "to_string"))
+        {
+            if (strcmp(commands[i].store, ""))
+            {
+                assert_lhs = sdsempty();
+                if (define_variable_type(commands[i].source) == VARIABLE_INT)
+                {
+                    assert_lhs = sdscatprintf(assert_lhs, "%d", source_int);
+                }
+                else if (define_variable_type(commands[i].source) ==
+                         VARIABLE_DOUBLE)
+                {
+                    assert_lhs = sdscatprintf(assert_lhs, "%f", source_double);
+                }
+                else
+                {
+                    assert_lhs = sdscpylen(assert_lhs, source_string,
+                                           strlen(source_string));
+                }
+                new_variable(commands[i].store, VARIABLE_STRING, assert_lhs, -1,
+                             -1);
+                sdsfree(assert_lhs);
             }
         }
         else if (!strcmp(commands[i].cmd, "to_int"))
