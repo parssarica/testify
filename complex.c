@@ -54,6 +54,7 @@ int complex_test(cJSON *testcase_json)
     int k;
     int64_t duration = 0;
     FILE *fptr;
+    char *endptr;
 
     variable_count = 0;
     extract_char_character[1] = 0;
@@ -286,6 +287,37 @@ int complex_test(cJSON *testcase_json)
                 {
                     new_variable(commands[i].store, VARIABLE_INT, NULL,
                                  (int)source_double, -1);
+                }
+            }
+        }
+        else if (!strcmp(commands[i].cmd, "atof"))
+        {
+            if (strcmp(commands[i].store, ""))
+            {
+                k = 1;
+                if (define_variable_type(commands[i].source) == VARIABLE_STRING)
+                {
+                    for (size_t j = 0; j < strlen(source_string); j++)
+                    {
+                        if (!((size_t)(source_string[j]) >= 0x30 &&
+                              (size_t)(source_string[j]) <= 0x39 &&
+                              (size_t)(source_string[j] == 0x2e)))
+                        {
+                            k = 0;
+                            break;
+                        }
+                    }
+                    if (k)
+                    {
+                        new_variable(commands[i].store, VARIABLE_DOUBLE, NULL,
+                                     strtod(source_string, &endptr), -1);
+                    }
+                }
+                else if (define_variable_type(commands[i].source) ==
+                         VARIABLE_INT)
+                {
+                    new_variable(commands[i].store, VARIABLE_DOUBLE, NULL, -1,
+                                 (double)source_int);
                 }
             }
         }
