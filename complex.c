@@ -1015,6 +1015,31 @@ int complex_test(cJSON *testcase_json)
                 }
             }
         }
+        else if (!strcmp(commands[i].cmd, "log"))
+        {
+            if (commands[i].source[0] == '{' && commands[i].source[1] == '{' &&
+                commands[i].source[strlen(commands[i].source) - 1] == '}' &&
+                commands[i].source[strlen(commands[i].source) - 2] == '}')
+                printf("Variable name: %s\n", commands[i].source);
+            else
+            {
+                printf("Value: %s\n", commands[i].source);
+                continue;
+            }
+            if (define_variable_type(commands[i].source) == VARIABLE_INT)
+            {
+                printf("Value: %d\n", source_int);
+            }
+            else if (define_variable_type(commands[i].source) ==
+                     VARIABLE_DOUBLE)
+            {
+                printf("Value: %f\n", source_double);
+            }
+            else
+            {
+                printf("Value: %s\n", source_string);
+            }
+        }
     }
     reason = sdscpylen(reason, "Assertion failed.", 17);
     print_output(testcase_obj, result, &reason, &output);
