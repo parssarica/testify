@@ -476,6 +476,38 @@ int complex_test(cJSON *testcase_json)
                              assert_lhs_double);
             }
         }
+        else if (!strcmp(commands[i].cmd, "increment"))
+        {
+            if (strcmp(commands[i].store, "") &&
+                (define_variable_type(commands[i].source) == VARIABLE_INT ||
+                 define_variable_type(commands[i].source) == VARIABLE_DOUBLE))
+            {
+                assert_lhs_double = get_source_non_char(commands[i].source);
+                assert_lhs_double++;
+                if (define_variable_type(commands[i].source) == VARIABLE_INT)
+                    new_variable(commands[i].store, VARIABLE_INT, NULL,
+                                 assert_lhs_double, -1);
+                else
+                    new_variable(commands[i].store, VARIABLE_DOUBLE, NULL, -1,
+                                 assert_lhs_double);
+            }
+        }
+        else if (!strcmp(commands[i].cmd, "decrement"))
+        {
+            if (strcmp(commands[i].store, "") &&
+                (define_variable_type(commands[i].source) == VARIABLE_INT ||
+                 define_variable_type(commands[i].source) == VARIABLE_DOUBLE))
+            {
+                assert_lhs_double = get_source_non_char(commands[i].source);
+                assert_lhs_double--;
+                if (define_variable_type(commands[i].source) == VARIABLE_INT)
+                    new_variable(commands[i].store, VARIABLE_INT, NULL,
+                                 assert_lhs_double, -1);
+                else
+                    new_variable(commands[i].store, VARIABLE_DOUBLE, NULL, -1,
+                                 assert_lhs_double);
+            }
+        }
         else if (!strcmp(commands[i].cmd, "add"))
         {
             if (strcmp(commands[i].store, ""))
