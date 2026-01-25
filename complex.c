@@ -462,6 +462,20 @@ int complex_test(cJSON *testcase_json)
                              assert_lhs_double);
             }
         }
+        else if (!strcmp(commands[i].cmd, "sum"))
+        {
+            if (commands[i].value_count > 0)
+            {
+                assert_lhs_double = 0;
+                for (int j = 0; j < commands[i].value_count; j++)
+                {
+                    assert_lhs_double +=
+                        get_source_non_char(commands[i].values[j]);
+                }
+                new_variable(commands[i].store, VARIABLE_DOUBLE, NULL, -1,
+                             assert_lhs_double);
+            }
+        }
         else if (!strcmp(commands[i].cmd, "add"))
         {
             if (strcmp(commands[i].store, ""))
