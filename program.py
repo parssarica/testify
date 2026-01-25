@@ -14,6 +14,7 @@ if sys.argv[1] == "help":
     print("\twait\t\tWaits for a sec")
     print("\twaitquarter\tWaits for a quarter sec")
     print("\tgreet\t\tSays hello")
+    print("\tgreetlong\tSays a long hello")
     print("\ttab\t\tPrints a tab character")
     print("\tgenerate_file\tCreates a file")
     print("\tremove_file\tRemoves a file")
@@ -23,6 +24,8 @@ elif sys.argv[1] == "waitquarter":
     time.sleep(0.25)
 elif sys.argv[1] == "greet":
     print("Helllo!")
+elif sys.argv[1] == "greetlong":
+    print("Helllioaeeraeosincoooooooooooooooooooooooooooooooooooooo!")
 elif sys.argv[1] == "greetname":
     if len(sys.argv) == 3:
         print(f"Helllo {sys.argv[2]}!")

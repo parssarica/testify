@@ -15,6 +15,8 @@ Pars SARICA <pars@parssarica.com>
 #define VARIABLE_INT 1
 #define VARIABLE_DOUBLE 2
 
+#define EPSILON 0.000001
+
 typedef struct
 {
     int help_shown;
@@ -80,6 +82,8 @@ typedef struct
     sds store;
     sds lhs;
     sds rhs;
+    sds *values;
+    int value_count;
     int lhs_int;
     int rhs_int;
     double lhs_double;
@@ -132,4 +136,5 @@ double to_double(variable);
 variable get_var_object(char *, int, double, int);
 void destroy_empty_variable(variable);
 int file_exists(char *);
+double get_source_non_char(char *);
 #endif

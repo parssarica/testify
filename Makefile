@@ -1,6 +1,6 @@
 CC = gcc
 SRCS = cli.c gui.c json.c main.c tester.c utils.c sds.c execute.c create.c regex.c complex.c
-LIBS = -lcjson -lpcre2-8
+LIBS = -lcjson -lpcre2-8 -lm
 TARGET = testify
 PREFIX = /usr/local
 BINDIR = $(PREFIX)/bin

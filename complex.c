@@ -5,6 +5,7 @@ Pars SARICA <pars@parssarica.com>
 #include "sds.h"
 #include "testify.h"
 #include <cjson/cJSON.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -37,6 +38,7 @@ int complex_test(cJSON *testcase_json)
     cJSON *lhs_json;
     cJSON *rhs_json;
     cJSON *index_json;
+    cJSON *value_json;
     char extract_char_character[2];
     sds cmd = sdsempty();
     sds source_string = sdsempty();
@@ -195,6 +197,25 @@ int complex_test(cJSON *testcase_json)
         else
         {
             commands[i].index = -1;
+        }
+
+        k = 0;
+        cJSON_ArrayForEach(value_json, cJSON_GetObjectItemCaseSensitive(
+                                           complex_command, "values"))
+        {
+            k++;
+        }
+
+        commands[i].value_count = k;
+        if (k)
+        {
+            commands[i].values = malloc(sizeof(sds) * k);
+            k = 0;
+            cJSON_ArrayForEach(value_json, cJSON_GetObjectItemCaseSensitive(
+                                               complex_command, "values"))
+            {
+                commands[i].values[k++] = sdsnew(value_json->valuestring);
+            }
         }
         i++;
     }
@@ -403,6 +424,24 @@ int complex_test(cJSON *testcase_json)
                 new_variable(commands[i].store, VARIABLE_STRING, assert_lhs, -1,
                              -1);
                 sdsfree(assert_lhs);
+            }
+        }
+        else if (!strcmp(commands[i].cmd, "min"))
+        {
+            if (commands[i].value_count > 0)
+            {
+                assert_lhs_double = get_source_non_char(commands[i].values[0]);
+                for (int j = 0; j < commands[i].value_count; j++)
+                {
+                    if (assert_lhs_double >
+                        get_source_non_char(commands[i].values[j]))
+                    {
+                        assert_lhs_double =
+                            get_source_non_char(commands[i].values[j]);
+                    }
+                }
+                new_variable(commands[i].store, VARIABLE_DOUBLE, NULL, -1,
+                             assert_lhs_double);
             }
         }
         else if (!strcmp(commands[i].cmd, "add"))
@@ -947,6 +986,12 @@ int complex_test(cJSON *testcase_json)
         sdsfree(commands[j].store);
         sdsfree(commands[j].lhs);
         sdsfree(commands[j].rhs);
+        for (k = 0; k < commands[j].value_count; k++)
+        {
+            sdsfree(commands[j].values[k]);
+        }
+        if (commands[j].value_count)
+            free(commands[j].values);
     }
     free(commands);
 
@@ -1090,6 +1135,45 @@ double get_source_double(char *source)
     return variables[index].valuedouble;
 }
 
+double get_source_non_char(char *source)
+{
+    if (!strcmp(source, "{{output}}") || !strcmp(source, "output"))
+        return -1;
+
+    sds varname;
+    int i;
+    int index = -1;
+    char *endptr;
+
+    if (source[0] == '{' && source[1] == '{' &&
+        source[strlen(source) - 1] == '}' && source[strlen(source) - 2] == '}')
+    {
+        varname = sdsnewlen(source + 2, strlen(source) - 4);
+    }
+    else
+    {
+        varname = sdsnewlen(source, strlen(source));
+    }
+
+    for (i = 0; i < variable_count; i++)
+    {
+        if (!strcmp(variables[i].name, varname))
+        {
+            index = i;
+            break;
+        }
+    }
+
+    sdsfree(varname);
+    if (index == -1 || variables[index].type == VARIABLE_STRING)
+        return strtod(source, &endptr);
+
+    if (variables[index].type == VARIABLE_INT)
+        return (double)variables[index].valueint;
+    else
+        return variables[index].valuedouble;
+}
+
 int define_variable_type(char *varname)
 {
     sds variablename;
@@ -1162,7 +1246,12 @@ sds to_str(variable var)
     }
     else if (var.type == VARIABLE_DOUBLE)
     {
-        stringified_str = sdscatprintf(stringified_str, "%f", var.valuedouble);
+        if (fabs(var.valuedouble - floor(var.valuedouble)) < EPSILON)
+            stringified_str =
+                sdscatprintf(stringified_str, "%d", (int)var.valuedouble);
+        else
+            stringified_str =
+                sdscatprintf(stringified_str, "%f", var.valuedouble);
     }
 
     destroy_empty_variable(var);

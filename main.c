@@ -66,8 +66,9 @@ int main(int argc, char **argv)
             fclose(fptr);
             return 1;
         }
-        json_file = malloc(size);
+        json_file = malloc(size + 1);
         fread(json_file, 1, size, fptr);
+        json_file[size] = 0;
         runtests(json_file);
         fclose(fptr);
         free(json_file);
