@@ -149,6 +149,8 @@ int complex_test(cJSON *testcase_json)
         if (cJSON_IsString(lhs_json) && (lhs_json->valuestring != NULL))
         {
             commands[i].lhs = sdsnew(lhs_json->valuestring);
+            commands[i].lhs_int = 0;
+            commands[i].lhs_double = 0;
             commands[i].lhs_type = VARIABLE_STRING;
         }
         else if (cJSON_IsNumber(lhs_json))
@@ -156,11 +158,13 @@ int complex_test(cJSON *testcase_json)
             if (lhs_json->valueint == lhs_json->valuedouble)
             {
                 commands[i].lhs_int = lhs_json->valueint;
+                commands[i].lhs_double = 0;
                 commands[i].lhs_type = VARIABLE_INT;
             }
             else
             {
                 commands[i].lhs_double = lhs_json->valuedouble;
+                commands[i].lhs_int = 0;
                 commands[i].lhs_double = VARIABLE_DOUBLE;
             }
             commands[i].lhs = sdsempty();
@@ -168,6 +172,8 @@ int complex_test(cJSON *testcase_json)
         else
         {
             commands[i].lhs = sdsempty();
+            commands[i].lhs_int = 0;
+            commands[i].lhs_double = 0;
             commands[i].lhs_type = VARIABLE_STRING;
         }
 
@@ -175,6 +181,8 @@ int complex_test(cJSON *testcase_json)
         if (cJSON_IsString(rhs_json) && (rhs_json->valuestring != NULL))
         {
             commands[i].rhs = sdsnew(rhs_json->valuestring);
+            commands[i].rhs_int = 0;
+            commands[i].rhs_double = 0;
             commands[i].rhs_type = VARIABLE_STRING;
         }
         else if (cJSON_IsNumber(rhs_json))
@@ -182,11 +190,13 @@ int complex_test(cJSON *testcase_json)
             if (rhs_json->valueint == rhs_json->valuedouble)
             {
                 commands[i].rhs_int = rhs_json->valueint;
+                commands[i].rhs_double = 0;
                 commands[i].rhs_type = VARIABLE_INT;
             }
             else
             {
                 commands[i].rhs_double = rhs_json->valuedouble;
+                commands[i].rhs_int = 0;
                 commands[i].rhs_type = VARIABLE_DOUBLE;
             }
             commands[i].rhs = sdsempty();
@@ -194,6 +204,8 @@ int complex_test(cJSON *testcase_json)
         else
         {
             commands[i].rhs = sdsempty();
+            commands[i].rhs_int = 0;
+            commands[i].rhs_double = 0;
             commands[i].rhs_type = VARIABLE_STRING;
         }
 
@@ -204,7 +216,7 @@ int complex_test(cJSON *testcase_json)
         }
         else
         {
-            commands[i].index = -1;
+            commands[i].index = 0;
         }
 
         k = 0;
@@ -1279,6 +1291,24 @@ int complex_test(cJSON *testcase_json)
                              -1);
                 sdsfree(assert_lhs);
             }
+        }
+        else if (!strcmp(commands[i].cmd, "get_line"))
+        {
+            k = 0;
+            for (int j = 0; j < commands[i].lhs_int; j++)
+            {
+                while (source_string[k++] != '\n')
+                    ;
+            }
+            var1_index = k;
+            var2_index = k + 1;
+            while (source_string[var2_index] != '\n')
+                var2_index++;
+            assert_lhs = sdsnewlen(source_string + var1_index,
+                                   var2_index - var1_index - 1);
+            new_variable(commands[i].store, VARIABLE_STRING, assert_lhs, -1,
+                         -1);
+            sdsfree(assert_lhs);
         }
     }
     reason = sdscpylen(reason, "Assertion failed.", 17);

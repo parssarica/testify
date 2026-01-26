@@ -16,6 +16,7 @@ if sys.argv[1] == "help":
     print("\tgreet\t\tSays hello")
     print("\tgreetlong\tSays a long hello")
     print("\ttab\t\tPrints a tab character")
+    print("\ttext\t\tPrints a text")
     print("\tgenerate_file\tCreates a file")
     print("\tremove_file\tRemoves a file")
 elif sys.argv[1] == "wait":
@@ -47,3 +48,5 @@ elif sys.argv[1] == "generate_file":
 elif sys.argv[1] == "remove_file":
     if os.path.exists("/tmp/program.txt"):
         os.remove("/tmp/program.txt")
+elif sys.argv[1] == "text":
+    print("Line 1\nLine 2\nLine 3\nLine 4\nprogram.py the program\n")
