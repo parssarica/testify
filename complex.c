@@ -1310,6 +1310,16 @@ int complex_test(cJSON *testcase_json)
                          -1);
             sdsfree(assert_lhs);
         }
+        else if (!strcmp(commands[i].cmd, "get_line_count"))
+        {
+            k = 0;
+            for (size_t j = 0; j < strlen(source_string); j++)
+            {
+                if (source_string[j] == '\n')
+                    k++;
+            }
+            new_variable(commands[i].store, VARIABLE_INT, NULL, k, -1);
+        }
     }
     reason = sdscpylen(reason, "Assertion failed.", 17);
     print_output(testcase_obj, result, &reason, &output);
