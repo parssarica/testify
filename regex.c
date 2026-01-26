@@ -47,7 +47,8 @@ sds regex_extract(char *regexcode, char *s, int slength, int groupnumber)
     int errornumber;
     int rc;
     PCRE2_SIZE erroroffset;
-    sds result = NULL;
+    sds result_sds = NULL;
+    char *result = NULL;
     PCRE2_UCHAR *buffer = NULL;
     PCRE2_SIZE buffer_len = 0;
 
@@ -65,12 +66,14 @@ sds regex_extract(char *regexcode, char *s, int slength, int groupnumber)
         if (pcre2_substring_get_bynumber(match_data, groupnumber, &buffer,
                                          &buffer_len) == 0)
         {
-            result = sdsnew((char *)buffer);
+            result = (char *)buffer;
+            result_sds = sdsnew(result);
+            pcre2_substring_free((PCRE2_UCHAR *)result);
         }
     }
 
     pcre2_match_data_free(match_data);
     pcre2_code_free(re);
 
-    return result;
+    return result_sds;
 }

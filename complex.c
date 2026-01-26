@@ -793,6 +793,8 @@ int complex_test(cJSON *testcase_json)
             variables[var1_index].valuedouble =
                 variables[var2_index].valuedouble;
             variables[var1_index].empty = variables[var2_index].empty;
+            sdsfree(varname);
+            sdsfree(varname2);
         }
         else if (!strcmp(commands[i].cmd, "assert_equals") ||
                  !strcmp(commands[i].cmd, "assert_not_equals") ||
@@ -1318,6 +1320,14 @@ int complex_test(cJSON *testcase_json)
                 if (source_string[j] == '\n')
                     k++;
             }
+            new_variable(commands[i].store, VARIABLE_INT, NULL, k, -1);
+        }
+        else if (!strcmp(commands[i].cmd, "length"))
+        {
+            if (define_variable_type(commands[i].source) != VARIABLE_STRING)
+                continue;
+
+            k = strlen(source_string);
             new_variable(commands[i].store, VARIABLE_INT, NULL, k, -1);
         }
     }
