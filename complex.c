@@ -58,6 +58,8 @@ int complex_test(cJSON *testcase_json)
     int64_t duration = 0;
     FILE *fptr;
     char *endptr;
+    int found;
+    sds varname;
 
     variable_count = 0;
     extract_char_character[1] = 0;
@@ -602,19 +604,76 @@ int complex_test(cJSON *testcase_json)
         {
             if (commands[i].lhs_type == VARIABLE_STRING)
             {
-                assert_lhs = sdsempty();
-                if (commands[i].rhs_type == VARIABLE_STRING)
-                    assert_lhs = sdscpylen(assert_lhs, commands[i].rhs,
-                                           strlen(commands[i].rhs));
-                else if (commands[i].rhs_type == VARIABLE_INT)
-                    assert_lhs =
-                        sdscatprintf(assert_lhs, "%d", commands[i].rhs_int);
-                else if (commands[i].rhs_type == VARIABLE_DOUBLE)
-                    assert_lhs =
-                        sdscatprintf(assert_lhs, "%f", commands[i].rhs_double);
-                new_variable(commands[i].lhs, VARIABLE_STRING, assert_lhs, -1,
-                             -1);
-                sdsfree(assert_lhs);
+                found = 0;
+                varname = sdsempty();
+                if (commands[i].lhs[0] == '{' && commands[i].lhs[1] == '{' &&
+                    commands[i].lhs[strlen(commands[i].lhs) - 1] == '}' &&
+                    commands[i].lhs[strlen(commands[i].lhs) - 2] == '}')
+                    varname = sdscpylen(varname, commands[i].lhs + 2,
+                                        sdslen(commands[i].lhs) - 4);
+                else
+                    varname = sdscpylen(varname, commands[i].lhs,
+                                        sdslen(commands[i].lhs));
+
+                for (k = 0; k < variable_count; k++)
+                {
+                    if (!strcmp(variables[k].name, varname))
+                    {
+                        found = 1;
+                        if (variables[k].type == VARIABLE_STRING)
+                        {
+                            variables[k].valuestring =
+                                sdscpylen(variables[k].valuestring, "", 0);
+                            if (commands[i].rhs_type == VARIABLE_STRING)
+                                variables[k].valuestring =
+                                    sdscatprintf(variables[k].valuestring, "%s",
+                                                 commands[i].rhs);
+                            else if (commands[i].rhs_type == VARIABLE_INT)
+                                variables[k].valuestring =
+                                    sdscatprintf(variables[k].valuestring, "%d",
+                                                 commands[i].rhs_int);
+                            else if (commands[i].rhs_type == VARIABLE_DOUBLE)
+                                variables[k].valuestring =
+                                    sdscatprintf(variables[k].valuestring, "%f",
+                                                 commands[i].rhs_double);
+                        }
+                        else if (variables[k].type == VARIABLE_INT)
+                        {
+                            if (commands[i].rhs_type == VARIABLE_STRING)
+                                variables[k].valueint = atoi(commands[i].rhs);
+                            else if (commands[i].rhs_type == VARIABLE_INT)
+                                variables[k].valueint = commands[i].rhs_int;
+                            else if (commands[i].rhs_type == VARIABLE_DOUBLE)
+                                variables[k].valueint =
+                                    (int)commands[i].rhs_double;
+                        }
+                        else if (variables[k].type == VARIABLE_DOUBLE)
+                        {
+                            if (commands[i].rhs_type == VARIABLE_STRING)
+                                variables[k].valuedouble =
+                                    strtod(commands[i].rhs, &endptr);
+                            else if (commands[i].rhs_type == VARIABLE_INT)
+                                variables[k].valuedouble =
+                                    commands[i].rhs_double;
+                            else if (commands[i].rhs_type == VARIABLE_DOUBLE)
+                                variables[k].valuedouble =
+                                    (double)commands[i].rhs_double;
+                        }
+                    }
+                }
+                if (!found)
+                {
+                    if (commands[i].rhs_type == VARIABLE_STRING)
+                        new_variable(commands[i].lhs, VARIABLE_STRING,
+                                     commands[i].rhs, -1, -1);
+                    else if (commands[i].rhs_type == VARIABLE_INT)
+                        new_variable(commands[i].lhs, VARIABLE_INT, NULL,
+                                     commands[i].rhs_int, -1);
+                    else if (commands[i].rhs_type == VARIABLE_DOUBLE)
+                        new_variable(commands[i].lhs, VARIABLE_INT, NULL, -1,
+                                     commands[i].rhs_double);
+                }
+                sdsfree(varname);
             }
         }
         else if (!strcmp(commands[i].cmd, "assert_equals") ||
