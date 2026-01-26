@@ -1040,6 +1040,22 @@ int complex_test(cJSON *testcase_json)
                 printf("Value: %s\n", source_string);
             }
         }
+        else if (!strcmp(commands[i].cmd, "dump"))
+        {
+            for (k = 0; k < variable_count; k++)
+            {
+                printf("Variable %d:\n", k);
+                printf("\tVariable name: %s\n", variables[k].name);
+                if (variables[k].type == VARIABLE_STRING)
+                    printf("\tVariable value: %s\n\n",
+                           variables[k].valuestring);
+                else if (variables[k].type == VARIABLE_INT)
+                    printf("\tVariable value: %d\n\n", variables[k].valueint);
+                else if (variables[k].type == VARIABLE_DOUBLE)
+                    printf("\tVariable value: %f\n\n",
+                           variables[k].valuedouble);
+            }
+        }
     }
     reason = sdscpylen(reason, "Assertion failed.", 17);
     print_output(testcase_obj, result, &reason, &output);
