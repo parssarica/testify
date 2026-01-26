@@ -1330,6 +1330,21 @@ int complex_test(cJSON *testcase_json)
             k = strlen(source_string);
             new_variable(commands[i].store, VARIABLE_INT, NULL, k, -1);
         }
+        else if (!strcmp(commands[i].cmd, "count_substring"))
+        {
+            if (define_variable_type(commands[i].source) != VARIABLE_STRING ||
+                commands[i].lhs_type != VARIABLE_STRING)
+                continue;
+
+            k = 0;
+            endptr = source_string;
+            while ((endptr = strstr(endptr, commands[i].lhs)) != NULL)
+            {
+                k++;
+                endptr++;
+            }
+            new_variable(commands[i].store, VARIABLE_INT, NULL, k, -1);
+        }
     }
     reason = sdscpylen(reason, "Assertion failed.", 17);
     print_output(testcase_obj, result, &reason, &output);
