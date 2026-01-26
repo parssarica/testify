@@ -1221,6 +1221,51 @@ int complex_test(cJSON *testcase_json)
                            variables[k].valuedouble);
             }
         }
+        else if (!strcmp(commands[i].cmd, "extract_substring"))
+        {
+            if (commands[i].lhs_type == VARIABLE_STRING)
+                var1_index = (int)to_double(
+                    get_var_object(commands[i].lhs, -1, -1, VARIABLE_STRING));
+            else if (commands[i].lhs_type == VARIABLE_INT)
+                var1_index = (int)to_double(get_var_object(
+                    NULL, commands[i].lhs_int, -1, VARIABLE_INT));
+            else if (commands[i].lhs_type == VARIABLE_DOUBLE)
+                var1_index = (int)to_double(get_var_object(
+                    NULL, -1, commands[i].lhs_double, VARIABLE_DOUBLE));
+            else
+                var1_index = 0;
+
+            if (commands[i].rhs_type == VARIABLE_STRING)
+                var2_index = (int)to_double(
+                    get_var_object(commands[i].rhs, -1, -1, VARIABLE_STRING));
+            else if (commands[i].rhs_type == VARIABLE_INT)
+                var2_index = (int)to_double(get_var_object(
+                    NULL, commands[i].rhs_int, -1, VARIABLE_INT));
+            else if (commands[i].rhs_type == VARIABLE_DOUBLE)
+                var2_index = (int)to_double(get_var_object(
+                    NULL, -1, commands[i].rhs_double, VARIABLE_DOUBLE));
+            else
+                var2_index = 0;
+
+            if (var1_index < 0)
+                var1_index = strlen(source_string) - (var1_index * -1);
+
+            if (var2_index < 0)
+                var2_index = strlen(source_string) - (var2_index * -1);
+
+            if (var1_index > var2_index)
+            {
+                k = var2_index;
+                var2_index = var1_index;
+                var1_index = k;
+            }
+
+            assert_lhs = sdsnewlen(source_string + var1_index,
+                                   var2_index - var1_index + 1);
+            new_variable(commands[i].store, VARIABLE_STRING, assert_lhs, -1,
+                         -1);
+            sdsfree(assert_lhs);
+        }
     }
     reason = sdscpylen(reason, "Assertion failed.", 17);
     print_output(testcase_obj, result, &reason, &output);
