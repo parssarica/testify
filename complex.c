@@ -60,6 +60,7 @@ int complex_test(cJSON *testcase_json)
     char *endptr;
     int found;
     sds varname;
+    variable *vars_tmp;
 
     variable_count = 0;
     extract_char_character[1] = 0;
@@ -675,6 +676,58 @@ int complex_test(cJSON *testcase_json)
                 }
                 sdsfree(varname);
             }
+        }
+        else if (!strcmp(commands[i].cmd, "clear"))
+        {
+            found = 0;
+            varname = sdsempty();
+            if (commands[i].source[0] == '{' && commands[i].source[1] == '{' &&
+                commands[i].source[strlen(commands[i].source) - 1] == '}' &&
+                commands[i].source[strlen(commands[i].source) - 2] == '}')
+                varname = sdscpylen(varname, commands[i].source + 2,
+                                    sdslen(commands[i].source) - 4);
+            else
+                varname = sdscpylen(varname, commands[i].source,
+                                    sdslen(commands[i].source));
+
+            for (k = 0; k < variable_count; k++)
+            {
+                if (!strcmp(varname, variables[k].name))
+                {
+                    found = 1;
+                    break;
+                }
+            }
+            if (found)
+            {
+                vars_tmp = malloc(sizeof(variable) * (variable_count - 1));
+                found = 0;
+                for (int j = 0; j < variable_count; j++)
+                {
+                    if (j == k)
+                    {
+                        found = 1;
+                        continue;
+                    }
+                    vars_tmp[j - found].name = sdsnew(variables[j].name);
+                    vars_tmp[j - found].valuestring =
+                        sdsnew(variables[j].valuestring);
+                    vars_tmp[j - found].type = variables[j].type;
+                    vars_tmp[j - found].valueint = variables[j].valueint;
+                    vars_tmp[j - found].valuedouble = variables[j].valuedouble;
+                    vars_tmp[j - found].empty = variables[j].empty;
+                }
+                for (int j = 0; j < variable_count; j++)
+                {
+                    sdsfree(variables[j].name);
+                    sdsfree(variables[j].valuestring);
+                }
+                free(variables);
+                variables = vars_tmp;
+                vars_tmp = NULL;
+                variable_count--;
+            }
+            sdsfree(varname);
         }
         else if (!strcmp(commands[i].cmd, "assert_equals") ||
                  !strcmp(commands[i].cmd, "assert_not_equals") ||
