@@ -165,6 +165,7 @@ int complex_test(cJSON *testcase_json)
         else
         {
             commands[i].lhs = sdsempty();
+            commands[i].lhs_type = VARIABLE_STRING;
         }
 
         rhs_json = cJSON_GetObjectItemCaseSensitive(complex_command, "rhs");
@@ -190,6 +191,7 @@ int complex_test(cJSON *testcase_json)
         else
         {
             commands[i].rhs = sdsempty();
+            commands[i].rhs_type = VARIABLE_STRING;
         }
 
         index_json = cJSON_GetObjectItemCaseSensitive(complex_command, "index");
