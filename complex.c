@@ -60,7 +60,10 @@ int complex_test(cJSON *testcase_json)
     char *endptr;
     int found;
     sds varname;
+    sds varname2;
     variable *vars_tmp;
+    int var1_index;
+    int var2_index;
 
     variable_count = 0;
     extract_char_character[1] = 0;
@@ -730,6 +733,54 @@ int complex_test(cJSON *testcase_json)
                 variable_count--;
             }
             sdsfree(varname);
+        }
+        else if (!strcmp(commands[i].cmd, "copy"))
+        {
+            if (!(commands[i].lhs_type == VARIABLE_STRING &&
+                  commands[i].rhs_type == VARIABLE_STRING))
+                continue;
+
+            var1_index = -1;
+            var2_index = -1;
+            varname = sdsempty();
+            varname2 = sdsempty();
+            if (commands[i].lhs[0] == '{' && commands[i].lhs[1] == '{' &&
+                commands[i].lhs[strlen(commands[i].lhs) - 1] == '}' &&
+                commands[i].lhs[strlen(commands[i].lhs) - 2] == '}')
+                varname = sdscpylen(varname, commands[i].lhs + 2,
+                                    sdslen(commands[i].lhs) - 4);
+            else
+                varname = sdscpylen(varname, commands[i].lhs,
+                                    sdslen(commands[i].lhs));
+
+            if (commands[i].rhs[0] == '{' && commands[i].rhs[1] == '{' &&
+                commands[i].rhs[strlen(commands[i].rhs) - 1] == '}' &&
+                commands[i].rhs[strlen(commands[i].rhs) - 2] == '}')
+                varname2 = sdscpylen(varname2, commands[i].rhs + 2,
+                                     sdslen(commands[i].rhs) - 4);
+            else
+                varname2 = sdscpylen(varname2, commands[i].rhs,
+                                     sdslen(commands[i].rhs));
+
+            for (k = 0; k < variable_count; k++)
+            {
+                if (!strcmp(variables[k].name, varname))
+                    var1_index = k;
+                if (!strcmp(variables[k].name, varname2))
+                    var2_index = k;
+            }
+            if (var1_index == -1 || var2_index == -1)
+                continue;
+            sdsfree(variables[var1_index].name);
+            sdsfree(variables[var1_index].valuestring);
+            variables[var1_index].name = sdsnew(variables[var2_index].name);
+            variables[var1_index].valuestring =
+                sdsnew(variables[var2_index].valuestring);
+            variables[var1_index].type = variables[var2_index].type;
+            variables[var1_index].valueint = variables[var2_index].valueint;
+            variables[var1_index].valuedouble =
+                variables[var2_index].valuedouble;
+            variables[var1_index].empty = variables[var2_index].empty;
         }
         else if (!strcmp(commands[i].cmd, "assert_equals") ||
                  !strcmp(commands[i].cmd, "assert_not_equals") ||
