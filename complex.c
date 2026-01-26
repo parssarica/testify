@@ -1266,6 +1266,20 @@ int complex_test(cJSON *testcase_json)
                          -1);
             sdsfree(assert_lhs);
         }
+        else if (!strcmp(commands[i].cmd, "extract_regex"))
+        {
+            if (define_variable_type(commands[i].source) == VARIABLE_STRING &&
+                commands[i].lhs_type == VARIABLE_STRING &&
+                commands[i].rhs_type == VARIABLE_INT)
+            {
+                assert_lhs =
+                    regex_extract(commands[i].lhs, source_string,
+                                  sdslen(source_string), commands[i].rhs_int);
+                new_variable(commands[i].store, VARIABLE_STRING, assert_lhs, -1,
+                             -1);
+                sdsfree(assert_lhs);
+            }
+        }
     }
     reason = sdscpylen(reason, "Assertion failed.", 17);
     print_output(testcase_obj, result, &reason, &output);

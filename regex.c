@@ -39,3 +39,38 @@ int regex_pass(char *regexcode, char *s, int slength)
 
     return result;
 }
+
+sds regex_extract(char *regexcode, char *s, int slength, int groupnumber)
+{
+    pcre2_code *re;
+    pcre2_match_data *match_data;
+    int errornumber;
+    int rc;
+    PCRE2_SIZE erroroffset;
+    sds result = NULL;
+    PCRE2_UCHAR *buffer = NULL;
+    PCRE2_SIZE buffer_len = 0;
+
+    re = pcre2_compile((PCRE2_SPTR)regexcode, PCRE2_ZERO_TERMINATED, 0,
+                       &errornumber, &erroroffset, NULL);
+
+    if (re == NULL)
+        return NULL;
+
+    match_data = pcre2_match_data_create_from_pattern(re, NULL);
+    rc = pcre2_match(re, (PCRE2_SPTR)s, (PCRE2_SIZE)slength, 0, 0, match_data,
+                     NULL);
+    if (rc > groupnumber)
+    {
+        if (pcre2_substring_get_bynumber(match_data, groupnumber, &buffer,
+                                         &buffer_len) == 0)
+        {
+            result = sdsnew((char *)buffer);
+        }
+    }
+
+    pcre2_match_data_free(match_data);
+    pcre2_code_free(re);
+
+    return result;
+}

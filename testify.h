@@ -137,4 +137,5 @@ variable get_var_object(char *, int, double, int);
 void destroy_empty_variable(variable);
 int file_exists(char *);
 double get_source_non_char(char *);
+sds regex_extract(char *, char *, int, int);
 #endif
