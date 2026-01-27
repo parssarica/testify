@@ -39,6 +39,7 @@ int complex_test(cJSON *testcase_json)
     cJSON *rhs_json;
     cJSON *index_json;
     cJSON *value_json;
+    cJSON *background_json;
     char extract_char_character[2];
     sds cmd = sdsempty();
     sds source_string = sdsempty();
@@ -64,6 +65,10 @@ int complex_test(cJSON *testcase_json)
     variable *vars_tmp;
     int var1_index;
     int var2_index;
+    process pr;
+    ssize_t n;
+    char output_buf[4096];
+    int ran_background = 0;
 
     variable_count = 0;
     extract_char_character[1] = 0;
@@ -237,6 +242,23 @@ int complex_test(cJSON *testcase_json)
                 commands[i].values[k++] = sdsnew(value_json->valuestring);
             }
         }
+
+        background_json =
+            cJSON_GetObjectItemCaseSensitive(complex_command, "background");
+        commands[i].background = 0;
+        if (cJSON_IsBool(background_json))
+        {
+            if (cJSON_IsTrue(background_json))
+            {
+                commands[i].background = 1;
+                ran_background = 1;
+            }
+            else
+            {
+                commands[i].background = 0;
+            }
+        }
+
         i++;
     }
 
@@ -268,14 +290,27 @@ int complex_test(cJSON *testcase_json)
                 perror("clock_gettime");
                 start_date = 0;
             }
-            if (env_count == 0)
-                output =
-                    execute(program_args, testcase_obj.input, &fault, &exitcode,
-                            args.enviromental_values, args.env_count);
+            if (!commands[i].background)
+            {
+                if (env_count == 0)
+                    output = execute(program_args, testcase_obj.input, &fault,
+                                     &exitcode, args.enviromental_values,
+                                     args.env_count);
+                else
+                    output = execute(
+                        program_args, testcase_obj.input, &fault, &exitcode,
+                        testcase_obj.enviromental_values, env_count);
+            }
             else
-                output =
-                    execute(program_args, testcase_obj.input, &fault, &exitcode,
-                            testcase_obj.enviromental_values, env_count);
+            {
+                if (env_count == 0)
+                    pr = execute_background(
+                        program_args, args.enviromental_values, args.env_count);
+                else
+                    pr = execute_background(program_args,
+                                            testcase_obj.enviromental_values,
+                                            env_count);
+            }
             if (clock_gettime(CLOCK_REALTIME, &ts2) == 0)
             {
                 end_date =
@@ -288,7 +323,25 @@ int complex_test(cJSON *testcase_json)
             }
             duration = end_date - start_date;
             testcase_obj.duration = duration;
-            new_variable("output", VARIABLE_STRING, output, -1, -1);
+            if (!commands[i].background)
+                new_variable("output", VARIABLE_STRING, output, -1, -1);
+        }
+        else if (!strcmp(commands[i].cmd, "send_input"))
+        {
+            interact_write(&pr, &source_string);
+        }
+        else if (!strcmp(commands[i].cmd, "wait_for_output"))
+        {
+            if (source_int)
+                n = interact_read(&pr, output_buf, 4096, source_int);
+            else
+                n = interact_read(&pr, output_buf, 4096, 200);
+
+            if (n <= 0)
+                close_child(&pr);
+
+            new_variable(commands[i].store, VARIABLE_STRING, output_buf, -1,
+                         -1);
         }
         else if (!strcmp(commands[i].cmd, "extract_char"))
         {
@@ -1392,7 +1445,8 @@ int complex_test(cJSON *testcase_json)
         free(program_args[j]);
     }
     free(program_args);
-    sdsfree(output);
+    if (!ran_background)
+        sdsfree(output);
     for (int j = 0; j < env_count; j++)
     {
         sdsfree(testcase_obj.enviromental_values[j]);

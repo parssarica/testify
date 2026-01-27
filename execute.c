@@ -5,6 +5,8 @@ Pars SARICA <pars@parssarica.com>
 #define _XOPEN_SOURCE 600
 #include "sds.h"
 #include "testify.h"
+#include <fcntl.h>
+#include <poll.h>
 #include <pty.h>
 #include <spawn.h>
 #include <stdio.h>
@@ -104,4 +106,111 @@ sds execute(char **process_args, char *input, int *fault, int *exitcode,
     }
     free(envp);
     return output;
+}
+
+process execute_background(char **process_args, sds *env_vars, int env_count)
+{
+    process proc = {-1, -1, -1, -1};
+    posix_spawn_file_actions_t actions;
+    int memorysize;
+    char **envp = make_env(env_vars, env_count, &memorysize);
+    int master = posix_openpt(O_RDWR | O_NOCTTY);
+    char *slave_name;
+    int slave;
+    if (master < 0)
+        return proc;
+
+    grantpt(master);
+    unlockpt(master);
+
+    slave_name = ptsname(master);
+    if (!slave_name)
+        return proc;
+
+    slave = open(slave_name, O_RDWR);
+    if (slave < 0)
+        return proc;
+
+    posix_spawn_file_actions_init(&actions);
+    posix_spawn_file_actions_adddup2(&actions, slave, STDIN_FILENO);
+    posix_spawn_file_actions_adddup2(&actions, slave, STDOUT_FILENO);
+    posix_spawn_file_actions_adddup2(&actions, slave, STDERR_FILENO);
+
+    posix_spawn_file_actions_addclose(&actions, master);
+    posix_spawn_file_actions_addclose(&actions, slave);
+
+    if (posix_spawn(&proc.pid, process_args[0], &actions, NULL, process_args,
+                    envp) != 0)
+    {
+        perror("posix_spawn");
+        return proc;
+    }
+
+    posix_spawn_file_actions_destroy(&actions);
+    close(slave);
+
+    proc.pty_fd = master;
+
+    for (int i = 0; i < memorysize; i++)
+    {
+        free(envp[i]);
+    }
+    free(envp);
+
+    return proc;
+}
+
+void interact_write(process *pr, sds *input)
+{
+    if (sdslen(*input) > 0)
+    {
+        write(pr->pty_fd, *input, sdslen(*input));
+    }
+}
+
+ssize_t interact_read(process *pr, char *output, size_t output_cap, int idle_ms)
+{
+    size_t total = 0;
+    ssize_t n;
+    struct pollfd pfd;
+    int r;
+
+    while (total < output_cap)
+    {
+        pfd = (struct pollfd){.fd = pr->pty_fd, .events = POLLIN | POLLHUP};
+        r = poll(&pfd, 1, idle_ms);
+        if (r == 0)
+            break;
+
+        if (r < 0)
+            return -1;
+
+        if (pfd.revents & POLLHUP)
+            break;
+        n = read(pr->pty_fd, output + total, output_cap - total);
+        if (n <= 0)
+        {
+            break;
+        }
+
+        total += n;
+    }
+
+    return total;
+}
+
+void close_child(process *pr)
+{
+    int status;
+
+    close(pr->pty_fd);
+    waitpid(pr->pid, &status, 0);
+    if (WIFSIGNALED(status))
+    {
+        pr->fault = WTERMSIG(status);
+    }
+    else if (WIFEXITED(status))
+    {
+        pr->exitcode = WEXITSTATUS(status);
+    }
 }

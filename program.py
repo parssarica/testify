@@ -50,3 +50,6 @@ elif sys.argv[1] == "remove_file":
         os.remove("/tmp/program.txt")
 elif sys.argv[1] == "text":
     print("Line 1\nLine 2\nLine 3\nLine 4\nprogram.py the program\n")
+elif sys.argv[1] == "bg":
+    print("Answer of the input:", input("> "))
+    print("Answer of the input 2:", input("> "))

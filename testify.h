@@ -91,6 +91,7 @@ typedef struct
     int lhs_type;
     int rhs_type;
     size_t index;
+    int background;
 } command;
 
 typedef struct
@@ -102,6 +103,14 @@ typedef struct
     double valuedouble;
     int empty;
 } variable;
+
+typedef struct
+{
+    pid_t pid;
+    int pty_fd;
+    int fault;
+    int exitcode;
+} process;
 
 void logo();
 void help();
@@ -139,4 +148,8 @@ int file_exists(char *);
 double get_source_non_char(char *);
 sds regex_extract(char *, char *, int, int);
 int regex_count(char *, char *, size_t);
+process execute_background(char **, sds *, int);
+void interact_write(process *, sds *);
+ssize_t interact_read(process *, char *, size_t, int);
+void close_child(process *);
 #endif
