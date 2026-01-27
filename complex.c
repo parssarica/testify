@@ -1345,6 +1345,27 @@ int complex_test(cJSON *testcase_json)
             }
             new_variable(commands[i].store, VARIABLE_INT, NULL, k, -1);
         }
+        else if (!strcmp(commands[i].cmd, "split"))
+        {
+            if (define_variable_type(commands[i].source) != VARIABLE_STRING ||
+                commands[i].lhs_type != VARIABLE_STRING ||
+                commands[i].rhs_type != VARIABLE_INT ||
+                !strcmp(commands[i].store, ""))
+                continue;
+
+            k = 0;
+            endptr = strtok(source_string, commands[i].lhs);
+            while (endptr != NULL)
+            {
+                if (k++ == commands[i].rhs_int)
+                {
+                    new_variable(commands[i].store, VARIABLE_STRING, endptr, -1,
+                                 -1);
+                    break;
+                }
+                endptr = strtok(NULL, commands[i].lhs);
+            }
+        }
     }
     reason = sdscpylen(reason, "Assertion failed.", 17);
     print_output(testcase_obj, result, &reason, &output);
