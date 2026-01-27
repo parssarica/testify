@@ -53,3 +53,4 @@ elif sys.argv[1] == "text":
 elif sys.argv[1] == "bg":
     print("Answer of the input:", input("> "))
     print("Answer of the input 2:", input("> "))
+    print("Answer of the input 3:", input("> "))

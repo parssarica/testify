@@ -70,6 +70,7 @@ int complex_test(cJSON *testcase_json)
     char output_buf[4096];
     int ran_background = 0;
 
+    memset(output_buf, 0, 4096);
     variable_count = 0;
     extract_char_character[1] = 0;
     testcase_obj = parse_testcase(testcase_json);
@@ -328,6 +329,11 @@ int complex_test(cJSON *testcase_json)
         }
         else if (!strcmp(commands[i].cmd, "send_input"))
         {
+            interact_write(&pr, &source_string);
+        }
+        else if (!strcmp(commands[i].cmd, "send_line"))
+        {
+            source_string = sdscatlen(source_string, "\n", 1);
             interact_write(&pr, &source_string);
         }
         else if (!strcmp(commands[i].cmd, "wait_for_output"))
@@ -835,7 +841,11 @@ int complex_test(cJSON *testcase_json)
                     var2_index = k;
             }
             if (var1_index == -1 || var2_index == -1)
+            {
+                sdsfree(varname);
+                sdsfree(varname2);
                 continue;
+            }
             sdsfree(variables[var1_index].name);
             sdsfree(variables[var1_index].valuestring);
             variables[var1_index].name = sdsnew(variables[var2_index].name);
@@ -1659,10 +1669,7 @@ int define_variable_type(char *varname)
 {
     sds variablename;
     int i;
-    size_t j;
     int type = -1;
-    int dot_seen = 0;
-    int letter_seen = 0;
     if (!strcmp(varname, ""))
         return -1;
     if (varname[0] == '{' && varname[1] == '{' &&
@@ -1691,24 +1698,7 @@ int define_variable_type(char *varname)
     sdsfree(variablename);
     if (type == -1)
     {
-        for (j = 0; j < strlen(varname); j++)
-        {
-            if (varname[j] == '.')
-            {
-                dot_seen = 1;
-                continue;
-            }
-            if (!(varname[j] >= 0x30 && varname[j] <= 0x39))
-            {
-                letter_seen = 1;
-            }
-        }
-        if (letter_seen)
-            return VARIABLE_STRING;
-        else if (dot_seen)
-            return VARIABLE_DOUBLE;
-        else
-            return VARIABLE_INT;
+        return VARIABLE_STRING;
     }
     return type;
 }
