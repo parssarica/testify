@@ -1366,6 +1366,18 @@ int complex_test(cJSON *testcase_json)
                 endptr = strtok(NULL, commands[i].lhs);
             }
         }
+        else if (!strcmp(commands[i].cmd, "count_matches"))
+        {
+            if (define_variable_type(commands[i].source) != VARIABLE_STRING ||
+                commands[i].lhs_type != VARIABLE_STRING ||
+                !strcmp(commands[i].store, ""))
+                continue;
+
+            new_variable(commands[i].store, VARIABLE_INT, NULL,
+                         regex_count(commands[i].lhs, source_string,
+                                     sdslen(source_string)),
+                         -1);
+        }
     }
     reason = sdscpylen(reason, "Assertion failed.", 17);
     print_output(testcase_obj, result, &reason, &output);

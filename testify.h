@@ -138,4 +138,5 @@ void destroy_empty_variable(variable);
 int file_exists(char *);
 double get_source_non_char(char *);
 sds regex_extract(char *, char *, int, int);
+int regex_count(char *, char *, size_t);
 #endif
