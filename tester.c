@@ -51,19 +51,19 @@ int test(cJSON *testcase_json)
     program_args_length = i;
     env_count = 0;
     cJSON_ArrayForEach(env_var, cJSON_GetObjectItemCaseSensitive(
-                                    testcase_json, "enviromentalVariables"))
+                                    testcase_json, "environmentalVariables"))
     {
         env_count++;
     }
 
-    testcase_obj.enviromental_values = malloc(sizeof(sds *) * env_count);
+    testcase_obj.environmental_values = malloc(sizeof(sds *) * env_count);
     i = 0;
     cJSON_ArrayForEach(env_var, cJSON_GetObjectItemCaseSensitive(
-                                    testcase_json, "enviromentalVariables"))
+                                    testcase_json, "environmentalVariables"))
     {
         if (cJSON_IsString(env_var) && (env_var->valuestring != NULL))
         {
-            testcase_obj.enviromental_values[i] = sdsnew(env_var->valuestring);
+            testcase_obj.environmental_values[i] = sdsnew(env_var->valuestring);
             i++;
         }
     }
@@ -78,10 +78,10 @@ int test(cJSON *testcase_json)
     }
     if (env_count == 0)
         output = execute(program_args, testcase_obj.input, &fault, &exitcode,
-                         args.enviromental_values, args.env_count);
+                         args.environmental_values, args.env_count);
     else
         output = execute(program_args, testcase_obj.input, &fault, &exitcode,
-                         testcase_obj.enviromental_values, env_count);
+                         testcase_obj.environmental_values, env_count);
     if (clock_gettime(CLOCK_REALTIME, &ts2) == 0)
     {
         end_date = ((int64_t)ts2.tv_sec * 1000) + (ts2.tv_nsec / 1000000);
@@ -116,9 +116,9 @@ int test(cJSON *testcase_json)
     sdsfree(output);
     for (int j = 0; j < env_count; j++)
     {
-        sdsfree(testcase_obj.enviromental_values[j]);
+        sdsfree(testcase_obj.environmental_values[j]);
     }
-    free(testcase_obj.enviromental_values);
+    free(testcase_obj.environmental_values);
     if (testcase_obj.expectedoutputgiven)
     {
         for (i = 0; i < testcase_obj.expectedoutput->count; i++)
@@ -372,19 +372,19 @@ int runtests(char *json)
     }
 
     cJSON_ArrayForEach(env_var, cJSON_GetObjectItemCaseSensitive(
-                                    testcases, "enviromentalVariables"))
+                                    testcases, "environmentalVariables"))
     {
         env_count++;
     }
 
-    args.enviromental_values = malloc(sizeof(sds *) * env_count);
+    args.environmental_values = malloc(sizeof(sds *) * env_count);
     i = 0;
     cJSON_ArrayForEach(env_var, cJSON_GetObjectItemCaseSensitive(
-                                    testcases, "enviromentalVariables"))
+                                    testcases, "environmentalVariables"))
     {
         if (cJSON_IsString(env_var) && (env_var->valuestring != NULL))
         {
-            args.enviromental_values[i++] = sdsnew(env_var->valuestring);
+            args.environmental_values[i++] = sdsnew(env_var->valuestring);
         }
     }
 
@@ -418,9 +418,9 @@ int runtests(char *json)
     execution_summary(passed, failed);
     for (int j = 0; j < env_count; j++)
     {
-        sdsfree(args.enviromental_values[j]);
+        sdsfree(args.environmental_values[j]);
     }
-    free(args.enviromental_values);
+    free(args.environmental_values);
     cJSON_Delete(testcases);
     return 0;
 }

@@ -27,7 +27,7 @@ typedef struct
     int env_count;
     sds filename;
     sds binary_file;
-    sds *enviromental_values;
+    sds *environmental_values;
 } arguments;
 
 extern arguments args;
@@ -72,7 +72,7 @@ typedef struct
     int notmatchregexgiven;
     int exitcode;
     int64_t duration;
-    sds *enviromental_values;
+    sds *environmental_values;
 } testcase;
 
 typedef struct

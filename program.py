@@ -17,11 +17,14 @@ if sys.argv[1] == "help":
     print("\tgreet\t\tSays hello")
     print("\tgreetlong\tSays a long hello")
     print("\ttab\t\tPrints a tab character")
+    print("\tenv\t\tChecks the enviromental values")
+    print("\tenvlist\t\tLists the enviromental values")
+    print("\tenvlist2\tChecks the enviromental variable is available")
     print("\ttext\t\tPrints a text")
     print("\tgenerate_file\tCreates a file")
     print("\tremove_file\tRemoves a file")
     print("\tbg\t\tGets input from user multiple times")
-    print("\tsegfault\tCrashs with segmentation fault.")
+    print("\tsegfault\tCrashes with segmentation fault.")
 elif sys.argv[1] == "wait":
     time.sleep(1)
 elif sys.argv[1] == "waitquarter":

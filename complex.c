@@ -21,8 +21,8 @@ int complex_test(cJSON *testcase_json)
     struct timespec ts2;
     testcase testcase_obj;
     command *commands;
-    int fault;
-    int exitcode;
+    int fault = -1;
+    int exitcode = -1;
     int64_t start_date;
     int64_t end_date;
     int program_args_length;
@@ -46,6 +46,7 @@ int complex_test(cJSON *testcase_json)
     sds assert_lhs;
     sds assert_rhs;
     sds file_content;
+    sds emptyvar = sdsempty();
     double assert_lhs_double = 0;
     double assert_rhs_double = 0;
     int source_int = 0;
@@ -93,24 +94,25 @@ int complex_test(cJSON *testcase_json)
     program_args_length = i;
     env_count = 0;
     cJSON_ArrayForEach(env_var, cJSON_GetObjectItemCaseSensitive(
-                                    testcase_json, "enviromentalVariables"))
+                                    testcase_json, "environmentalVariables"))
     {
         env_count++;
     }
 
-    testcase_obj.enviromental_values = malloc(sizeof(sds *) * env_count);
+    testcase_obj.environmental_values = malloc(sizeof(sds *) * env_count);
     i = 0;
     cJSON_ArrayForEach(env_var, cJSON_GetObjectItemCaseSensitive(
-                                    testcase_json, "enviromentalVariables"))
+                                    testcase_json, "environmentalVariables"))
     {
         if (cJSON_IsString(env_var) && (env_var->valuestring != NULL))
         {
-            testcase_obj.enviromental_values[i] = sdsnew(env_var->valuestring);
+            testcase_obj.environmental_values[i] = sdsnew(env_var->valuestring);
             i++;
         }
     }
 
     commandcount = 0;
+    i = 0;
     cJSON_ArrayForEach(complex_command, cJSON_GetObjectItemCaseSensitive(
                                             testcase_json, "pipeline"))
     {
@@ -296,21 +298,22 @@ int complex_test(cJSON *testcase_json)
             {
                 if (env_count == 0)
                     output = execute(program_args, testcase_obj.input, &fault,
-                                     &exitcode, args.enviromental_values,
+                                     &exitcode, args.environmental_values,
                                      args.env_count);
                 else
                     output = execute(
                         program_args, testcase_obj.input, &fault, &exitcode,
-                        testcase_obj.enviromental_values, env_count);
+                        testcase_obj.environmental_values, env_count);
             }
             else
             {
                 if (env_count == 0)
-                    pr = execute_background(
-                        program_args, args.enviromental_values, args.env_count);
+                    pr = execute_background(program_args,
+                                            args.environmental_values,
+                                            args.env_count);
                 else
                     pr = execute_background(program_args,
-                                            testcase_obj.enviromental_values,
+                                            testcase_obj.environmental_values,
                                             env_count);
             }
             if (clock_gettime(CLOCK_REALTIME, &ts2) == 0)
@@ -1456,13 +1459,17 @@ int complex_test(cJSON *testcase_json)
     {
         reason = sdscatprintf(reason, "Assertion %d failed.", assert_count);
     }
-    print_output(testcase_obj, result, &reason, &output);
+    if (!ran_background)
+        print_output(testcase_obj, result, &reason, &output);
+    else
+        print_output(testcase_obj, result, &reason, &emptyvar);
     sdsfree(testcase_obj.name);
     sdsfree(testcase_obj.description);
     sdsfree(testcase_obj.input);
     sdsfree(testcase_obj.validationtype);
     sdsfree(cmd);
     sdsfree(source_string);
+    sdsfree(emptyvar);
     for (int j = 0; j < program_args_length; j++)
     {
         free(program_args[j]);
@@ -1472,9 +1479,9 @@ int complex_test(cJSON *testcase_json)
         sdsfree(output);
     for (int j = 0; j < env_count; j++)
     {
-        sdsfree(testcase_obj.enviromental_values[j]);
+        sdsfree(testcase_obj.environmental_values[j]);
     }
-    free(testcase_obj.enviromental_values);
+    free(testcase_obj.environmental_values);
     for (int j = 0; j < variable_count; j++)
     {
         sdsfree(variables[j].name);
