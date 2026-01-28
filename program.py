@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import ctypes
 import time
 import sys
 import os
@@ -19,6 +20,8 @@ if sys.argv[1] == "help":
     print("\ttext\t\tPrints a text")
     print("\tgenerate_file\tCreates a file")
     print("\tremove_file\tRemoves a file")
+    print("\tbg\t\tGets input from user multiple times")
+    print("\tsegfault\tCrashs with segmentation fault.")
 elif sys.argv[1] == "wait":
     time.sleep(1)
 elif sys.argv[1] == "waitquarter":
@@ -54,3 +57,5 @@ elif sys.argv[1] == "bg":
     print("Answer of the input:", input("> "))
     print("Answer of the input 2:", input("> "))
     print("Answer of the input 3:", input("> "))
+elif sys.argv[1] == "segfault":
+    ctypes.memset(0, 0, 1)

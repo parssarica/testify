@@ -69,6 +69,7 @@ int complex_test(cJSON *testcase_json)
     ssize_t n;
     char output_buf[4096];
     int ran_background = 0;
+    int assert_count = 0;
 
     memset(output_buf, 0, 4096);
     variable_count = 0;
@@ -344,7 +345,7 @@ int complex_test(cJSON *testcase_json)
                 n = interact_read(&pr, output_buf, 4096, 200);
 
             if (n <= 0)
-                close_child(&pr);
+                close_child(&pr, &fault, &exitcode);
 
             new_variable(commands[i].store, VARIABLE_STRING, output_buf, -1,
                          -1);
@@ -874,6 +875,7 @@ int complex_test(cJSON *testcase_json)
                  !strcmp(commands[i].cmd, "assert_file_contains") ||
                  !strcmp(commands[i].cmd, "assert_file_not_contains"))
         {
+            assert_count++;
             if (commands[i].lhs_type == VARIABLE_STRING)
                 assert_lhs = to_str(
                     get_var_object(commands[i].lhs, -1, -1, VARIABLE_STRING));
@@ -1104,6 +1106,7 @@ int complex_test(cJSON *testcase_json)
                  !strcmp(commands[i].cmd, "assert_less_or_equal") ||
                  !strcmp(commands[i].cmd, "assert_greater_or_equal"))
         {
+            assert_count++;
             if (commands[i].lhs_type == VARIABLE_STRING)
                 assert_lhs_double = to_double(
                     get_var_object(commands[i].lhs, -1, -1, VARIABLE_STRING));
@@ -1173,6 +1176,7 @@ int complex_test(cJSON *testcase_json)
                  !strcmp(commands[i].cmd, "assert_exitcode_less") ||
                  !strcmp(commands[i].cmd, "assert_exitcode_greater"))
         {
+            assert_count++;
             assert_lhs_double = exitcode;
 
             if (commands[i].lhs_type == VARIABLE_STRING)
@@ -1222,6 +1226,7 @@ int complex_test(cJSON *testcase_json)
         else if (!strcmp(commands[i].cmd, "assert_duration_less_than") ||
                  !strcmp(commands[i].cmd, "assert_duration_greater_than"))
         {
+            assert_count++;
             assert_lhs_double = duration;
 
             if (commands[i].lhs_type == VARIABLE_STRING)
@@ -1442,7 +1447,15 @@ int complex_test(cJSON *testcase_json)
                          -1);
         }
     }
-    reason = sdscpylen(reason, "Assertion failed.", 17);
+    if (fault)
+    {
+        reason = sdscpylen(reason, "Segmentation fault detected.", 28);
+        result = 0;
+    }
+    else
+    {
+        reason = sdscatprintf(reason, "Assertion %d failed.", assert_count);
+    }
     print_output(testcase_obj, result, &reason, &output);
     sdsfree(testcase_obj.name);
     sdsfree(testcase_obj.description);

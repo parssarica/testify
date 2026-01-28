@@ -110,7 +110,7 @@ sds execute(char **process_args, char *input, int *fault, int *exitcode,
 
 process execute_background(char **process_args, sds *env_vars, int env_count)
 {
-    process proc = {-1, -1, -1, -1};
+    process proc = {-1, -1};
     posix_spawn_file_actions_t actions;
     int memorysize;
     char **envp = make_env(env_vars, env_count, &memorysize);
@@ -199,18 +199,20 @@ ssize_t interact_read(process *pr, char *output, size_t output_cap, int idle_ms)
     return total;
 }
 
-void close_child(process *pr)
+void close_child(process *pr, int *fault, int *exitcode)
 {
     int status;
 
     close(pr->pty_fd);
     waitpid(pr->pid, &status, 0);
+    *fault = -1;
+    *exitcode = -1;
     if (WIFSIGNALED(status))
     {
-        pr->fault = WTERMSIG(status);
+        *fault = WTERMSIG(status);
     }
     else if (WIFEXITED(status))
     {
-        pr->exitcode = WEXITSTATUS(status);
+        *exitcode = WEXITSTATUS(status);
     }
 }

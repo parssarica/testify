@@ -108,8 +108,6 @@ typedef struct
 {
     pid_t pid;
     int pty_fd;
-    int fault;
-    int exitcode;
 } process;
 
 void logo();
@@ -151,5 +149,5 @@ int regex_count(char *, char *, size_t);
 process execute_background(char **, sds *, int);
 void interact_write(process *, sds *);
 ssize_t interact_read(process *, char *, size_t, int);
-void close_child(process *);
+void close_child(process *, int *, int *);
 #endif
