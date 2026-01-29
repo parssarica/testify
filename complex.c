@@ -21,7 +21,7 @@ int complex_test(cJSON *testcase_json)
     struct timespec ts2;
     testcase testcase_obj;
     command *commands;
-    int fault = -1;
+    int fault = 0;
     int exitcode = -1;
     int64_t start_date;
     int64_t end_date;
@@ -352,6 +352,15 @@ int complex_test(cJSON *testcase_json)
 
             new_variable(commands[i].store, VARIABLE_STRING, output_buf, -1,
                          -1);
+        }
+        else if (!strcmp(commands[i].cmd, "is_alive"))
+        {
+            new_variable(commands[i].store, VARIABLE_INT, NULL,
+                         child_alive(&pr, &fault, &exitcode), -1);
+        }
+        else if (!strcmp(commands[i].cmd, "kill"))
+        {
+            kill_process(&pr, &fault, &exitcode);
         }
         else if (!strcmp(commands[i].cmd, "extract_char"))
         {

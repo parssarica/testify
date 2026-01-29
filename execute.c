@@ -112,6 +112,7 @@ process execute_background(char **process_args, sds *env_vars, int env_count)
 {
     process proc = {-1, -1};
     posix_spawn_file_actions_t actions;
+    posix_spawnattr_t attr;
     int memorysize;
     char **envp = make_env(env_vars, env_count, &memorysize);
     int master = posix_openpt(O_RDWR | O_NOCTTY);
@@ -139,7 +140,11 @@ process execute_background(char **process_args, sds *env_vars, int env_count)
     posix_spawn_file_actions_addclose(&actions, master);
     posix_spawn_file_actions_addclose(&actions, slave);
 
-    if (posix_spawn(&proc.pid, process_args[0], &actions, NULL, process_args,
+    posix_spawnattr_init(&attr);
+    posix_spawnattr_setflags(&attr, POSIX_SPAWN_SETPGROUP);
+    posix_spawnattr_setpgroup(&attr, 0);
+
+    if (posix_spawn(&proc.pid, process_args[0], &actions, &attr, process_args,
                     envp) != 0)
     {
         perror("posix_spawn");
@@ -205,14 +210,94 @@ void close_child(process *pr, int *fault, int *exitcode)
 
     close(pr->pty_fd);
     waitpid(pr->pid, &status, 0);
-    *fault = -1;
-    *exitcode = -1;
-    if (WIFSIGNALED(status))
+    if (!WIFEXITED(status))
     {
-        *fault = WTERMSIG(status);
+        if (WIFSIGNALED(status) && WTERMSIG(status) == SIGSEGV)
+        {
+            *fault = 1;
+        }
     }
-    else if (WIFEXITED(status))
+
+    if (WIFEXITED(status))
     {
         *exitcode = WEXITSTATUS(status);
     }
+}
+
+int child_alive(process *pr, int *fault, int *exitcode)
+{
+    int status;
+    pid_t r;
+
+    if (pr->pid == -1)
+        return 0;
+
+    r = waitpid(pr->pid, &status, WNOHANG);
+
+    if (r == 0)
+        return 1;
+
+    if (r == pr->pid)
+    {
+        if (!WIFEXITED(status))
+        {
+            if (WIFSIGNALED(status) && WTERMSIG(status) == SIGSEGV)
+            {
+                *fault = 1;
+            }
+        }
+
+        if (WIFEXITED(status))
+        {
+            *exitcode = WEXITSTATUS(status);
+        }
+
+        pr->pid = -1;
+        return 0;
+    }
+    return -1;
+}
+
+void kill_process(process *pr, int *fault, int *exitcode)
+{
+    int status;
+    *fault = 0;
+    *exitcode = -1;
+
+    kill(-pr->pid, SIGTERM);
+
+    for (int i = 0; i < 100; i++)
+    {
+        if (waitpid(pr->pid, &status, WNOHANG) == pr->pid)
+            goto done;
+
+        usleep(10000);
+    }
+
+    kill(-pr->pid, SIGKILL);
+
+    for (int i = 0; i < 100; i++)
+    {
+        if (waitpid(pr->pid, &status, WNOHANG) == pr->pid)
+            goto done;
+
+        usleep(10000);
+    }
+
+done:
+    if (!WIFEXITED(status))
+    {
+        if (WIFSIGNALED(status) && WTERMSIG(status) == SIGSEGV)
+        {
+            *fault = 1;
+        }
+    }
+
+    if (WIFEXITED(status))
+    {
+        *exitcode = WEXITSTATUS(status);
+    }
+
+    close(pr->pty_fd);
+    pr->pid = -1;
 }

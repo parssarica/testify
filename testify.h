@@ -150,4 +150,6 @@ process execute_background(char **, sds *, int);
 void interact_write(process *, sds *);
 ssize_t interact_read(process *, char *, size_t, int);
 void close_child(process *, int *, int *);
+int child_alive(process *, int *, int *);
+void kill_process(process *, int *, int *);
 #endif
