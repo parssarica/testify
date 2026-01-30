@@ -350,3 +350,157 @@ testcase parse_testcase(cJSON *testcase_obj)
 
     return test_case;
 }
+
+command parse_command(cJSON *commandjson)
+{
+    command cmd;
+    cJSON *cmd_json;
+    cJSON *source_json;
+    cJSON *store_json;
+    cJSON *lhs_json;
+    cJSON *rhs_json;
+    cJSON *index_json;
+    cJSON *value_json;
+    cJSON *background_json;
+    int k;
+
+    cmd_json = cJSON_GetObjectItemCaseSensitive(commandjson, "cmd");
+    if (cJSON_IsString(cmd_json) && (cmd_json->valuestring != NULL))
+    {
+        cmd.cmd = sdsnew(cmd_json->valuestring);
+    }
+    else
+    {
+        cmd.cmd = sdsempty();
+    }
+
+    source_json = cJSON_GetObjectItemCaseSensitive(commandjson, "source");
+    if (cJSON_IsString(source_json) && (source_json->valuestring != NULL))
+    {
+        cmd.source = sdsnew(source_json->valuestring);
+    }
+    else
+    {
+        cmd.source = sdsempty();
+    }
+
+    store_json = cJSON_GetObjectItemCaseSensitive(commandjson, "store");
+    if (cJSON_IsString(store_json) && (store_json->valuestring != NULL))
+    {
+        cmd.store = sdsnew(store_json->valuestring);
+    }
+    else
+    {
+        cmd.store = sdsempty();
+    }
+
+    lhs_json = cJSON_GetObjectItemCaseSensitive(commandjson, "lhs");
+    if (cJSON_IsString(lhs_json) && (lhs_json->valuestring != NULL))
+    {
+        cmd.lhs = sdsnew(lhs_json->valuestring);
+        cmd.lhs_int = 0;
+        cmd.lhs_double = 0;
+        cmd.lhs_type = VARIABLE_STRING;
+    }
+    else if (cJSON_IsNumber(lhs_json))
+    {
+        if (lhs_json->valueint == lhs_json->valuedouble)
+        {
+            cmd.lhs_int = lhs_json->valueint;
+            cmd.lhs_double = 0;
+            cmd.lhs_type = VARIABLE_INT;
+        }
+        else
+        {
+            cmd.lhs_double = lhs_json->valuedouble;
+            cmd.lhs_int = 0;
+            cmd.lhs_double = VARIABLE_DOUBLE;
+        }
+        cmd.lhs = sdsempty();
+    }
+    else
+    {
+        cmd.lhs = sdsempty();
+        cmd.lhs_int = 0;
+        cmd.lhs_double = 0;
+        cmd.lhs_type = VARIABLE_STRING;
+    }
+
+    rhs_json = cJSON_GetObjectItemCaseSensitive(commandjson, "rhs");
+    if (cJSON_IsString(rhs_json) && (rhs_json->valuestring != NULL))
+    {
+        cmd.rhs = sdsnew(rhs_json->valuestring);
+        cmd.rhs_int = 0;
+        cmd.rhs_double = 0;
+        cmd.rhs_type = VARIABLE_STRING;
+    }
+    else if (cJSON_IsNumber(rhs_json))
+    {
+        if (rhs_json->valueint == rhs_json->valuedouble)
+        {
+            cmd.rhs_int = rhs_json->valueint;
+            cmd.rhs_double = 0;
+            cmd.rhs_type = VARIABLE_INT;
+        }
+        else
+        {
+            cmd.rhs_double = rhs_json->valuedouble;
+            cmd.rhs_int = 0;
+            cmd.rhs_type = VARIABLE_DOUBLE;
+        }
+        cmd.rhs = sdsempty();
+    }
+    else
+    {
+        cmd.rhs = sdsempty();
+        cmd.rhs_int = 0;
+        cmd.rhs_double = 0;
+        cmd.rhs_type = VARIABLE_STRING;
+    }
+
+    index_json = cJSON_GetObjectItemCaseSensitive(commandjson, "index");
+    if (cJSON_IsNumber(index_json))
+    {
+        cmd.index = index_json->valuedouble;
+    }
+    else
+    {
+        cmd.index = 0;
+    }
+
+    k = 0;
+    cJSON_ArrayForEach(value_json,
+                       cJSON_GetObjectItemCaseSensitive(commandjson, "values"))
+    {
+        k++;
+    }
+
+    cmd.value_count = k;
+    if (k)
+    {
+        cmd.values = malloc(sizeof(sds) * k);
+        k = 0;
+        cJSON_ArrayForEach(
+            value_json, cJSON_GetObjectItemCaseSensitive(commandjson, "values"))
+        {
+            cmd.values[k++] = sdsnew(value_json->valuestring);
+        }
+    }
+
+    background_json =
+        cJSON_GetObjectItemCaseSensitive(commandjson, "background");
+    cmd.background = 0;
+    if (cJSON_IsBool(background_json))
+    {
+        if (cJSON_IsTrue(background_json))
+        {
+            cmd.background = 1;
+        }
+        else
+        {
+            cmd.background = 0;
+        }
+    }
+
+    return cmd;
+}
