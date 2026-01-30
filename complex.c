@@ -374,6 +374,17 @@ int complex_test(cJSON *testcase_json)
                 pr = execute_background(
                     program_args, testcase_obj.environmental_values, env_count);
         }
+        else if (!strcmp(commands[i].cmd, "sleep"))
+        {
+            if (strstr(source_string, ".") == NULL)
+            {
+                usleep(atoi(source_string) * 1000);
+            }
+            else
+            {
+                usleep(strtod(source_string, &endptr) * 1000);
+            }
+        }
         else if (!strcmp(commands[i].cmd, "extract_char"))
         {
             if (define_variable_type(commands[i].source) == VARIABLE_STRING)
