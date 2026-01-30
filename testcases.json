@@ -1,0 +1,1367 @@
+{
+	"binary":	"./program.py",
+	"environmentalVariables": ["BELLO=5"],
+	"testcases":	[{
+			"type":	1,
+			"name":	"No argument test",
+			"description":	"Runs the program without any arguments.",
+			"input":	"",
+			"containingOutput":	"Usage",
+			"commandArgs":	[]
+		}, {
+			"type":	1,
+			"name":	"Wait",
+			"description":	"Uses the wait sub-command of program.",
+			"input":	"",
+			"expectedOutput":	"",
+			"commandArgs":	["wait"]
+		}, {
+			"type":	1,
+			"name":	"Greet",
+			"description":	"Uses the greet sub-command of program.",
+			"input":	"",
+			"expectedOutput":	"Hello!\n",
+			"commandArgs":	["greet"]
+		}, {
+			"type": 1,
+			"name": "Tab",
+			"description": "Uses the tab sub-command of program.",
+			"input": "",
+			"expectedOutput": "123",
+			"commandArgs": ["tab"]
+		}, {
+			"type": 1,
+			"name": "Wait quarter sec",
+			"description": "Uses the waitquarter sub-command of program.",
+			"input": "",
+			"expectedOutput": "",
+			"commandArgs": ["waitquarter"]
+		}, {
+			"type":	1,
+			"name":	"Help text",
+			"description":	"Tries the help sub-command.",
+			"input":	"",
+			"containingOutput":	"v",
+			"commandArgs":	["help"]
+		}, {
+			"type": 1,
+			"name": "Timeout explode",
+			"description": "Tries timeout",
+			"commandArgs": [""],
+			"notContainingOutput": "FAILED"
+		}, {
+			"type":	1,
+			"name":	"Or",
+			"description": "Oooor!",
+			"input":	"",
+			"containingOutput":	["arandomstringthatisnotincludedintheoutput314159", "@"],
+			"commandArgs":	["greet"],
+			"validationType": "OR"
+		}, {
+			"type": 1,
+			"name": "Expectus patronus!",
+			"description": "Do the spell",
+			"input": "",
+			"commandArgs": ["version"],
+			"expectedOutput": "23423423rerfgvfe"
+		}, {
+			"type": 1,
+			"name": "Exit code control (1)",
+			"description": "Exit code case",
+			"input": "",
+			"commandArgs": [],
+			"exitCodeEquals": 1
+		}, {
+			"type": 1,
+			"name": "Exit code control (2)",
+			"description": "Exit code case",
+			"input": "",
+			"commandArgs": [],
+			"exitCodeSmaller": 2
+		}, {
+			"type": 1,
+			"name": "Exit code control (3)",
+			"description": "Exit code case",
+			"input": "",
+			"commandArgs": [],
+			"exitCodeGreater": 0
+		}, {
+			"type": 1,
+			"name": "Exit code control (4)",
+			"description": "Exit code case",
+			"input": "",
+			"commandArgs": [],
+			"exitCodeGreater": 1
+		}, {
+			"type": 1,
+			"name": "Exit code control (5)",
+			"description": "Exit code case",
+			"input": "",
+			"commandArgs": [],
+			"exitCodeSmaller": 0
+		}, {
+			"type": 1,
+			"name": "Exit code control (6)",
+			"description": "Exit code case",
+			"input": "",
+			"commandArgs": [],
+			"exitCodeEquals": 5
+		}, {
+			"type": 1,
+			"name": "Regex match (1)",
+			"description": "Checks regex match works or not",
+			"commandArgs": ["greet"],
+			"matchRegex": "^Hell+o![\\r\\n]+$"
+		}, {
+			"type": 1,
+			"name": "Regex match (2)",
+			"description": "Checks regex match works or not",
+			"commandArgs": ["greet"],
+			"matchRegex": ["H.*!", "[A-Z][a-z]{4,}!\\s+"]
+		}, {
+			"type": 1,
+			"name": "Regex match (3)",
+			"description": "Checks regex match works or not",
+			"commandArgs": ["greet"],
+			"notMatchRegex": "^Helllo!$"
+		}, {
+			"type": 1,
+			"name": "Regex match (4)",
+			"description": "Checks regex match works or not",
+			"commandArgs": ["greet"],
+			"notMatchRegex": ["^\\w+!$", "^[a-z]+![\r\n]+"]
+		}, {
+			"type": 1,
+			"name": "Regex match (5)",
+			"description": "Checks regex match works or not",
+			"commandArgs": ["greet"],
+			"notMatchRegex": ["(?s)H.*$"]
+		}, {
+			"type": 1,
+			"name": "Regex match (6)",
+			"description": "Checks regex match works or not",
+			"commandArgs": ["greet"],
+			"matchRegex": ["^Helllo!$"]
+		}, {
+			"type": 1,
+			"name": "Regex match (7)",
+			"description": "Checks regex match works or not",
+			"commandArgs": ["greet"],
+			"notMatchRegex": "(?s)H.*$"
+		}, {
+			"type": 1,
+			"name": "Regex match (8)",
+			"description": "Checks regex match works or not",
+			"commandArgs": ["greet"],
+			"matchRegex": "^Helllo!$"
+		}, {
+			"type": 1,
+			"name": "Environmental check (1)",
+			"description": "Checks the environmental variables",
+			"commandArgs": ["env"],
+			"environmentalVariables": ["HELLO=5"],
+			"expectedOutput": "1\r\n" 
+		}, {
+			"type": 1,
+			"name": "Environmental check (2)",
+			"description": "Checks the environmental variables",
+			"commandArgs": ["envlist"],
+			"environmentalVariables": ["HELLO=5"],
+			"containingOutput": "HELLO" 
+		}, {
+			"type": 1,
+			"name": "Environmental check (3)",
+			"description": "Checks the environmental variables",
+			"commandArgs": ["envlist2", "BELLO"],
+			"containingOutput": "True" 
+		}, {
+			"type": 1,
+			"name": "Environmental check (4)",
+			"description": "Checks the environmental variables",
+			"commandArgs": ["envlist2", "KELLO"],
+			"containingOutput": "True" 
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (1)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_equals", "lhs": "{{sum}}", "rhs": 134}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (2)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_equals", "lhs": "{{sum}}", "rhs": 135}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (3)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "subtract", "lhs": "{{sum}}", "rhs": "16", "store": "subtracted"},
+				{"cmd": "multiply", "lhs": "{{subtracted}}", "rhs": "2", "store": "multiplied"},
+				{"cmd": "divide", "lhs": "{{multiplied}}", "rhs": "3", "store": "divided"},
+				{"cmd": "atoi", "source": "{{divided}}", "store": "num"},
+				{"cmd": "assert_equals", "lhs": "{{num}}", "rhs": 78}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (4)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "subtract", "lhs": "{{sum}}", "rhs": "16", "store": "subtracted"},
+				{"cmd": "multiply", "lhs": "{{subtracted}}", "rhs": "2", "store": "multiplied"},
+				{"cmd": "divide", "lhs": "{{multiplied}}", "rhs": "3", "store": "divided"},
+				{"cmd": "atoi", "source": "{{divided}}", "store": "num"},
+				{"cmd": "assert_equals", "lhs": "{{num}}", "rhs": 79}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (5)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "subtract", "lhs": "{{sum}}", "rhs": "16", "store": "subtracted"},
+				{"cmd": "multiply", "lhs": "{{subtracted}}", "rhs": "2", "store": "multiplied"},
+				{"cmd": "divide", "lhs": "{{multiplied}}", "rhs": "3", "store": "divided"},
+				{"cmd": "atoi", "source": "{{divided}}", "store": "num"},
+				{"cmd": "assert_less", "lhs": "{{num}}", "rhs": 79}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (6)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "subtract", "lhs": "{{sum}}", "rhs": "16", "store": "subtracted"},
+				{"cmd": "multiply", "lhs": "{{subtracted}}", "rhs": "2", "store": "multiplied"},
+				{"cmd": "divide", "lhs": "{{multiplied}}", "rhs": "3", "store": "divided"},
+				{"cmd": "atoi", "source": "{{divided}}", "store": "num"},
+				{"cmd": "assert_less", "lhs": "{{num}}", "rhs": 69}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (7)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_not_equals", "lhs": "{{sum}}", "rhs": 134}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (8)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_not_equals", "lhs": "{{sum}}", "rhs": 135}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (9)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_greater", "lhs": "{{sum}}", "rhs": 133}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (10)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_greater", "lhs": "{{sum}}", "rhs": 135}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (11)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "set", "lhs": "regex", "rhs": "^\\d{3}$"},
+				{"cmd": "assert_regex_match", "lhs": "{{sum}}", "rhs": "{{regex}}"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (12)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "set", "lhs": "regex", "rhs": "^\\d{4}$"},
+				{"cmd": "assert_regex_match", "lhs": "{{sum}}", "rhs": "{{regex}}"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (13)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_regex_match", "lhs": "{{sum}}", "rhs": "^\\d{4}$"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (14)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_regex_match", "lhs": "{{sum}}", "rhs": "^\\d{3}$"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (15)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "set", "lhs": "regex", "rhs": "^\\d{3}$"},
+				{"cmd": "assert_less", "lhs": "{{sum}}", "rhs": "{{regiex}}"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (16)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "set", "lhs": "regex", "rhs": "^\\d{4}$"},
+				{"cmd": "assert_greater", "lhs": "{{regiex}}", "rhs": "{{sum}}"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (17)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "set", "lhs": "regex", "rhs": "^\\d{3}$"},
+				{"cmd": "assert_not_regex_match", "lhs": "{{sum}}", "rhs": "{{regex}}"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (18)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "set", "lhs": "regex", "rhs": "^\\d{4}$"},
+				{"cmd": "assert_not_regex_match", "lhs": "{{sum}}", "rhs": "{{regex}}"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (19)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_contains", "lhs": "{{sum}}", "rhs": "3"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (20)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_contains", "lhs": "{{sum}}", "rhs": "5"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (21)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_not_contains", "lhs": "{{sum}}", "rhs": "3"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (22)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_not_contains", "lhs": "{{sum}}", "rhs": "5"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (23)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_starts_with", "lhs": "{{sum}}", "rhs": "13"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (24)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_starts_with", "lhs": "{{sum}}", "rhs": "54648645"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (25)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_ends_with", "lhs": "{{sum}}", "rhs": "34"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (26)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_ends_with", "lhs": "{{sum}}", "rhs": "54648645"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (27)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_not_starts_with", "lhs": "{{sum}}", "rhs": "13"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (28)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_not_starts_with", "lhs": "{{sum}}", "rhs": "54648645"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (29)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_not_ends_with", "lhs": "{{sum}}", "rhs": "34"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (30)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_not_ends_with", "lhs": "{{sum}}", "rhs": "54648645"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (31)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_less_or_equal", "lhs": "{{sum}}", "rhs": 134}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (32)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_less_or_equal", "lhs": "{{sum}}", "rhs": 135}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (33)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_less_or_equal", "lhs": "{{sum}}", "rhs": 133}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (34)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_greater_or_equal", "lhs": "{{sum}}", "rhs": 133}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (35)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_greater_or_equal", "lhs": "{{sum}}", "rhs": 134}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (36)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_greater_or_equal", "lhs": "{{sum}}", "rhs": 135}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (37)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_exitcode", "lhs": 0}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (38)",
+			"commandArgs": [],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_exitcode", "lhs": 0}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (39)",
+			"commandArgs": [],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_exitcode", "lhs": 1}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (40)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_exitcode_less", "lhs": 1}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (41)",
+			"commandArgs": [],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_exitcode_less", "lhs": 0}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (42)",
+			"commandArgs": [],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_exitcode_less", "lhs": 2}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (43)",
+			"commandArgs": [],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_exitcode_less", "lhs": 0}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (44)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_exitcode_greater", "lhs": -1}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (45)",
+			"commandArgs": [],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_exitcode_greater", "lhs": 0}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (46)",
+			"commandArgs": [],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_exitcode_greater", "lhs": 2}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (47)",
+			"commandArgs": [],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "assert_exitcode_greater", "lhs": 1}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (48)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "assert_duration_less_than", "lhs": 50}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (49)",
+			"commandArgs": ["wait"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "assert_duration_less_than", "lhs": 50}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (50)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "assert_duration_less_than", "lhs": 0}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (51)",
+			"commandArgs": ["wait"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "assert_duration_less_than", "lhs": 50000}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (52)",
+			"commandArgs": ["generate_file"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "assert_file_exists", "lhs": "/tmp/program.txt"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (53)",
+			"commandArgs": ["generate_file"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "assert_file_exists", "lhs": "/tmp/zzz.txt"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (54)",
+			"commandArgs": ["remove_file"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "assert_file_not_exists", "lhs": "/tmp/program.txt"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (55)",
+			"commandArgs": ["generate_file"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "assert_file_not_exists", "lhs": "/tmp/zzz.txt"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (56)",
+			"commandArgs": ["generate_file"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "assert_file_not_exists", "lhs": "/tmp/program.txt"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (57)",
+			"commandArgs": ["generate_file"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "assert_file_contains", "lhs": "/tmp/program.txt", "rhs": "really"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (58)",
+			"commandArgs": ["generate_file"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "assert_file_contains", "lhs": "/tmp/program.txt", "rhs": "rocket"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (59)",
+			"commandArgs": ["generate_file"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "assert_file_not_contains", "lhs": "/tmp/program.txt", "rhs": "really"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (60)",
+			"commandArgs": ["generate_file"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "assert_file_not_contains", "lhs": "/tmp/program.txt", "rhs": "rocket"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (61)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
+				{"cmd": "subtract", "lhs": "{{sum}}", "rhs": "16", "store": "subtracted"},
+				{"cmd": "multiply", "lhs": "{{subtracted}}", "rhs": "2", "store": "multiplied"},
+				{"cmd": "divide", "lhs": "{{multiplied}}", "rhs": "3", "store": "divided"},
+				{"cmd": "atoi", "source": "{{divided}}", "store": "num"},
+				{"cmd": "to_string", "source": "{{num}}", "store": "converted_str"},
+				{"cmd": "atof", "source": "{{converted_str}}", "store": "converted"},
+				{"cmd": "assert_less", "lhs": "{{converted}}", "rhs": 79}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (62)",
+			"commandArgs": ["tab"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "trim", "source": "output", "store": "converted"},
+				{"cmd": "assert_equals", "lhs": "{{converted}}", "rhs": ""}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (63)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "upper", "source": "output", "store": "converted"},
+				{"cmd": "assert_contains", "lhs": "{{converted}}", "rhs": "HELLLO!"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (64)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "lower", "source": "output", "store": "converted"},
+				{"cmd": "assert_contains", "lhs": "{{converted}}", "rhs": "helllo!"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (65)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 0, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char2"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "mod", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "remainder"},
+				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": "72"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (66)",
+			"commandArgs": ["greetlong"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 0, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char2"},
+				{"cmd": "extract_char", "source": "output", "index": 2, "store": "char3"},
+				{"cmd": "extract_char", "source": "output", "index": 3, "store": "char4"},
+				{"cmd": "extract_char", "source": "output", "index": 4, "store": "char5"},
+				{"cmd": "extract_char", "source": "output", "index": 5, "store": "char6"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char7"},
+				{"cmd": "extract_char", "source": "output", "index": 7, "store": "char8"},
+				{"cmd": "extract_char", "source": "output", "index": 8, "store": "char9"},
+				{"cmd": "extract_char", "source": "output", "index": 9, "store": "char10"},
+				{"cmd": "extract_char", "source": "output", "index": 10, "store": "char11"},
+				{"cmd": "extract_char", "source": "output", "index": 11, "store": "char12"},
+				{"cmd": "extract_char", "source": "output", "index": 12, "store": "char13"},
+				{"cmd": "extract_char", "source": "output", "index": 13, "store": "char14"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "to_int", "source": "{{char3}}", "store": "num3"},
+				{"cmd": "to_int", "source": "{{char4}}", "store": "num4"},
+				{"cmd": "to_int", "source": "{{char5}}", "store": "num5"},
+				{"cmd": "to_int", "source": "{{char6}}", "store": "num6"},
+				{"cmd": "to_int", "source": "{{char7}}", "store": "num7"},
+				{"cmd": "to_int", "source": "{{char8}}", "store": "num8"},
+				{"cmd": "to_int", "source": "{{char9}}", "store": "num9"},
+				{"cmd": "to_int", "source": "{{char10}}", "store": "num10"},
+				{"cmd": "to_int", "source": "{{char11}}", "store": "num11"},
+				{"cmd": "to_int", "source": "{{char12}}", "store": "num12"},
+				{"cmd": "to_int", "source": "{{char13}}", "store": "num13"},
+				{"cmd": "to_int", "source": "{{char14}}", "store": "num14"},
+				{"cmd": "min", "values": ["{{num1}}", "{{num2}}", "{{num3}}", "{{num4}}", "{{num5}}", "{{num6}}", "{{num7}}", "{{num8}}", "{{num9}}", "{{num10}}", "{{num11}}", "{{num12}}", "{{num13}}", "{{num14}}"], "store": "remainder"},
+				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": "72"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (67)",
+			"commandArgs": ["greetlong"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 0, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char2"},
+				{"cmd": "extract_char", "source": "output", "index": 2, "store": "char3"},
+				{"cmd": "extract_char", "source": "output", "index": 3, "store": "char4"},
+				{"cmd": "extract_char", "source": "output", "index": 4, "store": "char5"},
+				{"cmd": "extract_char", "source": "output", "index": 5, "store": "char6"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char7"},
+				{"cmd": "extract_char", "source": "output", "index": 7, "store": "char8"},
+				{"cmd": "extract_char", "source": "output", "index": 8, "store": "char9"},
+				{"cmd": "extract_char", "source": "output", "index": 9, "store": "char10"},
+				{"cmd": "extract_char", "source": "output", "index": 10, "store": "char11"},
+				{"cmd": "extract_char", "source": "output", "index": 11, "store": "char12"},
+				{"cmd": "extract_char", "source": "output", "index": 12, "store": "char13"},
+				{"cmd": "extract_char", "source": "output", "index": 13, "store": "char14"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "to_int", "source": "{{char3}}", "store": "num3"},
+				{"cmd": "to_int", "source": "{{char4}}", "store": "num4"},
+				{"cmd": "to_int", "source": "{{char5}}", "store": "num5"},
+				{"cmd": "to_int", "source": "{{char6}}", "store": "num6"},
+				{"cmd": "to_int", "source": "{{char7}}", "store": "num7"},
+				{"cmd": "to_int", "source": "{{char8}}", "store": "num8"},
+				{"cmd": "to_int", "source": "{{char9}}", "store": "num9"},
+				{"cmd": "to_int", "source": "{{char10}}", "store": "num10"},
+				{"cmd": "to_int", "source": "{{char11}}", "store": "num11"},
+				{"cmd": "to_int", "source": "{{char12}}", "store": "num12"},
+				{"cmd": "to_int", "source": "{{char13}}", "store": "num13"},
+				{"cmd": "to_int", "source": "{{char14}}", "store": "num14"},
+				{"cmd": "max", "values": ["{{num1}}", "{{num2}}", "{{num3}}", "{{num4}}", "{{num5}}", "{{num6}}", "{{num7}}", "{{num8}}", "{{num9}}", "{{num10}}", "{{num11}}", "{{num12}}", "{{num13}}", "{{num14}}"], "store": "remainder"},
+				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": "114"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (68)",
+			"commandArgs": ["greetlong"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 0, "store": "char1"},
+				{"cmd": "extract_char", "source": "output", "index": 1, "store": "char2"},
+				{"cmd": "extract_char", "source": "output", "index": 2, "store": "char3"},
+				{"cmd": "extract_char", "source": "output", "index": 3, "store": "char4"},
+				{"cmd": "extract_char", "source": "output", "index": 4, "store": "char5"},
+				{"cmd": "extract_char", "source": "output", "index": 5, "store": "char6"},
+				{"cmd": "extract_char", "source": "output", "index": 6, "store": "char7"},
+				{"cmd": "extract_char", "source": "output", "index": 7, "store": "char8"},
+				{"cmd": "extract_char", "source": "output", "index": 8, "store": "char9"},
+				{"cmd": "extract_char", "source": "output", "index": 9, "store": "char10"},
+				{"cmd": "extract_char", "source": "output", "index": 10, "store": "char11"},
+				{"cmd": "extract_char", "source": "output", "index": 11, "store": "char12"},
+				{"cmd": "extract_char", "source": "output", "index": 12, "store": "char13"},
+				{"cmd": "extract_char", "source": "output", "index": 13, "store": "char14"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
+				{"cmd": "to_int", "source": "{{char3}}", "store": "num3"},
+				{"cmd": "to_int", "source": "{{char4}}", "store": "num4"},
+				{"cmd": "to_int", "source": "{{char5}}", "store": "num5"},
+				{"cmd": "to_int", "source": "{{char6}}", "store": "num6"},
+				{"cmd": "to_int", "source": "{{char7}}", "store": "num7"},
+				{"cmd": "to_int", "source": "{{char8}}", "store": "num8"},
+				{"cmd": "to_int", "source": "{{char9}}", "store": "num9"},
+				{"cmd": "to_int", "source": "{{char10}}", "store": "num10"},
+				{"cmd": "to_int", "source": "{{char11}}", "store": "num11"},
+				{"cmd": "to_int", "source": "{{char12}}", "store": "num12"},
+				{"cmd": "to_int", "source": "{{char13}}", "store": "num13"},
+				{"cmd": "to_int", "source": "{{char14}}", "store": "num14"},
+				{"cmd": "sum", "values": ["{{num1}}", "{{num2}}", "{{num3}}", "{{num4}}", "{{num5}}", "{{num6}}", "{{num7}}", "{{num8}}", "{{num9}}", "{{num10}}", "{{num11}}", "{{num12}}", "{{num13}}", "{{num14}}"], "store": "remainder"},
+				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": "1435"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (69)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 0, "store": "char1"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "increment", "source": "{{num1}}", "store": "remainder"},
+				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": "73"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (70)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 0, "store": "char1"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "decrement", "source": "{{num1}}", "store": "remainder"},
+				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": "71"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (71)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 0, "store": "char1"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "decrement", "source": "{{num1}}", "store": "remainder"},
+				{"cmd": "divide", "lhs": "{{num1}}", "rhs": "5", "store": "divided"},
+				{"cmd": "log", "source": "{{remainder}}"},
+				{"cmd": "log", "source": "{{char1}}"},
+				{"cmd": "dump"},
+				{"cmd": "set", "lhs": "{{remainder}}", "rhs": 314159},
+				{"cmd": "log", "source": "{{remainder}}"},
+				{"cmd": "set", "lhs": "{{divided}}", "rhs": 3.14159},
+				{"cmd": "log", "source": "{{divided}}"},
+				{"cmd": "set", "lhs": "{{char1}}", "rhs": "3.14159"},
+				{"cmd": "log", "source": "{{char1}}"},
+				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": 314159}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (72)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "output", "index": 0, "store": "char1"},
+				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
+				{"cmd": "decrement", "source": "{{num1}}", "store": "remainder"},
+				{"cmd": "divide", "lhs": "{{num1}}", "rhs": "5", "store": "divided"},
+				{"cmd": "log", "source": "{{remainder}}"},
+				{"cmd": "log", "source": "{{char1}}"},
+				{"cmd": "dump"},
+				{"cmd": "set", "lhs": "{{remainder}}", "rhs": 314159},
+				{"cmd": "log", "source": "{{remainder}}"},
+				{"cmd": "set", "lhs": "{{divided}}", "rhs": 3.14159},
+				{"cmd": "log", "source": "{{divided}}"},
+				{"cmd": "set", "lhs": "{{char1}}", "rhs": "3.14159"},
+				{"cmd": "log", "source": "{{char1}}"},
+				{"cmd": "clear", "source": "{{char1}}"},
+				{"cmd": "dump"},
+				{"cmd": "copy", "lhs": "{{divided}}", "rhs": "{{remainder}}"},
+				{"cmd": "dump"},
+				{"cmd": "extract_substring", "source": "{{output}}", "lhs": 2, "rhs": 5, "store": "sss"},
+				{"cmd": "log", "source": "{{sss}}"},
+				{"cmd": "extract_substring", "source": "{{output}}", "lhs": 1, "rhs": -1, "store": "sss2"},
+				{"cmd": "log", "source": "{{sss2}}"},
+				{"cmd": "extract_regex", "source": "{{output}}", "lhs": "^([A-Za-z]+)!", "rhs": 1, "store": "extracted"},
+				{"cmd": "log", "source": "{{extracted}}"},
+				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": 314159}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (73)",
+			"commandArgs": ["text"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "get_line", "source": "{{output}}", "lhs": 2, "store": "line2"},
+				{"cmd": "get_line_count", "source": "{{output}}", "store": "linecount"},
+				{"cmd": "length", "source": "{{output}}", "store": "length"},
+				{"cmd": "count_substring", "source": "{{output}}", "lhs": "Line", "store": "substring_count"},
+				{"cmd": "split", "source": "{{output}}", "lhs": "\n", "rhs": 2, "store": "splitted_text"},
+				{"cmd": "count_matches", "source": "{{output}}", "lhs": "Line \\d", "store": "regexcount"},
+				{"cmd": "log", "source": "{{line2}}"},
+				{"cmd": "log", "source": "{{linecount}}"},
+				{"cmd": "log", "source": "{{length}}"},
+				{"cmd": "log", "source": "{{substring_count}}"},
+				{"cmd": "log", "source": "{{splitted_text}}"},
+				{"cmd": "log", "source": "{{regexcount}}"},
+				{"cmd": "assert_equals", "lhs": "1", "rhs": "2"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (74)",
+			"commandArgs": ["bg"],
+			"pipeline": [
+				{"cmd": "run", "background": true},
+				{"cmd": "send_input", "source": "abc"},
+				{"cmd": "send_input", "source": "\n"},
+				{"cmd": "wait_for_output", "source": "200", "store": "feedback"},
+				{"cmd": "send_input", "source": "PI\n"},
+				{"cmd": "wait_for_output", "source": "200", "store": "feedback2"},
+				{"cmd": "send_line", "source": "3.14159"},
+				{"cmd": "wait_for_output", "store": "feedback3"},
+				{"cmd": "log", "source": "{{feedback}}"},
+				{"cmd": "log", "source": "{{feedback2}}"},
+				{"cmd": "log", "source": "{{feedback3}}"},
+				{"cmd": "assert_contains", "lhs": "{{feedback}}", "rhs": "Answer of the input: "}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (75)",
+			"commandArgs": ["segfault"],
+			"pipeline": [
+				{"cmd": "run"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (76)",
+			"commandArgs": ["envlist2", "BELLO"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "assert_equals", "lhs": "{{output}}", "rhs": "True\r\n"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (77)",
+			"commandArgs": ["envlist2", "HELLO"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "assert_equals", "lhs": "{{output}}", "rhs": "True\r\n"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (78)",
+			"commandArgs": ["envlist2", "HELLO"],
+			"environmentalVariables": ["HELLO=5"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "assert_equals", "lhs": "{{output}}", "rhs": "True\r\n"}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (79)",
+			"commandArgs": ["bg"],
+			"pipeline": [
+				{"cmd": "run", "background": true},
+				{"cmd": "send_input", "source": "Pi is an irrational number."},
+				{"cmd": "is_alive", "store": "is_alive_1"},
+				{"cmd": "kill"},
+				{"cmd": "is_alive", "store": "is_alive_2"},
+				{"cmd": "dump"},
+				{"cmd": "assert_equals", "lhs": "{{is_alive_1}}", "rhs": 1},
+				{"cmd": "assert_equals", "lhs": "{{is_alive_2}}", "rhs": 0}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (80)",
+			"commandArgs": ["bg"],
+			"pipeline": [
+				{"cmd": "run", "background": true},
+				{"cmd": "send_input", "source": "abc"},
+				{"cmd": "send_input", "source": "\n"},
+				{"cmd": "wait_for_output", "source": "200", "store": "feedback"},
+				{"cmd": "send_input", "source": "PI\n"},
+				{"cmd": "wait_for_output", "source": "200", "store": "feedback2"},
+				{"cmd": "send_line", "source": "3.14159"},
+				{"cmd": "wait_for_output", "store": "feedback3"},
+				{"cmd": "is_alive", "store": "is_alive"},
+				{"cmd": "restart"},
+				{"cmd": "is_alive", "store": "is_alive_1"},
+				{"cmd": "kill"},
+				{"cmd": "is_alive", "store": "is_alive_2"},
+				{"cmd": "log", "source": "{{feedback}}"},
+				{"cmd": "log", "source": "{{feedback2}}"},
+				{"cmd": "log", "source": "{{feedback3}}"},
+				{"cmd": "log", "source": "{{is_alive}}"},
+				{"cmd": "log", "source": "{{is_alive_1}}"},
+				{"cmd": "log", "source": "{{is_alive_2}}"},
+				{"cmd": "assert_contains", "lhs": "{{feedback}}", "rhs": "Answer of the input: "}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (81)",
+			"commandArgs": ["bg"],
+			"pipeline": [
+				{"cmd": "run", "background": true},
+				{"cmd": "sleep", "source": "314"},
+				{"cmd": "kill"},
+				{"cmd": "sleep", "source": "314.159"},
+				{"cmd": "assert_contains", "lhs": "{{feedback}}", "rhs": "Answer of the input: "}
+			]
+		}]
+}

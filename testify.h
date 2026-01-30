@@ -152,4 +152,5 @@ ssize_t interact_read(process *, char *, size_t, int);
 void close_child(process *, int *, int *);
 int child_alive(process *, int *, int *);
 void kill_process(process *, int *, int *);
+void run_command(command, int *, char *, int, double, sds *, int *);
 #endif
