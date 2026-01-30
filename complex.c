@@ -362,6 +362,18 @@ int complex_test(cJSON *testcase_json)
         {
             kill_process(&pr, &fault, &exitcode);
         }
+        else if (!strcmp(commands[i].cmd, "restart"))
+        {
+            kill_process(&pr, &fault, &exitcode);
+            fault = 0;
+            exitcode = -1;
+            if (env_count == 0)
+                pr = execute_background(program_args, args.environmental_values,
+                                        args.env_count);
+            else
+                pr = execute_background(
+                    program_args, testcase_obj.environmental_values, env_count);
+        }
         else if (!strcmp(commands[i].cmd, "extract_char"))
         {
             if (define_variable_type(commands[i].source) == VARIABLE_STRING)
