@@ -1379,13 +1379,25 @@
 		}, {
 			"type": 2,
 			"name": "Complex test case",
-			"description": "A very complex test case (finally) (82)",
+			"description": "A very complex test case (finally) (83)",
 			"commandArgs": ["greet"],
 			"pipeline": [
 				{"cmd": "run"},
 				{"cmd": "extract_char", "source": "{{output}}", "index": 0, "store": "var1"},
 				{"cmd": "loop", "indexVariable": "i", "source": "10", "steps": [{"cmd": "log", "source": "{{i}}"}, {"cmd": "continue"}, {"cmd": "log", "source": "{{var1}}"}]},
 				{"cmd": "assert_contains", "lhs": "{{feedback}}", "rhs": "Answer of the input: "}
+			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (84)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_substring", "source": "{{output}}", "lhs": 2, "rhs": 5, "store": "sss"},
+				{"cmd": "extract_substring", "source": "{{output}}", "lhs": 1, "rhs": -1, "store": "sss2"},
+				{"cmd": "concatenate", "lhs": "{{sss}}", "rhs": "{{sss2}}"},
+				{"cmd": "dump"}
 			]
 		}]
 }

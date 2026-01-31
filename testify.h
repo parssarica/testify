@@ -155,4 +155,5 @@ void kill_process(process *, int *, int *);
 void run_command(command, int *, char *, int, double, sds *, int *);
 command parse_command(cJSON *);
 cJSON *get_nth_json(cJSON *, int);
+void free_command(command *);
 #endif

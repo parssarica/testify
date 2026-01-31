@@ -223,10 +223,12 @@ int complex_test(cJSON *testcase_json)
                     if (!strcmp(statement_cmd.cmd, "break"))
                     {
                         j = k;
+                        free_command(&statement_cmd);
                         break;
                     }
                     else if (!strcmp(statement_cmd.cmd, "continue"))
                     {
+                        free_command(&statement_cmd);
                         break;
                     }
                     run_command(statement_cmd, &result, source_string,
@@ -280,20 +282,6 @@ int complex_test(cJSON *testcase_json)
     if (variable_count > 0)
         free(variables);
 
-    for (int j = 0; j < commandcount; j++)
-    {
-        sdsfree(commands[j].cmd);
-        sdsfree(commands[j].source);
-        sdsfree(commands[j].store);
-        sdsfree(commands[j].lhs);
-        sdsfree(commands[j].rhs);
-        for (k = 0; k < commands[j].value_count; k++)
-        {
-            sdsfree(commands[j].values[k]);
-        }
-        if (commands[j].value_count)
-            free(commands[j].values);
-    }
     free(commands);
 
     return result;
@@ -585,6 +573,40 @@ void run_command(command cmd, int *result_val, char *source_str, int source_int,
             }
             new_variable(cmd.store, VARIABLE_STRING, assert_lhs, -1, -1);
             sdsfree(assert_lhs);
+        }
+    }
+    else if (!strcmp(cmd.cmd, "concatenate"))
+    {
+        if (strcmp(cmd.store, " "))
+        {
+            if (cmd.lhs_type == VARIABLE_STRING)
+                assert_lhs =
+                    to_str(get_var_object(cmd.lhs, -1, -1, VARIABLE_STRING));
+            else if (cmd.lhs_type == VARIABLE_INT)
+                assert_lhs =
+                    to_str(get_var_object(NULL, cmd.lhs_int, -1, VARIABLE_INT));
+            else if (cmd.lhs_type == VARIABLE_DOUBLE)
+                assert_lhs = to_str(
+                    get_var_object(NULL, -1, cmd.lhs_double, VARIABLE_DOUBLE));
+            else
+                assert_lhs = sdsempty();
+
+            if (cmd.rhs_type == VARIABLE_STRING)
+                assert_rhs =
+                    to_str(get_var_object(cmd.rhs, -1, -1, VARIABLE_STRING));
+            else if (cmd.rhs_type == VARIABLE_INT)
+                assert_rhs =
+                    to_str(get_var_object(NULL, cmd.rhs_int, -1, VARIABLE_INT));
+            else if (cmd.rhs_type == VARIABLE_DOUBLE)
+                assert_rhs = to_str(
+                    get_var_object(NULL, -1, cmd.rhs_double, VARIABLE_DOUBLE));
+            else
+                assert_rhs = sdsempty();
+
+            assert_lhs = sdscatsds(assert_lhs, assert_rhs);
+            new_variable(cmd.store, VARIABLE_STRING, assert_lhs, -1, -1);
+            sdsfree(assert_lhs);
+            sdsfree(assert_rhs);
         }
     }
     else if (!strcmp(cmd.cmd, "min"))
@@ -1493,6 +1515,7 @@ exit:
     *output_str = sdscpylen(*output_str, output, sdslen(output));
     *result_val = result;
     sdsfree(output);
+    free_command(&cmd);
 }
 
 void new_variable(char *name, int type, char *valuestring, int valueint,
@@ -1823,4 +1846,21 @@ variable get_var_object(char *name, int name_int, double name_double, int type)
         emptyobj.type = name_type;
         return emptyobj;
     }
+}
+
+void free_command(command *cmd)
+{
+    int i;
+
+    sdsfree(cmd->cmd);
+    sdsfree(cmd->source);
+    sdsfree(cmd->store);
+    sdsfree(cmd->lhs);
+    sdsfree(cmd->rhs);
+    for (i = 0; i < cmd->value_count; i++)
+    {
+        sdsfree(cmd->values[i]);
+    }
+    if (cmd->value_count)
+        free(cmd->values);
 }
