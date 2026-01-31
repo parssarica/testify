@@ -1376,5 +1376,16 @@
 				{"cmd": "if", "condition": {"cmd": "assert_not_contains", "lhs": "{{output}}", "rhs": "He"}, "then": [{"cmd": "log", "source": "{{var1}}"}], "else": [{"cmd": "log", "source": "{{var2}}"}]},
 				{"cmd": "assert_contains", "lhs": "{{feedback}}", "rhs": "Answer of the input: "}
 			]
+		}, {
+			"type": 2,
+			"name": "Complex test case",
+			"description": "A very complex test case (finally) (82)",
+			"commandArgs": ["greet"],
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "extract_char", "source": "{{output}}", "index": 0, "store": "var1"},
+				{"cmd": "loop", "indexVariable": "i", "source": "10", "steps": [{"cmd": "log", "source": "{{i}}"}]},
+				{"cmd": "assert_contains", "lhs": "{{feedback}}", "rhs": "Answer of the input: "}
+			]
 		}]
 }
