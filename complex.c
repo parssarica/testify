@@ -220,6 +220,15 @@ int complex_test(cJSON *testcase_json)
                          VARIABLE_DOUBLE))
                         source_double = get_source_double(statement_cmd.source);
 
+                    if (!strcmp(statement_cmd.cmd, "break"))
+                    {
+                        j = k;
+                        break;
+                    }
+                    else if (!strcmp(statement_cmd.cmd, "continue"))
+                    {
+                        break;
+                    }
                     run_command(statement_cmd, &result, source_string,
                                 source_int, source_double, &output,
                                 &assert_count);

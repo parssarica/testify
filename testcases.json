@@ -1384,7 +1384,7 @@
 			"pipeline": [
 				{"cmd": "run"},
 				{"cmd": "extract_char", "source": "{{output}}", "index": 0, "store": "var1"},
-				{"cmd": "loop", "indexVariable": "i", "source": "10", "steps": [{"cmd": "log", "source": "{{i}}"}]},
+				{"cmd": "loop", "indexVariable": "i", "source": "10", "steps": [{"cmd": "log", "source": "{{i}}"}, {"cmd": "continue"}, {"cmd": "log", "source": "{{var1}}"}]},
 				{"cmd": "assert_contains", "lhs": "{{feedback}}", "rhs": "Answer of the input: "}
 			]
 		}]
