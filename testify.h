@@ -153,5 +153,6 @@ void close_child(process *, int *, int *);
 int child_alive(process *, int *, int *);
 void kill_process(process *, int *, int *);
 void run_command(command, int *, char *, int, double, sds *, int *);
-command parse_command(cJSON *commandjson);
+command parse_command(cJSON *);
+cJSON *get_nth_json(cJSON *, int);
 #endif

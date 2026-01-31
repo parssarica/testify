@@ -24,12 +24,16 @@ process pr;
 int complex_test(cJSON *testcase_json)
 {
     command *commands;
+    command statement_cmd;
     int program_args_length;
     sds output = sdsempty();
     sds reason = sdsempty();
     cJSON *testcase_input_str;
     cJSON *env_var;
     cJSON *complex_command;
+    cJSON *pipeline_json;
+    cJSON *command_cmd_json;
+    cJSON *statement_command;
     sds cmd = sdsempty();
     sds source_string = sdsempty();
     sds emptyvar = sdsempty();
@@ -41,6 +45,7 @@ int complex_test(cJSON *testcase_json)
     int assert_count = 0;
     int i;
     int k;
+    int old_result;
 
     variable_count = 0;
     testcase_obj = parse_testcase(testcase_json);
@@ -81,11 +86,8 @@ int complex_test(cJSON *testcase_json)
 
     commandcount = 0;
     i = 0;
-    cJSON_ArrayForEach(complex_command, cJSON_GetObjectItemCaseSensitive(
-                                            testcase_json, "pipeline"))
-    {
-        commandcount++;
-    }
+    pipeline_json = cJSON_GetObjectItemCaseSensitive(testcase_json, "pipeline");
+    cJSON_ArrayForEach(complex_command, pipeline_json) { commandcount++; }
 
     commands = malloc(sizeof(command) * commandcount);
     cJSON_ArrayForEach(complex_command, cJSON_GetObjectItemCaseSensitive(
@@ -111,6 +113,74 @@ int complex_test(cJSON *testcase_json)
             (define_variable_type(commands[i].source) == VARIABLE_DOUBLE))
             source_double = get_source_double(commands[i].source);
 
+        if (!strcmp(commands[i].cmd, "if"))
+        {
+            command_cmd_json = get_nth_json(pipeline_json, i);
+            old_result = result;
+            run_command(parse_command(cJSON_GetObjectItemCaseSensitive(
+                            command_cmd_json, "condition")),
+                        &result, source_string, source_int, source_double,
+                        &output, &assert_count);
+            assert_count--;
+            if (result)
+            {
+                result = old_result;
+                cJSON_ArrayForEach(
+                    statement_command,
+                    cJSON_GetObjectItemCaseSensitive(command_cmd_json, "then"))
+                {
+                    statement_cmd = parse_command(statement_command);
+                    if (statement_cmd.source != NULL &&
+                        (define_variable_type(statement_cmd.source) ==
+                             VARIABLE_STRING ||
+                         !strcmp(statement_cmd.source, "output")))
+                        source_string = sdscpy(
+                            source_string,
+                            get_source_str(statement_cmd.source, output));
+                    if (statement_cmd.source != NULL &&
+                        (define_variable_type(statement_cmd.source) ==
+                         VARIABLE_INT))
+                        source_int = get_source_int(statement_cmd.source);
+                    if (statement_cmd.source != NULL &&
+                        (define_variable_type(statement_cmd.source) ==
+                         VARIABLE_DOUBLE))
+                        source_double = get_source_double(statement_cmd.source);
+
+                    run_command(statement_cmd, &result, source_string,
+                                source_int, source_double, &output,
+                                &assert_count);
+                }
+            }
+            else
+            {
+                result = old_result;
+                cJSON_ArrayForEach(
+                    statement_command,
+                    cJSON_GetObjectItemCaseSensitive(command_cmd_json, "else"))
+                {
+                    statement_cmd = parse_command(statement_command);
+                    if (statement_cmd.source != NULL &&
+                        (define_variable_type(statement_cmd.source) ==
+                             VARIABLE_STRING ||
+                         !strcmp(statement_cmd.source, "output")))
+                        source_string = sdscpy(
+                            source_string,
+                            get_source_str(statement_cmd.source, output));
+                    if (statement_cmd.source != NULL &&
+                        (define_variable_type(statement_cmd.source) ==
+                         VARIABLE_INT))
+                        source_int = get_source_int(statement_cmd.source);
+                    if (statement_cmd.source != NULL &&
+                        (define_variable_type(statement_cmd.source) ==
+                         VARIABLE_DOUBLE))
+                        source_double = get_source_double(statement_cmd.source);
+
+                    run_command(statement_cmd, &result, source_string,
+                                source_int, source_double, &output,
+                                &assert_count);
+                }
+            }
+        }
         run_command(commands[i], &result, source_string, source_int,
                     source_double, &output, &assert_count);
     }

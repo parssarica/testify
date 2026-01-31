@@ -504,3 +504,19 @@ command parse_command(cJSON *commandjson)
 
     return cmd;
 }
+
+cJSON *get_nth_json(cJSON *json_obj, int index)
+{
+    cJSON *i;
+    int j = 0;
+    cJSON_ArrayForEach(i, json_obj)
+    {
+        if (j == index)
+        {
+            return i;
+        }
+        j++;
+    }
+
+    return NULL;
+}
