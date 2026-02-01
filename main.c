@@ -39,10 +39,6 @@ int main(int argc, char **argv)
         if (args.help_shown == 1)
             goto exit;
     }
-    else if (strcmp(argv[1], "create") == 0)
-    {
-        is_creating_json = 1;
-    }
     else
     {
         help();
@@ -72,10 +68,6 @@ int main(int argc, char **argv)
         runtests(json_file);
         fclose(fptr);
         free(json_file);
-    }
-    else if (is_creating_json)
-    {
-        create_json();
     }
 exit:
     sdsfree(args.filename);
