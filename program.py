@@ -24,7 +24,7 @@ if sys.argv[1] == "help":
     print("\tgenerate_file\tCreates a file")
     print("\tremove_file\tRemoves a file")
     print("\tbg\t\tGets input from user multiple times")
-    print("\tsegfault\tCrashes with segmentation fault.")
+    print("\tsegfault\tCrashes with segmentation fault")
 elif sys.argv[1] == "wait":
     time.sleep(1)
 elif sys.argv[1] == "waitquarter":
