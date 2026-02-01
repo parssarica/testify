@@ -1397,7 +1397,21 @@
 				{"cmd": "extract_substring", "source": "{{output}}", "lhs": 2, "rhs": 5, "store": "sss"},
 				{"cmd": "extract_substring", "source": "{{output}}", "lhs": 1, "rhs": -1, "store": "sss2"},
 				{"cmd": "concatenate", "lhs": "{{sss}}", "rhs": "{{sss2}}"},
+				{"cmd": "log", "source": 314},
+				{"cmd": "dump"},
+				{"cmd": "extract_substring", "source": "{{output}}", "lhs": 1, "rhs": -1, "store": "sss"},
 				{"cmd": "dump"}
+			]
+		}, {
+			"type":	2,
+			"name":	"Wait",
+			"description":	"A very complex test case (finally) (85)",
+			"input":	"",
+			"commandArgs":	["wait"],
+			"timeout": 1,
+			"pipeline": [
+				{"cmd": "run"},
+				{"cmd": "assert_equals", "lhs": "{{output}}", "rhs": ""}
 			]
 		}]
 }

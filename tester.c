@@ -30,7 +30,7 @@ int test(cJSON *testcase_json)
     int result;
     int i;
     int env_count;
-    int64_t duration;
+    int64_t duration = 0;
 
     testcase_obj = parse_testcase(testcase_json);
     program_args = malloc(sizeof(char **));
@@ -44,6 +44,11 @@ int test(cJSON *testcase_json)
             (testcase_input_str->valuestring) != NULL)
         {
             program_args[i - 1] = strdup(testcase_input_str->valuestring);
+        }
+        else
+        {
+            program_args[i - 1] = malloc(1);
+            program_args[i - 1][0] = 0;
         }
     }
     program_args = realloc(program_args, sizeof(char **) * ++i + sizeof(NULL));
@@ -437,7 +442,7 @@ int passed_or_not(char *output, testcase testcase_obj, int fault, sds *reason,
         return 0;
     }
 
-    if (duration != 0 && testcase_obj.timeout != -1 &&
+    if (duration != 0 && testcase_obj.timeout > 0 &&
         duration > testcase_obj.timeout)
     {
         *reason = sdscpylen(*reason, "Timeout expired.", 16);

@@ -20,6 +20,7 @@ int exitcode = -1;
 char **program_args;
 testcase testcase_obj;
 process pr;
+int continue_executing = 1;
 
 int complex_test(cJSON *testcase_json)
 {
@@ -54,6 +55,8 @@ int complex_test(cJSON *testcase_json)
     program_args = malloc(sizeof(char **));
     program_args[0] = strdup(args.binary_file);
     i = 1;
+    testcase_obj.duration = 0;
+
     cJSON_ArrayForEach(testcase_input_str, cJSON_GetObjectItemCaseSensitive(
                                                testcase_json, "commandArgs"))
     {
@@ -103,6 +106,8 @@ int complex_test(cJSON *testcase_json)
 
     for (i = 0; i < commandcount; i++)
     {
+        if (!continue_executing)
+            break;
         if (commands[i].source != NULL &&
             (define_variable_type(commands[i].source) == VARIABLE_STRING ||
              !strcmp(commands[i].source, "output")))
@@ -123,6 +128,8 @@ int complex_test(cJSON *testcase_json)
                             command_cmd_json, "condition")),
                         &result, source_string, source_int, source_double,
                         &output, &assert_count);
+            if (!continue_executing)
+                break;
             assert_count--;
             if (result)
             {
@@ -151,6 +158,8 @@ int complex_test(cJSON *testcase_json)
                     run_command(statement_cmd, &result, source_string,
                                 source_int, source_double, &output,
                                 &assert_count);
+                    if (!continue_executing)
+                        break;
                 }
             }
             else
@@ -180,6 +189,8 @@ int complex_test(cJSON *testcase_json)
                     run_command(statement_cmd, &result, source_string,
                                 source_int, source_double, &output,
                                 &assert_count);
+                    if (!continue_executing)
+                        break;
                 }
             }
         }
@@ -242,11 +253,17 @@ int complex_test(cJSON *testcase_json)
         }
         run_command(commands[i], &result, source_string, source_int,
                     source_double, &output, &assert_count);
+        if (!continue_executing)
+            break;
     }
     if (fault)
     {
         reason = sdscpylen(reason, "Segmentation fault detected.", 28);
         result = 0;
+    }
+    else if (args.timeout > 0 && testcase_obj.duration > args.timeout)
+    {
+        reason = sdscatprintf(reason, "Timeout expired.");
     }
     else
     {
@@ -373,6 +390,11 @@ void run_command(command cmd, int *result_val, char *source_str, int source_int,
         testcase_obj.duration = duration;
         if (!cmd.background)
             new_variable("output", VARIABLE_STRING, output, -1, -1);
+        if (args.timeout > 0 && duration > args.timeout)
+        {
+            result = 0;
+            continue_executing = 0;
+        }
     }
     else if (!strcmp(cmd.cmd, "send_input"))
     {
@@ -431,12 +453,12 @@ void run_command(command cmd, int *result_val, char *source_str, int source_int,
     {
         if (define_variable_type(cmd.source) == VARIABLE_STRING)
         {
-            if (strlen(source_string) > cmd.index)
+            if (strlen(source_string) > cmd.index && strcmp(cmd.store, ""))
+            {
                 extract_char_character[0] = source_string[cmd.index];
-
-            if (strcmp(cmd.store, ""))
                 new_variable(cmd.store, VARIABLE_STRING, extract_char_character,
                              -1, -1);
+            }
         }
     }
     else if (!strcmp(cmd.cmd, "atoi"))
@@ -577,7 +599,7 @@ void run_command(command cmd, int *result_val, char *source_str, int source_int,
     }
     else if (!strcmp(cmd.cmd, "concatenate"))
     {
-        if (strcmp(cmd.store, " "))
+        if (strcmp(cmd.store, ""))
         {
             if (cmd.lhs_type == VARIABLE_STRING)
                 assert_lhs =
@@ -1521,6 +1543,38 @@ exit:
 void new_variable(char *name, int type, char *valuestring, int valueint,
                   double valuedouble)
 {
+    int i;
+
+    for (i = 0; i < variable_count; i++)
+    {
+        if (!strcmp(variables[i].name, name))
+        {
+            if (variables[i].type == VARIABLE_STRING)
+                sdsfree(variables[i].valuestring);
+
+            variables[i].type = type;
+            if (type == VARIABLE_STRING)
+            {
+                variables[i].valuestring = sdsnew(valuestring);
+                variables[i].valueint = -1;
+                variables[i].valuedouble = -1;
+            }
+            else if (type == VARIABLE_INT)
+            {
+                variables[i].valuestring = NULL;
+                variables[i].valueint = valueint;
+                variables[i].valuedouble = -1;
+            }
+            else if (type == VARIABLE_DOUBLE)
+            {
+                variables[i].valuestring = NULL;
+                variables[i].valueint = -1;
+                variables[i].valuedouble = valuedouble;
+            }
+            return;
+        }
+    }
+
     if (variable_count == 0)
     {
         variables = malloc(sizeof(variable));

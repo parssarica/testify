@@ -327,7 +327,8 @@ void replaced_print(char *string, difference *diff)
     printf("'");
     if (diff != NULL)
     {
-        free(diff->diffs);
+        if (diff->diffs != NULL)
+            free(diff->diffs);
         free(diff);
     }
 }
@@ -395,6 +396,7 @@ difference *diff(char *s1, char *s2)
     int count = 0;
     int malloced = 0;
     // diffs->diffs = malloc(sizeof(int *));
+    diffs->diffs = NULL;
 
     while (i < len1 || j < len2)
     {
@@ -435,7 +437,8 @@ difference *diff(char *s1, char *s2)
 
     if (size == 1)
     {
-        free(diffs->diffs);
+        if (diffs->diffs != NULL)
+            free(diffs->diffs);
         free(diffs);
         return NULL;
     }

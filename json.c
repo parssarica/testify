@@ -53,7 +53,10 @@ void get_timeout_json(char *json_string)
     timeout = cJSON_GetObjectItemCaseSensitive(json, "timeout");
     if (cJSON_IsNumber(timeout))
     {
-        args.timeout = timeout->valuedouble;
+        if (timeout->valuedouble < 1)
+            args.timeout = -1;
+        else
+            args.timeout = timeout->valuedouble;
     }
     cJSON_Delete(json);
 }
@@ -382,6 +385,19 @@ command parse_command(cJSON *commandjson)
     else
     {
         cmd.source = sdsempty();
+        if (cJSON_IsNumber(source_json))
+        {
+            if (source_json->valuedouble == (double)source_json->valueint)
+            {
+                cmd.source =
+                    sdscatprintf(cmd.source, "%d", source_json->valueint);
+            }
+            else
+            {
+                cmd.source =
+                    sdscatprintf(cmd.source, "%f", source_json->valuedouble);
+            }
+        }
     }
 
     store_json = cJSON_GetObjectItemCaseSensitive(commandjson, "store");
