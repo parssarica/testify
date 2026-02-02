@@ -14,7 +14,6 @@ int main(int argc, char **argv)
     FILE *fptr;
     long size;
     char *json_file;
-    int is_creating_json = 0;
     int run_tests = 0;
     if (argc == 1)
     {

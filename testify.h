@@ -6,7 +6,7 @@ Pars SARICA <pars@parssarica.com>
 #include <cjson/cJSON.h>
 #include <stdint.h>
 
-#define VERSION "0.1"
+#define VERSION "1.0"
 
 #ifndef TESTIFY_H
 #define TESTIFY_H
