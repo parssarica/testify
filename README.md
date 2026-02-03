@@ -7,24 +7,23 @@
 
 A fast, JSON-based tool for black-box testing program output and behavior.
 
-https://github.com/parssarica/testify/blob/main/testify_record.mp4
-
 ---
 
 ## Table of Contents
-- [Overview](#overview)
-- [Quick Start](#quick-start)
-- [Installation](#installation)
+- [Overview](#overview-)
+- [Quick Start](#quick-start-)
+- [Installation](#installation-)
   - [Fedora](#fedora)
   - [Debian-based distros](#debian-based-distros)
   - [Arch Linux](#arch-linux)
-- [Features](#features)
-- [JSON Structure](#json-structure)
-- [Assertions](#assertions)
-- [Complex Test Cases](#complex-test-cases)
-  - [Structure of Complex Test Cases](#structure-of-complex-test-cases)
-- [Productivity & Development Speed](#productivity--development-speed)
-- [A Few More Features](#a-few-more-features)
+- [Features](#features-)
+- [JSON Structure](#json-structure-)
+- [Assertions](#assertions-)
+- [Complex Test Cases](#complex-test-cases-)
+  - [Complete Complex Test Case Example](#complete-complex-test-case-example-)
+  - [Structure of Complex Test Cases](#structure-of-complex-test-cases-%EF%B8%8F)
+- [Productivity & Development Speed](#productivity--development-speed-)
+- [A Few More Features](#a-few-more-features-)
 
 ---
 
