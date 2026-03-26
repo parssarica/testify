@@ -5,7 +5,7 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-active-success)
 
-A fast, JSON-based tool for black-box testing program output and behavior.
+A generic, semi-automatic testing program.
 
 ---
 
