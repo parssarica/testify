@@ -210,7 +210,7 @@ arithmetic operations, and a final assertion.
     { "cmd": "multiply", "lhs": "{{sum}}", "rhs": "2", "store": "result" },
     { "cmd": "subtract", "lhs": "{{result}}", "rhs": "5", "store": "result" },
     { "cmd": "length", "source": "{{output}}", "store": "output_length" },
-    { "cmd": "assert_equals", "lhs": "{{output_length}}", "rhs": "{{result}}" }
+    { "cmd": "assert_equals", "lhs": "{{output_length}}", "rhs": "{{result}}", "msg": "Variables 'output_length' and 'result' are not same." }
   ]
 }
 ```
@@ -229,6 +229,7 @@ Each pipeline command may include:
 * **index**: Character index (for extraction commands)
 * **background**: Keep the process running for interactive tests
 * **store**: Variable name to store the result
+* **msg**: Message when assertion failed (for assertion commands)
 
 Variables support **string**, **integer**, and **float** types and are referenced using `{{variable}}` syntax.
 
