@@ -192,7 +192,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_equals", "lhs": "{{sum}}", "rhs": 134}
+				{"cmd": "assert_equals", "lhs": "{{sum}}", "rhs": 134, "msg": "Lhs isn't same with rhs."}
 			]
 		}, {
 			"type": 2,
@@ -206,7 +206,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_equals", "lhs": "{{sum}}", "rhs": 135}
+				{"cmd": "assert_equals", "lhs": "{{sum}}", "rhs": 135, "msg": "Lhs isn't same with rhs."}
 			]
 		}, {
 			"type": 2,
@@ -224,7 +224,7 @@
 				{"cmd": "multiply", "lhs": "{{subtracted}}", "rhs": "2", "store": "multiplied"},
 				{"cmd": "divide", "lhs": "{{multiplied}}", "rhs": "3", "store": "divided"},
 				{"cmd": "atoi", "source": "{{divided}}", "store": "num"},
-				{"cmd": "assert_equals", "lhs": "{{num}}", "rhs": 78}
+				{"cmd": "assert_equals", "lhs": "{{num}}", "rhs": 78, "msg": "Lhs isn't same with rhs."}
 			]
 		}, {
 			"type": 2,
@@ -242,7 +242,7 @@
 				{"cmd": "multiply", "lhs": "{{subtracted}}", "rhs": "2", "store": "multiplied"},
 				{"cmd": "divide", "lhs": "{{multiplied}}", "rhs": "3", "store": "divided"},
 				{"cmd": "atoi", "source": "{{divided}}", "store": "num"},
-				{"cmd": "assert_equals", "lhs": "{{num}}", "rhs": 79}
+				{"cmd": "assert_equals", "lhs": "{{num}}", "rhs": 79, "msg": "Lhs isn't same with rhs."}
 			]
 		}, {
 			"type": 2,
@@ -260,7 +260,7 @@
 				{"cmd": "multiply", "lhs": "{{subtracted}}", "rhs": "2", "store": "multiplied"},
 				{"cmd": "divide", "lhs": "{{multiplied}}", "rhs": "3", "store": "divided"},
 				{"cmd": "atoi", "source": "{{divided}}", "store": "num"},
-				{"cmd": "assert_less", "lhs": "{{num}}", "rhs": 79}
+				{"cmd": "assert_less", "lhs": "{{num}}", "rhs": 79, "msg": "Lhs isn't less than rhs."}
 			]
 		}, {
 			"type": 2,
@@ -278,7 +278,7 @@
 				{"cmd": "multiply", "lhs": "{{subtracted}}", "rhs": "2", "store": "multiplied"},
 				{"cmd": "divide", "lhs": "{{multiplied}}", "rhs": "3", "store": "divided"},
 				{"cmd": "atoi", "source": "{{divided}}", "store": "num"},
-				{"cmd": "assert_less", "lhs": "{{num}}", "rhs": 69}
+				{"cmd": "assert_less", "lhs": "{{num}}", "rhs": 69, "msg": "Lhs isn't less than rhs."}
 			]
 		}, {
 			"type": 2,
@@ -292,7 +292,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_not_equals", "lhs": "{{sum}}", "rhs": 134}
+				{"cmd": "assert_not_equals", "lhs": "{{sum}}", "rhs": 134, "msg": "Lhs is same with rhs."}
 			]
 		}, {
 			"type": 2,
@@ -306,7 +306,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_not_equals", "lhs": "{{sum}}", "rhs": 135}
+				{"cmd": "assert_not_equals", "lhs": "{{sum}}", "rhs": 135, "msg": "Lhs is same with rhs."}
 			]
 		}, {
 			"type": 2,
@@ -320,7 +320,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_greater", "lhs": "{{sum}}", "rhs": 133}
+				{"cmd": "assert_greater", "lhs": "{{sum}}", "rhs": 133, "msg": "Lhs isn't greater than rhs."}
 			]
 		}, {
 			"type": 2,
@@ -334,7 +334,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_greater", "lhs": "{{sum}}", "rhs": 135}
+				{"cmd": "assert_greater", "lhs": "{{sum}}", "rhs": 135, "msg": "Lhs isn't greater than rhs."}
 			]
 		}, {
 			"type": 2,
@@ -349,7 +349,7 @@
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
 				{"cmd": "set", "lhs": "regex", "rhs": "^\\d{3}$"},
-				{"cmd": "assert_regex_match", "lhs": "{{sum}}", "rhs": "{{regex}}"}
+				{"cmd": "assert_regex_match", "lhs": "{{sum}}", "rhs": "{{regex}}", "msg": "Regex doesn't match."}
 			]
 		}, {
 			"type": 2,
@@ -364,7 +364,7 @@
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
 				{"cmd": "set", "lhs": "regex", "rhs": "^\\d{4}$"},
-				{"cmd": "assert_regex_match", "lhs": "{{sum}}", "rhs": "{{regex}}"}
+				{"cmd": "assert_regex_match", "lhs": "{{sum}}", "rhs": "{{regex}}", "msg": "Regex doesn't match."}
 			]
 		}, {
 			"type": 2,
@@ -378,7 +378,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_regex_match", "lhs": "{{sum}}", "rhs": "^\\d{4}$"}
+				{"cmd": "assert_regex_match", "lhs": "{{sum}}", "rhs": "^\\d{4}$", "msg": "Regex doesn't match."}
 			]
 		}, {
 			"type": 2,
@@ -392,7 +392,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_regex_match", "lhs": "{{sum}}", "rhs": "^\\d{3}$"}
+				{"cmd": "assert_regex_match", "lhs": "{{sum}}", "rhs": "^\\d{3}$", "msg": "Regex doesn't match."}
 			]
 		}, {
 			"type": 2,
@@ -407,7 +407,7 @@
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
 				{"cmd": "set", "lhs": "regex", "rhs": "^\\d{3}$"},
-				{"cmd": "assert_less", "lhs": "{{sum}}", "rhs": "{{regiex}}"}
+				{"cmd": "assert_less", "lhs": "{{sum}}", "rhs": "{{regiex}}", "msg": "Lhs is greater than rhs."}
 			]
 		}, {
 			"type": 2,
@@ -422,7 +422,7 @@
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
 				{"cmd": "set", "lhs": "regex", "rhs": "^\\d{4}$"},
-				{"cmd": "assert_greater", "lhs": "{{regiex}}", "rhs": "{{sum}}"}
+				{"cmd": "assert_greater", "lhs": "{{regiex}}", "rhs": "{{sum}}", "msg": "Lhs is smaller than rhs."}
 			]
 		}, {
 			"type": 2,
@@ -437,7 +437,7 @@
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
 				{"cmd": "set", "lhs": "regex", "rhs": "^\\d{3}$"},
-				{"cmd": "assert_not_regex_match", "lhs": "{{sum}}", "rhs": "{{regex}}"}
+				{"cmd": "assert_not_regex_match", "lhs": "{{sum}}", "rhs": "{{regex}}", "msg": "Regex does match."}
 			]
 		}, {
 			"type": 2,
@@ -452,7 +452,7 @@
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
 				{"cmd": "set", "lhs": "regex", "rhs": "^\\d{4}$"},
-				{"cmd": "assert_not_regex_match", "lhs": "{{sum}}", "rhs": "{{regex}}"}
+				{"cmd": "assert_not_regex_match", "lhs": "{{sum}}", "rhs": "{{regex}}", "msg": "Regex does match."}
 			]
 		}, {
 			"type": 2,
@@ -466,7 +466,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_contains", "lhs": "{{sum}}", "rhs": "3"}
+				{"cmd": "assert_contains", "lhs": "{{sum}}", "rhs": "3", "msg": "Lhs contains rhs."}
 			]
 		}, {
 			"type": 2,
@@ -480,7 +480,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_contains", "lhs": "{{sum}}", "rhs": "5"}
+				{"cmd": "assert_contains", "lhs": "{{sum}}", "rhs": "5", "msg": "Lhs contains rhs."}
 			]
 		}, {
 			"type": 2,
@@ -494,7 +494,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_not_contains", "lhs": "{{sum}}", "rhs": "3"}
+				{"cmd": "assert_not_contains", "lhs": "{{sum}}", "rhs": "3", "msg": "Lhs doesn't contain rhs."}
 			]
 		}, {
 			"type": 2,
@@ -508,7 +508,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_not_contains", "lhs": "{{sum}}", "rhs": "5"}
+				{"cmd": "assert_not_contains", "lhs": "{{sum}}", "rhs": "5", "msg": "Lhs doesn't contain rhs."}
 			]
 		}, {
 			"type": 2,
@@ -522,7 +522,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_starts_with", "lhs": "{{sum}}", "rhs": "13"}
+				{"cmd": "assert_starts_with", "lhs": "{{sum}}", "rhs": "13", "msg": "Lhs doesn't start with rhs."}
 			]
 		}, {
 			"type": 2,
@@ -536,7 +536,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_starts_with", "lhs": "{{sum}}", "rhs": "54648645"}
+				{"cmd": "assert_starts_with", "lhs": "{{sum}}", "rhs": "54648645", "msg": "Lhs doesn't start with rhs."}
 			]
 		}, {
 			"type": 2,
@@ -550,7 +550,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_ends_with", "lhs": "{{sum}}", "rhs": "34"}
+				{"cmd": "assert_ends_with", "lhs": "{{sum}}", "rhs": "34", "msg": "Lhs doesn't end with rhs."}
 			]
 		}, {
 			"type": 2,
@@ -564,7 +564,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_ends_with", "lhs": "{{sum}}", "rhs": "54648645"}
+				{"cmd": "assert_ends_with", "lhs": "{{sum}}", "rhs": "54648645", "msg": "Lhs doesn't end with rhs."}
 			]
 		}, {
 			"type": 2,
@@ -578,7 +578,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_not_starts_with", "lhs": "{{sum}}", "rhs": "13"}
+				{"cmd": "assert_not_starts_with", "lhs": "{{sum}}", "rhs": "13", "msg": "Lhs does start with rhs."}
 			]
 		}, {
 			"type": 2,
@@ -592,7 +592,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_not_starts_with", "lhs": "{{sum}}", "rhs": "54648645"}
+				{"cmd": "assert_not_starts_with", "lhs": "{{sum}}", "rhs": "54648645", "msg": "Lhs does start with rhs."}
 			]
 		}, {
 			"type": 2,
@@ -606,7 +606,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_not_ends_with", "lhs": "{{sum}}", "rhs": "34"}
+				{"cmd": "assert_not_ends_with", "lhs": "{{sum}}", "rhs": "34", "msg": "Lhs ends with rhs."}
 			]
 		}, {
 			"type": 2,
@@ -620,7 +620,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_not_ends_with", "lhs": "{{sum}}", "rhs": "54648645"}
+				{"cmd": "assert_not_ends_with", "lhs": "{{sum}}", "rhs": "54648645", "msg": "Lhs ends with rhs."}
 			]
 		}, {
 			"type": 2,
@@ -634,7 +634,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_less_or_equal", "lhs": "{{sum}}", "rhs": 134}
+				{"cmd": "assert_less_or_equal", "lhs": "{{sum}}", "rhs": 134, "msg": "Lhs is bigger than rhs."}
 			]
 		}, {
 			"type": 2,
@@ -648,7 +648,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_less_or_equal", "lhs": "{{sum}}", "rhs": 135}
+				{"cmd": "assert_less_or_equal", "lhs": "{{sum}}", "rhs": 135, "msg": "Lhs is bigger than rhs."}
 			]
 		}, {
 			"type": 2,
@@ -662,7 +662,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_less_or_equal", "lhs": "{{sum}}", "rhs": 133}
+				{"cmd": "assert_less_or_equal", "lhs": "{{sum}}", "rhs": 133, "msg": "Lhs is bigger than rhs."}
 			]
 		}, {
 			"type": 2,
@@ -676,7 +676,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_greater_or_equal", "lhs": "{{sum}}", "rhs": 133}
+				{"cmd": "assert_greater_or_equal", "lhs": "{{sum}}", "rhs": 133, "msg": "Lhs is smaller than rhs."}
 			]
 		}, {
 			"type": 2,
@@ -690,7 +690,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_greater_or_equal", "lhs": "{{sum}}", "rhs": 134}
+				{"cmd": "assert_greater_or_equal", "lhs": "{{sum}}", "rhs": 134, "msg": "Lhs is smaller than rhs."}
 			]
 		}, {
 			"type": 2,
@@ -704,7 +704,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_greater_or_equal", "lhs": "{{sum}}", "rhs": 135}
+				{"cmd": "assert_greater_or_equal", "lhs": "{{sum}}", "rhs": 135, "msg": "Lhs is smaller than rhs."}
 			]
 		}, {
 			"type": 2,
@@ -718,7 +718,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_exitcode", "lhs": 0}
+				{"cmd": "assert_exitcode", "lhs": 0, "msg": "Exit code isn't 0."}
 			]
 		}, {
 			"type": 2,
@@ -732,7 +732,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_exitcode", "lhs": 0}
+				{"cmd": "assert_exitcode", "lhs": 0, "msg": "Exit code isn't 0."}
 			]
 		}, {
 			"type": 2,
@@ -746,7 +746,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_exitcode", "lhs": 1}
+				{"cmd": "assert_exitcode", "lhs": 1, "msg": "Exit code isn't 1."}
 			]
 		}, {
 			"type": 2,
@@ -760,7 +760,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_exitcode_less", "lhs": 1}
+				{"cmd": "assert_exitcode_less", "lhs": 1, "msg": "Exit code is greater than 1."}
 			]
 		}, {
 			"type": 2,
@@ -774,7 +774,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_exitcode_less", "lhs": 0}
+				{"cmd": "assert_exitcode_less", "lhs": 0, "msg": "Exit code is greater than 0."}
 			]
 		}, {
 			"type": 2,
@@ -788,7 +788,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_exitcode_less", "lhs": 2}
+				{"cmd": "assert_exitcode_less", "lhs": 2, "msg": "Exit code is greater than 2."}
 			]
 		}, {
 			"type": 2,
@@ -802,7 +802,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_exitcode_less", "lhs": 0}
+				{"cmd": "assert_exitcode_less", "lhs": 0, "msg": "Exit code is greater than 0."}
 			]
 		}, {
 			"type": 2,
@@ -816,7 +816,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_exitcode_greater", "lhs": -1}
+				{"cmd": "assert_exitcode_greater", "lhs": -1, "msg": "Exit code is less than 1."}
 			]
 		}, {
 			"type": 2,
@@ -830,7 +830,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_exitcode_greater", "lhs": 0}
+				{"cmd": "assert_exitcode_greater", "lhs": 0, "msg": "Exit code is less than 0."}
 			]
 		}, {
 			"type": 2,
@@ -844,7 +844,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_exitcode_greater", "lhs": 2}
+				{"cmd": "assert_exitcode_greater", "lhs": 2, "msg": "Exit code is less than 2."}
 			]
 		}, {
 			"type": 2,
@@ -858,7 +858,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "add", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "sum"},
-				{"cmd": "assert_exitcode_greater", "lhs": 1}
+				{"cmd": "assert_exitcode_greater", "lhs": 1, "msg": "Exit code is less than 1."}
 			]
 		}, {
 			"type": 2,
@@ -867,7 +867,7 @@
 			"commandArgs": ["greet"],
 			"pipeline": [
 				{"cmd": "run"},
-				{"cmd": "assert_duration_less_than", "lhs": 50}
+				{"cmd": "assert_duration_less_than", "lhs": 50, "msg": "Duration is greater than 50 milliseconds."}
 			]
 		}, {
 			"type": 2,
@@ -876,7 +876,7 @@
 			"commandArgs": ["wait"],
 			"pipeline": [
 				{"cmd": "run"},
-				{"cmd": "assert_duration_less_than", "lhs": 50}
+				{"cmd": "assert_duration_less_than", "lhs": 50, "msg": "Duration is greater than 50 milliseconds."}
 			]
 		}, {
 			"type": 2,
@@ -885,7 +885,7 @@
 			"commandArgs": ["greet"],
 			"pipeline": [
 				{"cmd": "run"},
-				{"cmd": "assert_duration_less_than", "lhs": 0}
+				{"cmd": "assert_duration_less_than", "lhs": 0, "msg": "Duration is greater than 0 milliseconds."}
 			]
 		}, {
 			"type": 2,
@@ -894,7 +894,7 @@
 			"commandArgs": ["wait"],
 			"pipeline": [
 				{"cmd": "run"},
-				{"cmd": "assert_duration_less_than", "lhs": 50000}
+				{"cmd": "assert_duration_less_than", "lhs": 50000, "msg": "Duration is greater than 50000 milliseconds."}
 			]
 		}, {
 			"type": 2,
@@ -903,7 +903,7 @@
 			"commandArgs": ["generate_file"],
 			"pipeline": [
 				{"cmd": "run"},
-				{"cmd": "assert_file_exists", "lhs": "/tmp/program.txt"}
+				{"cmd": "assert_file_exists", "lhs": "/tmp/program.txt", "msg": "/tmp/program.txt doesn't exist."}
 			]
 		}, {
 			"type": 2,
@@ -912,7 +912,7 @@
 			"commandArgs": ["generate_file"],
 			"pipeline": [
 				{"cmd": "run"},
-				{"cmd": "assert_file_exists", "lhs": "/tmp/zzz.txt"}
+				{"cmd": "assert_file_exists", "lhs": "/tmp/zzz.txt", "msg": "/tmp/zzz.txt doesn't exist."}
 			]
 		}, {
 			"type": 2,
@@ -921,7 +921,7 @@
 			"commandArgs": ["remove_file"],
 			"pipeline": [
 				{"cmd": "run"},
-				{"cmd": "assert_file_not_exists", "lhs": "/tmp/program.txt"}
+				{"cmd": "assert_file_not_exists", "lhs": "/tmp/program.txt", "msg": "/tmp/program.txt does exist."}
 			]
 		}, {
 			"type": 2,
@@ -930,7 +930,7 @@
 			"commandArgs": ["generate_file"],
 			"pipeline": [
 				{"cmd": "run"},
-				{"cmd": "assert_file_not_exists", "lhs": "/tmp/zzz.txt"}
+				{"cmd": "assert_file_not_exists", "lhs": "/tmp/zzz.txt", "msg": "/tmp/zzz.txt does exist."}
 			]
 		}, {
 			"type": 2,
@@ -939,7 +939,7 @@
 			"commandArgs": ["generate_file"],
 			"pipeline": [
 				{"cmd": "run"},
-				{"cmd": "assert_file_not_exists", "lhs": "/tmp/program.txt"}
+				{"cmd": "assert_file_not_exists", "lhs": "/tmp/program.txt", "msg": "/tmp/program.txt does exist."}
 			]
 		}, {
 			"type": 2,
@@ -948,7 +948,7 @@
 			"commandArgs": ["generate_file"],
 			"pipeline": [
 				{"cmd": "run"},
-				{"cmd": "assert_file_contains", "lhs": "/tmp/program.txt", "rhs": "really"}
+				{"cmd": "assert_file_contains", "lhs": "/tmp/program.txt", "rhs": "really", "msg": "/tmp/program.txt contains a word."}
 			]
 		}, {
 			"type": 2,
@@ -957,7 +957,7 @@
 			"commandArgs": ["generate_file"],
 			"pipeline": [
 				{"cmd": "run"},
-				{"cmd": "assert_file_contains", "lhs": "/tmp/program.txt", "rhs": "rocket"}
+				{"cmd": "assert_file_contains", "lhs": "/tmp/program.txt", "rhs": "rocket", "msg": "/tmp/program.txt contains a word."}
 			]
 		}, {
 			"type": 2,
@@ -966,7 +966,7 @@
 			"commandArgs": ["generate_file"],
 			"pipeline": [
 				{"cmd": "run"},
-				{"cmd": "assert_file_not_contains", "lhs": "/tmp/program.txt", "rhs": "really"}
+				{"cmd": "assert_file_not_contains", "lhs": "/tmp/program.txt", "rhs": "really", "msg": "/tmp/program.txt doens't contain a word."}
 			]
 		}, {
 			"type": 2,
@@ -975,7 +975,7 @@
 			"commandArgs": ["generate_file"],
 			"pipeline": [
 				{"cmd": "run"},
-				{"cmd": "assert_file_not_contains", "lhs": "/tmp/program.txt", "rhs": "rocket"}
+				{"cmd": "assert_file_not_contains", "lhs": "/tmp/program.txt", "rhs": "rocket", "msg": "/tmp/program.txt doens't contain a word."}
 			]
 		}, {
 			"type": 2,
@@ -995,7 +995,7 @@
 				{"cmd": "atoi", "source": "{{divided}}", "store": "num"},
 				{"cmd": "to_string", "source": "{{num}}", "store": "converted_str"},
 				{"cmd": "atof", "source": "{{converted_str}}", "store": "converted"},
-				{"cmd": "assert_less", "lhs": "{{converted}}", "rhs": 79}
+				{"cmd": "assert_less", "lhs": "{{converted}}", "rhs": 79, "msg": "Lhs is greater than 79."}
 			]
 		}, {
 			"type": 2,
@@ -1005,7 +1005,7 @@
 			"pipeline": [
 				{"cmd": "run"},
 				{"cmd": "trim", "source": "output", "store": "converted"},
-				{"cmd": "assert_equals", "lhs": "{{converted}}", "rhs": ""}
+				{"cmd": "assert_equals", "lhs": "{{converted}}", "rhs": "", "msg": "Lhs isn't same as rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1015,7 +1015,7 @@
 			"pipeline": [
 				{"cmd": "run"},
 				{"cmd": "upper", "source": "output", "store": "converted"},
-				{"cmd": "assert_contains", "lhs": "{{converted}}", "rhs": "HELLLO!"}
+				{"cmd": "assert_contains", "lhs": "{{converted}}", "rhs": "HELLLO!", "msg": "Lhs doesn't contain rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1025,7 +1025,7 @@
 			"pipeline": [
 				{"cmd": "run"},
 				{"cmd": "lower", "source": "output", "store": "converted"},
-				{"cmd": "assert_contains", "lhs": "{{converted}}", "rhs": "helllo!"}
+				{"cmd": "assert_contains", "lhs": "{{converted}}", "rhs": "helllo!", "msg": "Lhs doesn't contain rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1039,7 +1039,7 @@
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "to_int", "source": "{{char2}}", "store": "num2"},
 				{"cmd": "mod", "lhs": "{{num1}}", "rhs": "{{num2}}", "store": "remainder"},
-				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": "72"}
+				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": "72", "msg": "Lhs isn't same as rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1077,7 +1077,7 @@
 				{"cmd": "to_int", "source": "{{char13}}", "store": "num13"},
 				{"cmd": "to_int", "source": "{{char14}}", "store": "num14"},
 				{"cmd": "min", "values": ["{{num1}}", "{{num2}}", "{{num3}}", "{{num4}}", "{{num5}}", "{{num6}}", "{{num7}}", "{{num8}}", "{{num9}}", "{{num10}}", "{{num11}}", "{{num12}}", "{{num13}}", "{{num14}}"], "store": "remainder"},
-				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": "72"}
+				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": "72", "msg": "Lhs isn't same as rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1115,7 +1115,7 @@
 				{"cmd": "to_int", "source": "{{char13}}", "store": "num13"},
 				{"cmd": "to_int", "source": "{{char14}}", "store": "num14"},
 				{"cmd": "max", "values": ["{{num1}}", "{{num2}}", "{{num3}}", "{{num4}}", "{{num5}}", "{{num6}}", "{{num7}}", "{{num8}}", "{{num9}}", "{{num10}}", "{{num11}}", "{{num12}}", "{{num13}}", "{{num14}}"], "store": "remainder"},
-				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": "114"}
+				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": "114", "msg": "Lhs isn't same as rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1153,7 +1153,7 @@
 				{"cmd": "to_int", "source": "{{char13}}", "store": "num13"},
 				{"cmd": "to_int", "source": "{{char14}}", "store": "num14"},
 				{"cmd": "sum", "values": ["{{num1}}", "{{num2}}", "{{num3}}", "{{num4}}", "{{num5}}", "{{num6}}", "{{num7}}", "{{num8}}", "{{num9}}", "{{num10}}", "{{num11}}", "{{num12}}", "{{num13}}", "{{num14}}"], "store": "remainder"},
-				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": "1435"}
+				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": "1435", "msg": "Lhs isn't same as rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1165,7 +1165,7 @@
 				{"cmd": "extract_char", "source": "output", "index": 0, "store": "char1"},
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "increment", "source": "{{num1}}", "store": "remainder"},
-				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": "73"}
+				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": "73", "msg": "Lhs isn't same as rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1177,7 +1177,7 @@
 				{"cmd": "extract_char", "source": "output", "index": 0, "store": "char1"},
 				{"cmd": "to_int", "source": "{{char1}}", "store": "num1"},
 				{"cmd": "decrement", "source": "{{num1}}", "store": "remainder"},
-				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": "71"}
+				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": "71", "msg": "Lhs isn't same as rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1199,7 +1199,7 @@
 				{"cmd": "log", "source": "{{divided}}"},
 				{"cmd": "set", "lhs": "{{char1}}", "rhs": "3.14159"},
 				{"cmd": "log", "source": "{{char1}}"},
-				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": 314159}
+				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": 314159, "msg": "Lhs isn't same as rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1231,7 +1231,7 @@
 				{"cmd": "log", "source": "{{sss2}}"},
 				{"cmd": "extract_regex", "source": "{{output}}", "lhs": "^([A-Za-z]+)!", "rhs": 1, "store": "extracted"},
 				{"cmd": "log", "source": "{{extracted}}"},
-				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": 314159}
+				{"cmd": "assert_equals", "lhs": "{{remainder}}", "rhs": 314159, "msg": "Lhs isn't same as rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1252,7 +1252,7 @@
 				{"cmd": "log", "source": "{{substring_count}}"},
 				{"cmd": "log", "source": "{{splitted_text}}"},
 				{"cmd": "log", "source": "{{regexcount}}"},
-				{"cmd": "assert_equals", "lhs": "1", "rhs": "2"}
+				{"cmd": "assert_equals", "lhs": "1", "rhs": "2", "msg": "Lhs isn't same as rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1271,7 +1271,7 @@
 				{"cmd": "log", "source": "{{feedback}}"},
 				{"cmd": "log", "source": "{{feedback2}}"},
 				{"cmd": "log", "source": "{{feedback3}}"},
-				{"cmd": "assert_contains", "lhs": "{{feedback}}", "rhs": "Answer of the input: "}
+				{"cmd": "assert_contains", "lhs": "{{feedback}}", "rhs": "Answer of the input: ", "msg": "Lhs doesn't contain rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1288,7 +1288,7 @@
 			"commandArgs": ["envlist2", "BELLO"],
 			"pipeline": [
 				{"cmd": "run"},
-				{"cmd": "assert_equals", "lhs": "{{output}}", "rhs": "True\r\n"}
+				{"cmd": "assert_equals", "lhs": "{{output}}", "rhs": "True\r\n", "msg": "Lhs isn't same as rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1297,7 +1297,7 @@
 			"commandArgs": ["envlist2", "HELLO"],
 			"pipeline": [
 				{"cmd": "run"},
-				{"cmd": "assert_equals", "lhs": "{{output}}", "rhs": "True\r\n"}
+				{"cmd": "assert_equals", "lhs": "{{output}}", "rhs": "True\r\n", "msg": "Lhs isn't same as rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1307,7 +1307,7 @@
 			"environmentalVariables": ["HELLO=5"],
 			"pipeline": [
 				{"cmd": "run"},
-				{"cmd": "assert_equals", "lhs": "{{output}}", "rhs": "True\r\n"}
+				{"cmd": "assert_equals", "lhs": "{{output}}", "rhs": "True\r\n", "msg": "Lhs isn't same as rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1321,8 +1321,8 @@
 				{"cmd": "kill"},
 				{"cmd": "is_alive", "store": "is_alive_2"},
 				{"cmd": "dump"},
-				{"cmd": "assert_equals", "lhs": "{{is_alive_1}}", "rhs": 1},
-				{"cmd": "assert_equals", "lhs": "{{is_alive_2}}", "rhs": 0}
+				{"cmd": "assert_equals", "lhs": "{{is_alive_1}}", "rhs": 1, "msg": "Lhs isn't same as rhs."},
+				{"cmd": "assert_equals", "lhs": "{{is_alive_2}}", "rhs": 0, "msg": "Lhs isn't same as rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1349,7 +1349,7 @@
 				{"cmd": "log", "source": "{{is_alive}}"},
 				{"cmd": "log", "source": "{{is_alive_1}}"},
 				{"cmd": "log", "source": "{{is_alive_2}}"},
-				{"cmd": "assert_contains", "lhs": "{{feedback}}", "rhs": "Answer of the input: "}
+				{"cmd": "assert_contains", "lhs": "{{feedback}}", "rhs": "Answer of the input: ", "msg": "Lhs doesn't contain rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1361,7 +1361,7 @@
 				{"cmd": "sleep", "source": "314"},
 				{"cmd": "kill"},
 				{"cmd": "sleep", "source": "314.159"},
-				{"cmd": "assert_contains", "lhs": "{{feedback}}", "rhs": "Answer of the input: "}
+				{"cmd": "assert_contains", "lhs": "{{feedback}}", "rhs": "Answer of the input: ", "msg": "Lhs doesn't contain rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1374,7 +1374,7 @@
 				{"cmd": "extract_char", "source": "{{output}}", "index": 1, "store": "var2"},
 				{"cmd": "if", "condition": {"cmd": "assert_contains", "lhs": "{{output}}", "rhs": "He"}, "then": [{"cmd": "log", "source": "{{var1}}"}], "else": [{"cmd": "log", "source": "{{var2}}"}]},
 				{"cmd": "if", "condition": {"cmd": "assert_not_contains", "lhs": "{{output}}", "rhs": "He"}, "then": [{"cmd": "log", "source": "{{var1}}"}], "else": [{"cmd": "log", "source": "{{var2}}"}]},
-				{"cmd": "assert_contains", "lhs": "{{feedback}}", "rhs": "Answer of the input: "}
+				{"cmd": "assert_contains", "lhs": "{{feedback}}", "rhs": "Answer of the input: ", "msg": "Lhs doesn't contain rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1385,7 +1385,7 @@
 				{"cmd": "run"},
 				{"cmd": "extract_char", "source": "{{output}}", "index": 0, "store": "var1"},
 				{"cmd": "loop", "indexVariable": "i", "source": "10", "steps": [{"cmd": "log", "source": "{{i}}"}, {"cmd": "continue"}, {"cmd": "log", "source": "{{var1}}"}]},
-				{"cmd": "assert_contains", "lhs": "{{feedback}}", "rhs": "Answer of the input: "}
+				{"cmd": "assert_contains", "lhs": "{{feedback}}", "rhs": "Answer of the input: ", "msg": "Lhs doesn't contain rhs."}
 			]
 		}, {
 			"type": 2,
@@ -1411,7 +1411,7 @@
 			"timeout": 1,
 			"pipeline": [
 				{"cmd": "run"},
-				{"cmd": "assert_equals", "lhs": "{{output}}", "rhs": ""}
+				{"cmd": "assert_equals", "lhs": "{{output}}", "rhs": "", "msg": "Lhs isn't same as rhs."}
 			]
 		}]
 }

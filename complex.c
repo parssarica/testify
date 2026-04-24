@@ -127,7 +127,7 @@ int complex_test(cJSON *testcase_json)
             run_command(parse_command(cJSON_GetObjectItemCaseSensitive(
                             command_cmd_json, "condition")),
                         &result, source_string, source_int, source_double,
-                        &output, &assert_count);
+                        &output, &assert_count, &reason);
             if (!continue_executing)
                 break;
             assert_count--;
@@ -157,7 +157,7 @@ int complex_test(cJSON *testcase_json)
 
                     run_command(statement_cmd, &result, source_string,
                                 source_int, source_double, &output,
-                                &assert_count);
+                                &assert_count, &reason);
                     if (!continue_executing)
                         break;
                 }
@@ -188,7 +188,7 @@ int complex_test(cJSON *testcase_json)
 
                     run_command(statement_cmd, &result, source_string,
                                 source_int, source_double, &output,
-                                &assert_count);
+                                &assert_count, &reason);
                     if (!continue_executing)
                         break;
                 }
@@ -244,7 +244,7 @@ int complex_test(cJSON *testcase_json)
                     }
                     run_command(statement_cmd, &result, source_string,
                                 source_int, source_double, &output,
-                                &assert_count);
+                                &assert_count, &reason);
                 }
                 if (loop_variable_index != -1)
                     variables[loop_variable_index].valueint++;
@@ -252,7 +252,7 @@ int complex_test(cJSON *testcase_json)
             loop_variable_index = -1;
         }
         run_command(commands[i], &result, source_string, source_int,
-                    source_double, &output, &assert_count);
+                    source_double, &output, &assert_count, &reason);
         if (!continue_executing)
             break;
     }
@@ -265,7 +265,7 @@ int complex_test(cJSON *testcase_json)
     {
         reason = sdscatprintf(reason, "Timeout expired.");
     }
-    else
+    else if (!strcmp(reason, ""))
     {
         reason = sdscatprintf(reason, "Assertion %d failed.", assert_count);
     }
@@ -305,7 +305,8 @@ int complex_test(cJSON *testcase_json)
 }
 
 void run_command(command cmd, int *result_val, char *source_str, int source_int,
-                 double source_double, sds *output_str, int *assert_count)
+                 double source_double, sds *output_str, int *assert_count,
+                 sds *reason)
 {
     ssize_t n;
     size_t tmp;
@@ -333,6 +334,14 @@ void run_command(command cmd, int *result_val, char *source_str, int source_int,
     int k;
     char output_buf[4096];
     int result = 1;
+
+    if (strcmp(cmd.msg, ""))
+    {
+        sdsclear(*reason);
+        *reason = sdscpylen(*reason, cmd.msg, sdslen(cmd.msg));
+    }
+
+    sdsfree(cmd.msg);
 
     memset(output_buf, 0, 4096);
     extract_char_character[1] = 0;

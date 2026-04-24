@@ -365,6 +365,7 @@ command parse_command(cJSON *commandjson)
     cJSON *index_json;
     cJSON *value_json;
     cJSON *background_json;
+    cJSON *msg_json;
     int k;
 
     cmd_json = cJSON_GetObjectItemCaseSensitive(commandjson, "cmd");
@@ -516,6 +517,16 @@ command parse_command(cJSON *commandjson)
         {
             cmd.background = 0;
         }
+    }
+
+    msg_json = cJSON_GetObjectItemCaseSensitive(commandjson, "msg");
+    if (cJSON_IsString(msg_json) && (msg_json->valuestring != NULL))
+    {
+        cmd.msg = sdsnew(msg_json->valuestring);
+    }
+    else
+    {
+        cmd.msg = sdsempty();
     }
 
     return cmd;
