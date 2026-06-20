@@ -256,4 +256,4 @@ Testify lets you move fast without breaking things.
 * Per-test timeouts
 * Per-test environment variables
 * Designed for interactive and non-interactive CLI programs
-  
+* Segmentation fault detects  
